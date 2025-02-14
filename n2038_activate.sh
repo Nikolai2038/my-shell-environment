@@ -91,7 +91,10 @@ n2038_activate() {
       sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
       echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
     elif [ "${__n2038_is_update_requested}" = "1" ]; then
-      echo "\"${_N2038_SHELL_ENVIRONMENT_PATH}\" is not installed to be updated! Pass \"--install\" argument instead of \"--update\" to install it." >&2
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"--install\" argument instead of \"--update\" to install it." >&2
+      return 1
+    else
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed! Pass \"--install\" argument to install it." >&2
       return 1
     fi
   # If the repository already is cloned - we update it
