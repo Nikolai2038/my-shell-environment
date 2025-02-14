@@ -126,8 +126,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" >> "${__n2038_bashrc_
 
   # We use external script here to be able to apply new changes right now.
   # However, if this script is changed, we still need to reload the shell (in some cases).
-  # shellcheck source=./n2038_activate_inner.sh
-  . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate_inner.sh" || return "$?"
+  # shellcheck source=./_n2038_activate_inner.sh
+  . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_activate_inner.sh" || return "$?"
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2
