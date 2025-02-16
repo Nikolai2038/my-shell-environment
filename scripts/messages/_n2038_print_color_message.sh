@@ -26,12 +26,10 @@ _n2038_print_color_message() {
   __n2038_text="${__n2038_main_color}${__n2038_text}${c_reset}"
 
   if _n2038_is_shell_bash_compatible; then
-    # Prepare colors in text
-    __n2038_text="$(echo "${__n2038_text}" | sed -E "s/\\033\[[0-9]+m//g")" || return "$?"
-
     # shellcheck disable=SC2320,SC3037
     echo -e "${@}" "${__n2038_text}" || return "$?"
   else
+    # "sh" does not have "-e"
     # shellcheck disable=SC2320
     echo "${@}" "${__n2038_text}" || return "$?"
   fi

@@ -15,7 +15,8 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 #
 # Usage: _n2038_get_current_shell
 _n2038_get_current_shell() {
-  echo "$0" | sed -E 's/^(.*[^a-z]+)?([a-z]+)$/\2/' || return "$?"
+  # We use "realpath" here to resolve symbolic links (for example, "sh" is a symlink to "bash" by default in Arch Linux)
+  realpath "$(which "$0")" | sed -E 's/^(.*[^a-z]+)?([a-z]+)$/\2/' || return "$?"
 }
 
 # If this file is being executed - we execute function itself, otherwise it will be just loaded

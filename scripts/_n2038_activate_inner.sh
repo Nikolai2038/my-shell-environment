@@ -14,10 +14,11 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 
 _n2038_activate_inner() {
   # Set command prompt.
-  # We must source script here to be able to get current shell via "$0" - this will not work if file is being executed.
+  # We must use function here to be able to get current shell via "$0" - this will not work if file is being executed.
+  # Also, when we are entering "sh" from "bash" (even if "sh" is a symbolic link to "bash"), "sh" won't know about functions - because of that, we source them, if first execution fails.
   # shellcheck disable=SC2090
-  export PS1="\$(_n2038_ps1_function \"\$?\" || return \"\$?\")"
-  export PS2="\$(_n2038_ps2_function || return \"\$?\")"
+  export PS1="\$(__n2038_return_code=\"\$?\"; _n2038_ps1_function \"\${__n2038_return_code}\" 2> /dev/null || { . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh\" && _n2038_ps1_function \"\${__n2038_return_code}\"; } || exit \"\$?\")"
+  export PS2="\$(n2038_ps2_function 2> /dev/null || { . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh\" && _n2038_ps2_function; } || exit \"\$?\")"
 
   # Make scripts available in shell by their names
   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
