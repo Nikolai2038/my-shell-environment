@@ -37,10 +37,11 @@ _n2038_ps1_function() {
   # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
   #   Because of that, we can't call "_n2038_print_color_message" here.
   #   But we can specify colors here and replace them all colors with their values later.
-  _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]─[${__n2038_date}]
+  # - We specify colors in the beginning of each line, because bash may have override it with text color, when navigating in commands' history.
+  _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]─[${__n2038_date}]${c_reset}
 
-┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
-├─[${c_success}${__n2038_current_shell}${c_border}]─\$ ${c_reset}" || return "$?"
+${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]${c_reset}
+${c_border}├─[${c_success}${__n2038_current_shell}${c_border}]─\$ ${c_reset}" || return "$?"
 
   unset __n2038_return_code __n2038_return_code_formatted __n2038_date __n2038_hostname __n2038_user __n2038_current_shell __n2038_color_for_error_code
 }

@@ -46,7 +46,7 @@ _n2038_activate_inner() {
     ${__n2038_new_ps2_function_file_content_only_body}
     _n2038_ps2_function 2> /dev/null || {
       . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh\" || exit \"\$?\"
-      _n2038_ps1_function \"\${__n2038_return_code}\" || exit \"\$?\"
+      _n2038_ps2_function \"\${__n2038_return_code}\" || exit \"\$?\"
     }
   )"
 
