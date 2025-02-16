@@ -61,6 +61,10 @@ n2038_activate() {
       echo "Checking requirements..." >&2
     fi
 
+    if ! which bash > /dev/null 2>&1; then
+      echo "\"bash\" is not installed!" >&2
+      return 1
+    fi
     if ! which git > /dev/null 2>&1; then
       echo "\"git\" is not installed!" >&2
       return 1
@@ -116,10 +120,10 @@ n2038_activate() {
     # ----------------------------------------
     echo "Installing for Bash..." >&2
     __n2038_bashrc_path="${HOME}/.bashrc"
-    if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet "source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" "${__n2038_bashrc_path}"; then
+    if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate\$" "${__n2038_bashrc_path}"; then
       # shellcheck disable=SC2320
       echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
-source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" >> "${__n2038_bashrc_path}" || return "$?"
+source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate" >> "${__n2038_bashrc_path}" || return "$?"
     fi
     unset __n2038_bashrc_path
     echo "Installing for Bash: success!" >&2
@@ -127,23 +131,30 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" >> "${__n2038_bashrc_
   fi
   # ========================================
 
-  # We use external script here to be able to apply new changes right now.
-  # However, if this script is changed, we still need to reload the shell (in some cases).
-  # shellcheck source=./_n2038_activate_inner.sh
-  . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_activate_inner.sh" || return "$?"
+  # ========================================
+  # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
+  # However, if this "n2038_activate.sh" script is changed, we still need to reload the shell (in some cases).
+  # ========================================
+  : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
+  eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh\""
+  # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_before_imports.sh
+  { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_before_imports.sh" && _n2038_required_before_imports; } || return "$?"
+
+  # Imports
+  . "./scripts/_n2038_activate_inner.sh" || return "$?"
+
+  # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
+  { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || return "$?"
+
+  _n2038_activate_inner || return "$?"
+  # ========================================
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2
   fi
 }
 
-n2038_activate "${@}" || {
-  return_code="$?"
-  # If file is being executed
-  if [ "$(basename "$0")" = "n2038_activate.sh" ]; then
-    exit "${return_code}"
-  # If file is being sourced
-  else
-    return "${return_code}"
-  fi
-}
+# If this file is being executed - we execute function itself, otherwise it will be just loaded
+if [ "$(basename "$0")" = "n2038_activate.sh" ]; then
+  n2038_activate "${@}" || exit "$?"
+fi
