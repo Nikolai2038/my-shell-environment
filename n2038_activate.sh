@@ -5,7 +5,8 @@
 # Usage: n2038_activate [--no-check] [--install] [--update]
 # Where:
 # - "--no-check" - Do not check requirements (they are checked by default);
-# - "--install" - Install the scripts in the system (implies "--update");
+# - "--install" - Install stable version of the scripts in the system;
+# - "--install-dev" - Install dev version of the scripts in the system;
 # - "--update" - Update the repository from remote.
 n2038_activate() {
   # If need to check requirements
@@ -17,12 +18,19 @@ n2038_activate() {
   # If need to install the scripts in the system
   __n2038_is_install_requested=0
 
+  # (If installing) If need to install dev version (otherwise stable version will be installed)
+  __n2038_is_install_dev=0
+
   for __n2038_argument in "${@}"; do
     if [ "${__n2038_argument}" = "--no-check" ]; then
       __n2038_is_check_requested=0
     fi
     if [ "${__n2038_argument}" = "--install" ]; then
       __n2038_is_install_requested=1
+    fi
+    if [ "${__n2038_argument}" = "--install-dev" ]; then
+      __n2038_is_install_requested=1
+      __n2038_is_install_dev=1
     fi
     if [ "${__n2038_argument}" = "--update" ]; then
       __n2038_is_update_requested=1
@@ -35,6 +43,10 @@ n2038_activate() {
 
   # Name for the scripts folder and name to be shown in logs
   export _N2038_SHELL_ENVIRONMENT_NAME="${_N2038_SHELL_ENVIRONMENT_NAME:-"my-shell-environment"}"
+  if [ -z "${_N2038_SHELL_ENVIRONMENT_NAME}" ]; then
+    echo "_N2038_SHELL_ENVIRONMENT_NAME cannot be empty!" >&2
+    return 1
+  fi
 
   # Repository URL to install scripts from
   export _N2038_SHELL_ENVIRONMENT_REPOSITORY_URL="${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL:-"https://github.com/Nikolai2038/my-shell-environment"}"
@@ -81,29 +93,44 @@ n2038_activate() {
   # ========================================
 
   # ========================================
-  # Cloning or updating the repository
+  # Installing the repository
   # ========================================
-  # If the repository is not cloned - we clone it
+  if [ "${__n2038_is_install_requested}" = "1" ]; then
+    if [ -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
+      sudo rm -rf "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+    fi
+
+    echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
+
+    __n2038_branch_name="main"
+    if [ "${__n2038_is_install_dev}" = "1" ]; then
+      __n2038_branch_name="dev"
+    fi
+    sudo git clone --branch "${__n2038_branch_name}" "${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}.git" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+
+    sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+
+    echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
+  fi
+
   if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-    if [ "${__n2038_is_install_requested}" = "1" ]; then
-      echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
-      sudo git clone "${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}.git" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
-      sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
-      echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
-    elif [ "${__n2038_is_update_requested}" = "1" ]; then
+    if [ "${__n2038_is_update_requested}" = "1" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"--install\" argument instead of \"--update\" to install it." >&2
       return 1
     else
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed! Pass \"--install\" argument to install it." >&2
       return 1
     fi
-  # If the repository already is cloned - we update it
-  else
-    if [ "${__n2038_is_install_requested}" = "1" ] || [ "${__n2038_is_update_requested}" = "1" ]; then
-      echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
-      git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || return "$?"
-      echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
-    fi
+  fi
+  # ========================================
+
+  # ========================================
+  # Updating the repository
+  # ========================================
+  if [ "${__n2038_is_update_requested}" = "1" ]; then
+    echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
+    git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || return "$?"
+    echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
   fi
   # ========================================
 
@@ -114,36 +141,45 @@ n2038_activate() {
     # ----------------------------------------
     # Installing for Bash
     # ----------------------------------------
-    echo "Installing for Bash..." >&2
-    __n2038_bashrc_path="${HOME}/.bashrc"
-    if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet "source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" "${__n2038_bashrc_path}"; then
-      # shellcheck disable=SC2320
-      echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
-source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh" >> "${__n2038_bashrc_path}" || return "$?"
+    if which bash > /dev/null 2>&1; then
+      echo "Installing for Bash..." >&2
+      __n2038_bashrc_path="${HOME}/.bashrc"
+      if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate\$" "${__n2038_bashrc_path}"; then
+        # shellcheck disable=SC2320
+        echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
+source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate" >> "${__n2038_bashrc_path}" || return "$?"
+      fi
+      unset __n2038_bashrc_path
+      echo "Installing for Bash: success!" >&2
     fi
-    unset __n2038_bashrc_path
-    echo "Installing for Bash: success!" >&2
     # ----------------------------------------
   fi
   # ========================================
 
-  # We use external script here to be able to apply new changes right now.
-  # However, if this script is changed, we still need to reload the shell (in some cases).
-  # shellcheck source=./_n2038_activate_inner.sh
-  . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_activate_inner.sh" || return "$?"
+  # ========================================
+  # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
+  # However, if this "n2038_activate.sh" script is changed, we still need to reload the shell (in some cases).
+  # ========================================
+  : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
+  eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh\""
+  # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_before_imports.sh
+  { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_before_imports.sh" && _n2038_required_before_imports; } || return "$?"
+
+  # Imports
+  . "./scripts/_n2038_activate_inner.sh" || return "$?"
+
+  # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
+  { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || return "$?"
+
+  _n2038_activate_inner || return "$?"
+  # ========================================
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2
   fi
 }
 
-n2038_activate "${@}" || {
-  return_code="$?"
-  # If file is being executed
-  if [ "$(basename "$0")" = "n2038_activate.sh" ]; then
-    exit "${return_code}"
-  # If file is being sourced
-  else
-    return "${return_code}"
-  fi
-}
+# If this file is being executed - we execute function itself, otherwise it will be just loaded
+if [ "$(basename "$0")" = "n2038_activate.sh" ]; then
+  n2038_activate "${@}" || exit "$?"
+fi

@@ -14,8 +14,16 @@ My personal shell environment customizations, which is both useful and simple to
 
 ## 4. Installation
 
-```bash
-git clone https://github.com/Nikolai2038/my-shell-environment.git && . ./my-shell-environment/n2038_activate.sh --install; rm -rf ./my-shell-environment
+Stable version:
+
+```sh
+rm -rf /tmp/my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install; rm -rf /tmp/my-shell-environment
+```
+
+Development version:
+
+```sh
+rm -rf /tmp/my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install-dev; rm -rf /tmp/my-shell-environment
 ```
 
 ## 5. Update
@@ -26,7 +34,16 @@ n2038_activate --update
 
 ## 6. Features
 
-- Shows exit code of the finished command, if it is not `0`.
+- Shows information about:
+
+    - Current user;
+    - Hostname;
+    - Full path to the current directory;
+    - Current real shell (follows symlinks);
+    - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
+    - Date and time when command was finished.
+
+- Supports any shell, because scripts are based on POSIX `sh`. Right now I checked it for `bash` and `dash`.
 
 ## 7. More information
 
