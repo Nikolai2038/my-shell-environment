@@ -61,10 +61,6 @@ n2038_activate() {
       echo "Checking requirements..." >&2
     fi
 
-    if ! which bash > /dev/null 2>&1; then
-      echo "\"bash\" is not installed!" >&2
-      return 1
-    fi
     if ! which git > /dev/null 2>&1; then
       echo "\"git\" is not installed!" >&2
       return 1
@@ -118,15 +114,17 @@ n2038_activate() {
     # ----------------------------------------
     # Installing for Bash
     # ----------------------------------------
-    echo "Installing for Bash..." >&2
-    __n2038_bashrc_path="${HOME}/.bashrc"
-    if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate\$" "${__n2038_bashrc_path}"; then
-      # shellcheck disable=SC2320
-      echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
+    if which bash > /dev/null 2>&1; then
+      echo "Installing for Bash..." >&2
+      __n2038_bashrc_path="${HOME}/.bashrc"
+      if ! [ -f "${__n2038_bashrc_path}" ] || ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate\$" "${__n2038_bashrc_path}"; then
+        # shellcheck disable=SC2320
+        echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
 source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate" >> "${__n2038_bashrc_path}" || return "$?"
+      fi
+      unset __n2038_bashrc_path
+      echo "Installing for Bash: success!" >&2
     fi
-    unset __n2038_bashrc_path
-    echo "Installing for Bash: success!" >&2
     # ----------------------------------------
   fi
   # ========================================
