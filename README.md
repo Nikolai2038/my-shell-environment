@@ -34,7 +34,16 @@ n2038_activate --update
 
 ## 6. Features
 
-- Shows exit code of the finished command, if it is not `0`.
+- Shows information about:
+
+    - Current user;
+    - Hostname;
+    - Full path to the current directory;
+    - Current real shell (follows symlinks);
+    - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
+    - Date and time when command was finished.
+
+- Supports any shell, because scripts are based on POSIX `sh`. Right now I checked it for `bash` and `dash`.
 
 ## 7. More information
 
