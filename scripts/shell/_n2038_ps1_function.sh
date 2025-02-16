@@ -7,7 +7,7 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 
 # Imports
 . "../messages/_constants.sh" || _n2038_return "$?"
-. "../messages/_n2038_print_color_message.sh" || _n2038_return "$?"
+. "../messages/_n2038_echo.sh" || _n2038_return "$?"
 . "./_n2038_get_current_shell.sh" || _n2038_return "$?"
 
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
@@ -33,11 +33,14 @@ _n2038_ps1_function() {
     __n2038_color_for_error_code="${c_error}"
   fi
 
-  # We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh"
-  _n2038_print_color_message "${c_border}" "└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_return}]─[${__n2038_date}]" || return "$?"
-  _n2038_print_color_message "${c_border}" "" || return "$?"
-  _n2038_print_color_message "${c_border}" "┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_return}]" || return "$?"
-  _n2038_print_color_message "${c_border}" "├─[${c_success}${__n2038_current_shell}${c_return}]─$ " || return "$?"
+  # - We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh".
+  # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
+  #   Because of that, we can't call "_n2038_print_color_message" here.
+  #   But we can specify colors here and replace them all colors with their values later.
+  _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]─[${__n2038_date}]
+
+┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
+├─[${c_success}${__n2038_current_shell}${c_border}]─\$ ${c_reset}" || return "$?"
 
   unset __n2038_return_code __n2038_return_code_formatted __n2038_date __n2038_hostname __n2038_user __n2038_current_shell __n2038_color_for_error_code
 }
