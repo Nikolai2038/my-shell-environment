@@ -7,6 +7,7 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 
 # Imports
 . "../shell/_n2038_is_shell_bash_compatible.sh" || _n2038_return "$?"
+. "../string/n2038_escape_sed.sh" || _n2038_return "$?"
 . "./_constants.sh" || _n2038_return "$?"
 . "./_n2038_echo.sh" || _n2038_return "$?"
 
@@ -29,16 +30,16 @@ _n2038_replace_colors_with_exact_values() {
 
   # shellcheck disable=SC2016
   _n2038_echo -en "${__n2038_text}" \
-    | sed "s/$(_n2038_escape_sed '${c_info}')/$(_n2038_escape_sed "${__n2038_prefix}${c_info}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_success}')/$(_n2038_escape_sed "${__n2038_prefix}${c_success}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_highlight}')/$(_n2038_escape_sed "${__n2038_prefix}${c_highlight}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_warning}')/$(_n2038_escape_sed "${__n2038_prefix}${c_warning}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_error}')/$(_n2038_escape_sed "${__n2038_prefix}${c_error}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_text}')/$(_n2038_escape_sed "${__n2038_prefix}${c_text}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_border_usual}')/$(_n2038_escape_sed "${__n2038_prefix}${c_border_usual}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_border_root}')/$(_n2038_escape_sed "${__n2038_prefix}${c_border_root}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_border}')/$(_n2038_escape_sed "${__n2038_prefix}${c_border}${__n2038_suffix}")/g" \
-    | sed "s/$(_n2038_escape_sed '${c_reset}')/$(_n2038_escape_sed "${__n2038_prefix}${c_reset}${__n2038_suffix}")/g" || return "$?"
+    | sed "s/$(n2038_escape_sed '${c_info}')/$(n2038_escape_sed "${__n2038_prefix}${c_info}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_success}')/$(n2038_escape_sed "${__n2038_prefix}${c_success}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_highlight}')/$(n2038_escape_sed "${__n2038_prefix}${c_highlight}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_warning}')/$(n2038_escape_sed "${__n2038_prefix}${c_warning}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_error}')/$(n2038_escape_sed "${__n2038_prefix}${c_error}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_text}')/$(n2038_escape_sed "${__n2038_prefix}${c_text}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_border_usual}')/$(n2038_escape_sed "${__n2038_prefix}${c_border_usual}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_border_root}')/$(n2038_escape_sed "${__n2038_prefix}${c_border_root}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_border}')/$(n2038_escape_sed "${__n2038_prefix}${c_border}${__n2038_suffix}")/g" \
+    | sed "s/$(n2038_escape_sed '${c_reset}')/$(n2038_escape_sed "${__n2038_prefix}${c_reset}${__n2038_suffix}")/g" || return "$?"
 
   unset __n2038_text __n2038_prefix __n2038_suffix
 }
