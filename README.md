@@ -14,8 +14,16 @@ My personal shell environment customizations, which is both useful and simple to
 
 ## 4. Installation
 
-```bash
-git clone https://github.com/Nikolai2038/my-shell-environment.git && . ./my-shell-environment/n2038_activate.sh && n2038_activate --install; rm -rf ./my-shell-environment
+Stable version:
+
+```sh
+rm -rf /tmp/my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install; rm -rf /tmp/my-shell-environment
+```
+
+Development version:
+
+```sh
+rm -rf /tmp/my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install-dev; rm -rf /tmp/my-shell-environment
 ```
 
 ## 5. Update
