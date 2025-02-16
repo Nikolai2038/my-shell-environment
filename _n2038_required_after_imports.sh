@@ -1,10 +1,7 @@
 #!/bin/sh
 
 _n2038_required_after_imports() {
-  # echo "Current PWD: ${PWD}" >&2
   eval "cd \"\${_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || return "$?"
-  : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
-  # echo "Went back to PWD: ${PWD}" >&2
 }
 
 # If this file is being executed - we execute function itself, otherwise it will be just loaded
