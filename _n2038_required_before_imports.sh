@@ -7,13 +7,13 @@ _n2038_get_text_hash() {
 }
 
 _n2038_return() {
-  return_code="${1}" && { shift || true; }
+  [ "$#" -gt 0 ] && { __n2038_return_code="${1}" && shift || return "$?"; }
   # If file is being executed
   if [ "$(basename "$0")" = "_n2038_required.sh" ]; then
-    exit "${return_code}"
+    exit "${__n2038_return_code}"
   # If file is being sourced
   else
-    return "${return_code}"
+    return "${__n2038_return_code}"
   fi
 }
 

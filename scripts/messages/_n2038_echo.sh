@@ -12,11 +12,11 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || _n2038_return "$?"
 
 _n2038_echo() {
-  __n2038_text="${1}" && { shift || true; }
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; }
 
   if [ "${__n2038_text}" = "-e" ] || [ "${__n2038_text}" = "-n" ] || [ "${__n2038_text}" = "-en" ] || [ "${__n2038_text}" = "-ne" ]; then
     __n2038_args="${__n2038_text}"
-    __n2038_text="${1}" && { shift || true; }
+    [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; }
   fi
 
   if _n2038_is_shell_bash_compatible; then

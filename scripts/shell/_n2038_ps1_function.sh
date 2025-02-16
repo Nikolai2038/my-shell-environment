@@ -14,7 +14,7 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || _n2038_return "$?"
 
 _n2038_ps1_function() {
-  __n2038_return_code="${1}" && { shift || true; }
+  [ "$#" -gt 0 ] && { __n2038_return_code="${1}" && shift || return "$?"; }
 
   __n2038_return_code_formatted="$(printf '%03d' "${__n2038_return_code#0}")" || return "$?"
 

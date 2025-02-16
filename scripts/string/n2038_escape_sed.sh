@@ -12,8 +12,8 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || _n2038_return "$?"
 
 n2038_escape_sed() {
-  __n2038_text="${1}" && { shift || true; }
-  __n2038_arg="${1}" && { shift || true; }
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; }
+  [ "$#" -gt 0 ] && { __n2038_arg="${1}" && shift || return "$?"; }
 
   # "-E" can be as first argument or as second, so we switch them, if necessary
   if [ "${__n2038_text}" = "-E" ]; then
