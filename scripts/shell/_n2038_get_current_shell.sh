@@ -15,8 +15,22 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 #
 # Usage: _n2038_get_current_shell
 _n2038_get_current_shell() {
-  # We use "realpath" here to resolve symbolic links (for example, "sh" is a symlink to "bash" by default in Arch Linux)
-  realpath "$(which "$0")" | sed -E 's/^(.*[^a-z]+)?([a-z]+)$/\2/' || return "$?"
+  # If executing script
+  if [ -f "${0}" ]; then
+    # Check first line in the script
+    __n2038_shell_path="$(head -n 1 "${0}" | sed -En 's/^#!.*[^a-z]+([a-z]+)$/\1/p')" || return "$?"
+  else
+    # We use "realpath" here to resolve symbolic links (for example, "sh" is a symlink to "bash" by default in Arch Linux)
+    __n2038_shell_path="$(realpath "$(which "${0}")" | sed -En 's/^.*[^a-z]+([a-z]+)$/\1/p')" || return "$?"
+  fi
+
+  if [ -z "${__n2038_shell_path}" ]; then
+    echo "Could not determine the current shell. Will use value from \$0." >&2
+    __n2038_shell_path="${0}"
+  fi
+
+  echo "${__n2038_shell_path}"
+  unset __n2038_shell_path
 }
 
 # If this file is being executed - we execute function itself, otherwise it will be just loaded
