@@ -15,7 +15,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
 _n2038_print_text() {
-  _n2038_print_color_message "${c_error}" "${@}" >&2 || return "$?"
+  _n2038_print_color_message "${c_text}" "${@}" >&2 || return "$?"
   return 0
 }
 

@@ -17,7 +17,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_repla
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
 _n2038_replace_colors_with_exact_values() {
-  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; }
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
 
   __n2038_prefix=""
   __n2038_suffix=""

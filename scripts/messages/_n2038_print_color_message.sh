@@ -16,8 +16,8 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
 _n2038_print_color_message() {
-  [ "$#" -gt 0 ] && { __n2038_main_color="${1}" && shift || return "$?"; }
-  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; }
+  [ "$#" -gt 0 ] && { __n2038_main_color="${1}" && shift || return "$?"; } || __n2038_main_color=""
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
 
   # Replaces the special string with the __n2038_text color
   # (don't forget to escape the first color character with an additional backslash)

@@ -34,7 +34,6 @@ _n2038_activate_inner() {
   # Cut all before and after function body
   __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || return "$?"
   __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || return "$?"
-
   export PS1="\$(
     __n2038_return_code=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}
@@ -43,11 +42,11 @@ _n2038_activate_inner() {
       _n2038_ps1_function \"\${__n2038_return_code}\" || exit \"\$?\"
     }
   )"
+  unset __n2038_new_ps1_function_file_content_only_body
 
   # Cut all before and after function body
   __n2038_new_ps2_function_file_content_only_body="$(sed -n '/_n2038_ps2_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh")" || return "$?"
   __n2038_new_ps2_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps2_function_file_content_only_body}")" || return "$?"
-
   export PS2="\$(
     ${__n2038_new_ps2_function_file_content_only_body}
     _n2038_ps2_function 2> /dev/null || {
@@ -55,8 +54,7 @@ _n2038_activate_inner() {
       _n2038_ps2_function \"\${__n2038_return_code}\" || exit \"\$?\"
     }
   )"
-
-  unset __n2038_new_ps1_function_file_content_only_body __n2038_new_ps2_function_file_content_only_body
+  unset __n2038_new_ps2_function_file_content_only_body
 
   # ========================================
 
