@@ -46,7 +46,7 @@ ${c_border}├─[${c_success}${__n2038_current_shell}${c_border}]─\$ ${c_rese
   unset __n2038_return_code __n2038_return_code_formatted __n2038_date __n2038_hostname __n2038_user __n2038_current_shell __n2038_color_for_error_code
 }
 
-# If this file is being executed - we execute function itself, otherwise it will be just loaded
+# If this file is being executed - we execute function itself
 if [ "$(basename "$0")" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ]; then
   _n2038_ps1_function "${@}" || exit "$?"
 fi

@@ -46,7 +46,7 @@ _n2038_print_color_message() {
   unset __n2038_main_color __n2038_text
 }
 
-# If this file is being executed - we execute function itself, otherwise it will be just loaded
+# If this file is being executed - we execute function itself
 if [ "$(basename "$0")" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ]; then
   _n2038_print_color_message "${@}" || exit "$?"
 fi

@@ -179,7 +179,9 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate" >> 
   fi
 }
 
-# If this file is being executed - we execute function itself, otherwise it will be just loaded
+# If this file is being executed
 if [ "$(basename "$0")" = "n2038_activate.sh" ]; then
-  n2038_activate "${@}" || exit "$?"
+  echo "This file is meant to be sourced, not executed! Source this file and then execute function itself:
+. ${0} && n2038_activate" >&2
+  exit 1
 fi

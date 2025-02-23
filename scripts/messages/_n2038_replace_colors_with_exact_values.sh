@@ -44,7 +44,7 @@ _n2038_replace_colors_with_exact_values() {
   unset __n2038_text __n2038_prefix __n2038_suffix
 }
 
-# If this file is being executed - we execute function itself, otherwise it will be just loaded
+# If this file is being executed - we execute function itself
 if [ "$(basename "$0")" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ]; then
   _n2038_replace_colors_with_exact_values "${@}" || exit "$?"
 fi

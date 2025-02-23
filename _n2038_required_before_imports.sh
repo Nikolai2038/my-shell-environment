@@ -41,7 +41,7 @@ _n2038_required_before_imports() {
   unset __n2038_script_file_path __n2038_script_file_hash
 }
 
-# If this file is being executed - we execute function itself, otherwise it will be just loaded
+# If this file is being executed - we execute function itself
 if [ "$(basename "$0")" = "_n2038_required_before_imports.sh" ]; then
   _n2038_required_before_imports "${@}" || exit "$?"
 fi
