@@ -24,20 +24,22 @@ _n2038_get_current_shell() {
     return 0
   fi
 
-  # Notes:
-  # - If executing script - "${0}" will be the script path.
-  # - If sourcing script - "${0}" will be current shell path.
-  # - We use extra variable "__n2038_shell_path" to not leave main one with wrong value if script is interrupted.
+  # NOTE: We use extra variable "__n2038_shell_path" to not leave main one with wrong value if script is interrupted.
 
-  # If executing script (we assume all scripts end up with ".sh" extension)
+  # If executing script - "${0}" will be the script path. (we assume all scripts end up with ".sh" extension)
   if echo "${0}" | grep --extended-regexp --quiet '\.sh$'; then
-    # Get shell name from shebang
-    __n2038_shell_path="$(head -n 1 "${0}" | sed -En 's/^#!.*[^a-z]+([a-z]+)$/\1/p')" || return "$?"
-
-    if [ -z "${__n2038_shell_path}" ]; then
-      echo "Could not determine the current shell from shebang in file \"${0}\". Will use value from \"\${0}\"." >&2
-      __n2038_shell_path="${0}"
+    if [ -n "${BASH}" ]; then
+      __n2038_shell_path="bash"
+    elif [ -n "${ZSH_NAME}" ]; then
+      __n2038_shell_path="zsh"
+    elif [ -n "${KSH_VERSION}" ]; then
+      __n2038_shell_path="ksh"
+    elif [ -n "${shell}" ]; then
+      __n2038_shell_path="tcsh"
+    else
+      __n2038_shell_path="sh"
     fi
+  # If sourcing script - "${0}" will be current shell path.
   else
     # We use "realpath" here to resolve symbolic links (for example, "sh" is a symlink to "bash" by default in Arch Linux)
     __n2038_shell_path="$(realpath "$(which "${0}")" | sed -En 's/^.*[^a-z]+([a-z]+)$/\1/p')" || return "$?"

@@ -4,6 +4,13 @@
 
 My personal shell environment customizations, which is both useful and simple to install.
 
+Supported shells (tested with start from `bash`):
+
+- `sh`;
+- `bash`;
+- `dash`;
+- `ksh`.
+
 ## 2. Preview
 
 ![Preview](./.readme_images/preview.png)
