@@ -7,6 +7,7 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?"
+. "./shell/_n2038_get_current_shell.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?"
 
@@ -14,6 +15,9 @@ eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038
 { . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" && _n2038_required_after_imports; } || _n2038_return "$?"
 
 _n2038_activate_inner() {
+  # To initialize the "_N2038_SHELL_PATH" variable - to not recalculate it every time
+  _n2038_get_current_shell > /dev/null || return "$?"
+
   # ========================================
   # Set command prompt.
   # - We must use function here to be able to get current shell via "$0" - this will not work if file is being executed.
