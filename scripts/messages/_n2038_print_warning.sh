@@ -14,6 +14,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Print warning-colored text.
+#
+# Usage: _n2038_print_warning [text]
 _n2038_print_warning() {
   _n2038_print_color_message "${c_warning}" "${@}" >&2 || return "$?"
   return 0

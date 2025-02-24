@@ -15,6 +15,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_ps2_func
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Print PS2 prompt.
+#
+# Usage: _n2038_ps2_function
 _n2038_ps2_function() {
   __n2038_current_shell="$(_n2038_get_current_shell)" || return "$?"
 

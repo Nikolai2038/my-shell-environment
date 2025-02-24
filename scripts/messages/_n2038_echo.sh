@@ -13,6 +13,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_echo.
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Executes "echo", based on current shell, with the given arguments.
+#
+# Usage: _n2038_echo [-e] [-n] [text]
 _n2038_echo() {
   [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
 

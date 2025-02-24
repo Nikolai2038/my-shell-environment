@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Required steps after function declaration.
+# Checks if this file is being executed or sourced.
+# If this file is being executed - it will execute the function itself.
+# If this file is being sourced - it will do nothing.
+#
+# Usage: _n2038_required_after_function
 _n2038_required_after_function() {
   __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || return "$?"
   if [ -n "${__n2038_function_name}" ]; then

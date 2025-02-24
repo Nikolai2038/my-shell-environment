@@ -14,6 +14,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/n2038_print_
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Print colored lines with message colors names.
+#
+# Usage: _n2038_print_colors
 n2038_print_colors() {
   _n2038_echo -e "${c_info}c_info${c_reset}" || return "$?"
   _n2038_echo -e "${c_success}c_success${c_reset}" || return "$?"

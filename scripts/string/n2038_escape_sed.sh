@@ -13,6 +13,11 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/string/n2038_escape_s
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Escapes the specified text for use in the sed command.
+# If you will pass the result of this command to "sed" or "grep" - please, add "-E" if you will also add it to them.
+# This is because, the escaping depends on condition if extended regular expressions will be used.
+#
+# Usage: _n2038_escape_sed [-E] [text]
 n2038_escape_sed() {
   [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
   [ "$#" -gt 0 ] && { __n2038_arg="${1}" && shift || return "$?"; } || __n2038_arg=""

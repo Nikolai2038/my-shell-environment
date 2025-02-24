@@ -8,6 +8,11 @@ _n2038_get_text_hash() {
   return 0
 }
 
+# Special function to return from script.
+# If script is being executed - it will exit with the given code.
+# If script is being sourced - it will return with the given code.
+#
+# Usage: _n2038_return [return_code]
 _n2038_return() {
   [ "$#" -gt 0 ] && { __n2038_return_code="${1}" && shift || return "$?"; } || {
     echo "Return code is not provided to \"_n2038_return\"! Result code will become 1." >&2

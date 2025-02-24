@@ -15,6 +15,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_ps1_func
 # shellcheck source=/usr/local/lib/my-shell-environment/_n2038_required_after_imports.sh
 . "${_N2038_SHELL_ENVIRONMENT_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
+# Print PS1 prompt.
+#
+# Usage: _n2038_ps1_function [return_code]
 _n2038_ps1_function() {
   [ "$#" -gt 0 ] && { __n2038_return_code="${1}" && shift || return "$?"; } || __n2038_return_code=""
 
