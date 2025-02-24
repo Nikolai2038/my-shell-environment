@@ -57,6 +57,23 @@ n2038_activate() {
 
   # Path to folder, where the directory with scripts will be located
   __n2038_libs_path="/usr/local/lib"
+
+  # Is "sudo" faked (not needed) for this OS
+  __n2038_is_sudo_faked=0
+
+  # ========================================
+  # Termux support
+  # ========================================
+  if [ -n "${TERMUX_VERSION}" ]; then
+    # Termux does not have "/usr/local/lib" directory - so we use app storage instead
+    __n2038_libs_path="${PREFIX}/lib"
+
+    # Termux does not need "sudo" to write to the lib directory
+    sudo() { "${@}"; }
+    __n2038_is_sudo_faked=1
+  fi
+  # ========================================
+
   if [ ! -d "${__n2038_libs_path}" ]; then
     echo "Libs path \"${__n2038_libs_path}\" not found - probably, \"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not implemented for your OS." >&2
     return 1
@@ -73,6 +90,10 @@ n2038_activate() {
       echo "Checking requirements..." >&2
     fi
 
+    if ! which --version > /dev/null 2>&1; then
+      echo "\"which\" is not installed!" >&2
+      return 1
+    fi
     if ! which git > /dev/null 2>&1; then
       echo "\"git\" is not installed!" >&2
       return 1
@@ -81,7 +102,7 @@ n2038_activate() {
       echo "\"grep\" is not installed!" >&2
       return 1
     fi
-    if ! which sudo > /dev/null 2>&1; then
+    if ! which sudo > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
       echo "\"sudo\" is not installed!" >&2
       return 1
     fi
@@ -90,6 +111,7 @@ n2038_activate() {
       echo "Checking requirements: success!" >&2
     fi
   fi
+  unset __n2038_is_check_requested __n2038_is_sudo_faked
   # ========================================
 
   # ========================================
@@ -106,7 +128,9 @@ n2038_activate() {
     if [ "${__n2038_is_install_dev}" = "1" ]; then
       __n2038_branch_name="dev"
     fi
+    unset __n2038_is_install_dev
     sudo git clone --branch "${__n2038_branch_name}" "${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}.git" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+    unset __n2038_branch_name
 
     sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
 
@@ -132,6 +156,7 @@ n2038_activate() {
     git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || return "$?"
     echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
   fi
+  unset __n2038_is_update_requested
   # ========================================
 
   # ========================================
@@ -154,6 +179,7 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_activate.sh && n2038_activate" >> 
     fi
     # ----------------------------------------
   fi
+  unset __n2038_is_update_requested
   # ========================================
 
   # ========================================
