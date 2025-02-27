@@ -19,10 +19,10 @@ n2038_my_shell_environment() {
 
   for __n2038_argument in "${@}"; do
     if [ "${__n2038_argument}" = "--no-check" ]; then
-      __n2038_is_check_requested=0
+      __n2038_is_check_requested=0 && { shift || return "$?"; }
     fi
     if [ "${__n2038_argument}" = "--dev" ]; then
-      __n2038_is_install_dev=1
+      __n2038_is_install_dev=1 && { shift || return "$?"; }
     fi
   done
   unset __n2038_argument
