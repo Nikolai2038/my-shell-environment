@@ -52,7 +52,7 @@ rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikola
 ## 5. Update
 
 ```bash
-n2038_my_shell_environment --update
+n2038_my_shell_environment update
 ```
 
 ## 6. Features
