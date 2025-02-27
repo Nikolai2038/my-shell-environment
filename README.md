@@ -10,26 +10,49 @@ My personal shell environment customizations, which is both useful and simple to
 
 ## 3. Requirements
 
-- `git`, `grep` and `sudo` commands available.
+Supported shells (tested with start from `bash`):
+
+- `sh`;
+- `bash`;
+- `dash`;
+- `ksh`.
+
+Required commands:
+
+- `git`, `grep`, `which`, `tput`.
+
+You can install them via:
+
+- Termux:
+
+    ```sh
+    pkg update && pkg install -y git grep which ncurses-utils
+    ```
+
+- Arch Linux:
+
+    ```sh
+    sudo pacman --sync --refresh --needed --noconfirm git grep
+    ```
 
 ## 4. Installation
 
 Stable version:
 
 ```sh
-rm -rf /tmp/my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install; rm -rf /tmp/my-shell-environment
+rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install && n2038_my_shell_environment activate; rm -rf ~/.my-shell-environment
 ```
 
 Development version:
 
 ```sh
-rm -rf /tmp/my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git /tmp/my-shell-environment && . /tmp/my-shell-environment/n2038_activate.sh && n2038_activate --install-dev; rm -rf /tmp/my-shell-environment
+rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install && n2038_my_shell_environment activate; rm -rf ~/.my-shell-environment
 ```
 
 ## 5. Update
 
 ```bash
-n2038_activate --update
+n2038_my_shell_environment --update
 ```
 
 ## 6. Features
