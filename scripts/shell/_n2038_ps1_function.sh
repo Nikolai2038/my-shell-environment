@@ -53,9 +53,6 @@ _n2038_ps1_function() {
       echo "Variable \"_N2038_INIT_SHELL_DEPTH\" is not defined!" >&2
       return 1
     elif [ "${_N2038_INIT_SHELL_DEPTH}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
-      if [ "${N2038_IS_DEBUG}" = "1" ]; then
-        echo "\"_N2038_INIT_SHELL_DEPTH\" is unknown!" >&2
-      fi
       __n2038_was_error_calculating_current_shell_depth=1
     else
       __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || return "$?"
@@ -66,7 +63,7 @@ _n2038_ps1_function() {
   if [ "${__n2038_was_error_calculating_current_shell_depth}" = "0" ]; then
     __n2038_get_current_shell_depth_part="─[${__n2038_get_current_shell_depth}]"
   fi
-  unset __n2038_get_current_shell_depth
+  unset __n2038_get_current_shell_depth __n2038_was_error_calculating_current_shell_depth
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || return "$?"
 
