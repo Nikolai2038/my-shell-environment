@@ -117,7 +117,8 @@ n2038_my_shell_environment() {
     # Installing the repository
     # ========================================
     if [ -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-      sudo rm -rf "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is already installed! Pass \"update\" argument instead of \"install\" to update it." >&2
+      return 1
     fi
 
     echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
@@ -156,7 +157,7 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     # ========================================
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_UPDATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"--install\" argument instead of \"--update\" to install it." >&2
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"install\" argument instead of \"update\" to install it." >&2
       return 1
     fi
 

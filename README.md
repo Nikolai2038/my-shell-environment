@@ -10,18 +10,32 @@ My personal shell environment customizations, which is both useful and simple to
 
 ## 3. Requirements
 
-Supported shells (tested with start from `bash`):
+### 3.1. Supported shells
+
+(tested with start from `bash`):
 
 - `sh`;
 - `bash`;
 - `dash`;
 - `ksh`.
 
-Required commands:
+### 3.2. Required commands
 
 - `git`, `grep`, `which`, `tput`.
 
 You can install them via:
+
+- Debian (not tested):
+
+    ```sh
+    sudo apt-get update && sudo apt-get install -y git grep which ncurses
+    ```
+
+- Arch Linux:
+
+    ```sh
+    sudo pacman --sync --refresh --needed --noconfirm git grep which ncurses
+    ```
 
 - Termux:
 
@@ -29,10 +43,32 @@ You can install them via:
     pkg update && pkg install -y git grep which ncurses-utils
     ```
 
+### 3.3. Optional commands
+
+They will enhance some functional:
+
+- `pstree`: Will allow to output current shell depth.
+
+You can install them via:
+
+- Debian:
+
+    ```sh
+    sudo apt-get update && sudo apt-get install -y psmisc
+    ```
+
+    - `psmisc`: for `pstree` command.
+
 - Arch Linux:
 
     ```sh
-    sudo pacman --sync --refresh --needed --noconfirm git grep
+    sudo pacman --sync --refresh --needed --noconfirm psmisc
+    ```
+
+- Termux:
+
+    ```sh
+    pkg update && pkg install -y psmisc
     ```
 
 ## 4. Installation
