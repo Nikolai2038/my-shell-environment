@@ -28,7 +28,7 @@ _n2038_get_current_shell_depth() {
   fi
 
   # Count all processes, which starts with word "[a-z]*sh" - like "bash", "sh" and others
-  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || { _N2038_RETURN_CODE="$?" && _N2038_LINENO="${LINENO}" && eval "${_n2038_return}"; }
+  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || return "$?"
 
   if [ -z "${__n2038_current_shell_depth}" ]; then
     echo "Could not determine the current shell depth!" >&2
@@ -36,8 +36,8 @@ _n2038_get_current_shell_depth() {
     return 0
   fi
 
-  # "sh" and "ksh" has different call stack
-  if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_SH}" ] || [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_KSH}" ]; then
+  # "ksh" has different call stack
+  if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_KSH}" ]; then
     __n2038_current_shell_depth="$((__n2038_current_shell_depth + 3))"
   fi
 

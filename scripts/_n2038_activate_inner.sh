@@ -9,6 +9,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?"
 . "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?"
+. "./shell/_n2038_get_current_shell_depth.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?"
 
@@ -27,6 +28,11 @@ _n2038_activate_inner() {
   if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
     export _N2038_INIT_SHELL_DEPTH
     _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)" || return "$?"
+
+    # Termux has different call stack
+    if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ -n "${_N2038_INIT_SHELL_DEPTH}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
+      _N2038_INIT_SHELL_DEPTH="$((_N2038_INIT_SHELL_DEPTH - 1))"
+    fi
   fi
 
   # ========================================
@@ -43,6 +49,7 @@ _n2038_activate_inner() {
   # Cut all before and after function body
   __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || return "$?"
   __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || return "$?"
+  # shellcheck disable=SC2154
   export PS1="\$(
     __n2038_return_code_ps1=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}

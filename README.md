@@ -84,7 +84,7 @@ You can install them via:
     - Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
 
         ```sh
-        _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)"
+        _N2038_INIT_SHELL_DEPTH="" && n2038_my_bash_environment activate
         ```
 
 ## 4. Installation
@@ -92,13 +92,13 @@ You can install them via:
 Stable version:
 
 ```sh
-rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install && n2038_my_shell_environment activate; rm -rf ~/.my-shell-environment
+rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
 ```
 
 Development version:
 
 ```sh
-rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install && n2038_my_shell_environment activate; rm -rf ~/.my-shell-environment
+rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
 ```
 
 ## 5. Update

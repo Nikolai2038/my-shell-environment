@@ -14,6 +14,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_get_curr
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
 _N2038_OS_NAME_UNKNOWN="os"
+_N2038_OS_NAME_TERMUX="termux"
 
 # Prints name of the current OS.
 # Also, defines "_N2038_CURRENT_OS_NAME" variable with the same value, which is useful to avoid recalculating the current OS name.
@@ -22,6 +23,13 @@ _N2038_OS_NAME_UNKNOWN="os"
 _n2038_get_current_os_name() {
   # If we already calculated current shell in current terminal session - just return it
   if [ -n "${_N2038_CURRENT_OS_NAME}" ]; then
+    echo "${_N2038_CURRENT_OS_NAME}"
+    return 0
+  fi
+
+  # For Termux there is no "/etc/os-release" file, so we need to check it separately
+  if [ -n "${TERMUX_VERSION}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
     echo "${_N2038_CURRENT_OS_NAME}"
     return 0
   fi
