@@ -27,9 +27,9 @@ _n2038_ps1_function() {
   if [ "${__n2038_return_code}" != "0" ]; then
     __n2038_color_for_error_code="${c_error}"
   fi
-  unset __n2038_return_code
 
   __n2038_return_code_formatted="$(printf '%03d' "${__n2038_return_code#0}")" || return "$?"
+  unset __n2038_return_code
 
   __n2038_date="$(date +'%Y-%m-%d]─[%a]─[%H:%M:%S')" || return "$?"
 
