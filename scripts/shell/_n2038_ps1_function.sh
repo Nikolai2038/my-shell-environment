@@ -62,9 +62,11 @@ _n2038_ps1_function() {
     fi
   fi
 
-  if [ "${__n2038_was_error_calculating_current_shell_depth}" = "1" ]; then
-    __n2038_get_current_shell_depth="${c_error}${_N2038_SHELL_DEPTH_UNKNOWN}${c_border}"
+  __n2038_get_current_shell_depth_part=""
+  if [ "${__n2038_was_error_calculating_current_shell_depth}" = "0" ]; then
+    __n2038_get_current_shell_depth_part="─[${__n2038_get_current_shell_depth}]"
   fi
+  unset __n2038_get_current_shell_depth
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || return "$?"
 
@@ -76,9 +78,9 @@ _n2038_ps1_function() {
   _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]─[${__n2038_date}]
 
 ${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
-${c_border}├─[${__n2038_current_os_name}]─[${__n2038_get_current_shell_depth}]─[${c_success}${__n2038_current_shell_name}${c_border}]─\$ ${c_reset}" || return "$?"
+${c_border}├─[${__n2038_current_os_name}]${__n2038_get_current_shell_depth_part}─[${c_success}${__n2038_current_shell_name}${c_border}]─\$ ${c_reset}" || return "$?"
 
-  unset __n2038_color_for_error_code __n2038_return_code_formatted __n2038_date __n2038_user __n2038_hostname __n2038_current_os_name __n2038_get_current_shell_depth __n2038_current_shell_name
+  unset __n2038_color_for_error_code __n2038_return_code_formatted __n2038_date __n2038_user __n2038_hostname __n2038_current_os_name __n2038_get_current_shell_depth_part __n2038_current_shell_name
 }
 
 # Required after function
