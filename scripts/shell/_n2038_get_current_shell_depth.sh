@@ -7,7 +7,6 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_get_curr
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && { _n2038_return "0" && return 0; } || [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
 
 # Imports
-. "./_n2038_get_current_os_name.sh" || _n2038_return "$?"
 . "./_n2038_get_current_shell_name.sh" || _n2038_return "$?"
 
 # Required after imports
@@ -29,7 +28,7 @@ _n2038_get_current_shell_depth() {
   fi
 
   # Count all processes, which starts with word "[a-z]*sh" - like "bash", "sh" and others
-  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || { _N2038_RETURN_CODE="$?" && _N2038_LINENO="${LINENO}" && eval "${_n2038_return}"; }
+  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || return "$?"
 
   if [ -z "${__n2038_current_shell_depth}" ]; then
     echo "Could not determine the current shell depth!" >&2
@@ -40,11 +39,6 @@ _n2038_get_current_shell_depth() {
   # "ksh" has different call stack
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_KSH}" ]; then
     __n2038_current_shell_depth="$((__n2038_current_shell_depth + 3))"
-  fi
-
-  # Termux has different call stack - it has first shell as "`-/data/data/com.termux/files/usr/bin/bash -l", which does not count in the regex above.
-  if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ]; then
-    __n2038_current_shell_depth="$((__n2038_current_shell_depth + 1))" || return "$?"
   fi
 
   echo "${__n2038_current_shell_depth}"
