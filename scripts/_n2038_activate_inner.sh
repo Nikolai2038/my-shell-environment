@@ -43,6 +43,7 @@ _n2038_activate_inner() {
   # Cut all before and after function body
   __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || return "$?"
   __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || return "$?"
+  # shellcheck disable=SC2154
   export PS1="\$(
     __n2038_return_code_ps1=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}
