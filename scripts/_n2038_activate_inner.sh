@@ -8,7 +8,6 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?"
-. "./shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?"
 . "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?"
@@ -21,9 +20,6 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 #
 # Usage: _n2038_activate_inner
 _n2038_activate_inner() {
-  # To initialize the "_N2038_CURRENT_SHELL_NAME" variable - to not recalculate it every time
-  _n2038_get_current_shell_name > /dev/null || return "$?"
-
   # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
   _n2038_get_current_os_name > /dev/null || return "$?"
 

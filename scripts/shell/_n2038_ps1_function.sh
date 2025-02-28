@@ -67,9 +67,6 @@ _n2038_ps1_function() {
   fi
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || return "$?"
-  if [ "${__n2038_current_shell_name}" = "${_N2038_SHELL_NAME_UNKNOWN}" ]; then
-    __n2038_current_shell_name="${c_error}${__n2038_current_shell_name}${c_border}"
-  fi
 
   # - We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh".
   # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
