@@ -26,6 +26,13 @@ _n2038_get_current_os_name() {
     return 0
   fi
 
+  # For Termux there is no "/etc/os-release" file, so we need to check it separately
+  if [ -n "${TERMUX_VERSION}" ]; then
+    _N2038_CURRENT_OS_NAME="termux"
+    echo "${_N2038_CURRENT_OS_NAME}"
+    return 0
+  fi
+
   if [ ! -f "/etc/os-release" ]; then
     echo "File \"/etc/os-release\" not found - probably, \"_n2038_get_current_os_name\" is not implemented for your OS." >&2
     echo "${_N2038_OS_NAME_UNKNOWN}"
