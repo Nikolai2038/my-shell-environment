@@ -88,7 +88,7 @@ n2038_my_shell_environment() {
       echo "Checking requirements..." >&2
     fi
 
-    if ! which --version > /dev/null 2>&1; then
+    if ! which which > /dev/null 2>&1; then
       echo "\"which\" is not installed!" >&2
       return 1
     fi
@@ -117,7 +117,8 @@ n2038_my_shell_environment() {
     # Installing the repository
     # ========================================
     if [ -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-      sudo rm -rf "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is already installed! Pass \"update\" argument instead of \"install\" to update it." >&2
+      return 1
     fi
 
     echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
@@ -156,7 +157,7 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     # ========================================
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_UPDATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"--install\" argument instead of \"--update\" to install it." >&2
+      echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"install\" argument instead of \"update\" to install it." >&2
       return 1
     fi
 
@@ -175,31 +176,14 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
 
     # ========================================
     # Activating the shell environment.
-    # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
-    # However, if this "n2038_my_shell_environment.sh" script is changed, we still need to reload the shell (in some cases).
     # ========================================
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\"..." >&2
     fi
 
-    __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="n2038_my_shell_environment.sh"
-
-    # Required before imports
-    # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_before_imports.sh
-    . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && { _n2038_return "0" && return 0; } || [ "$(basename "$0")" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
-
-    # Imports
-    . "./scripts/_n2038_activate_inner.sh" || return "$?"
-
-    # Required after imports
-    # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
-    . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || return "$?"
-
-    _n2038_activate_inner || return "$?"
-
-    # Required after function
-    # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_function.sh
-    . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_function.sh" || _n2038_return "$?"
+    # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
+    # However, if this "n2038_my_shell_environment.sh" script is changed, we still need to reload the shell (in some cases).
+    . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner.sh" && _n2038_activate_inner || return "$?"
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2
@@ -213,7 +197,7 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
 }
 
 # If this file is being executed
-if [ "$(basename "$0")" = "n2038_my_shell_environment.sh" ]; then
+if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then
   echo "This file is meant to be sourced, not executed! Source this file and then execute function itself:
 . ${0} && n2038_my_shell_environment" >&2
   exit 1

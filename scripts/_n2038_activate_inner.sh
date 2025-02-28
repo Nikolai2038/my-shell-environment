@@ -4,11 +4,11 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 
 # Required before imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_before_imports.sh
-. "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && { _n2038_return "0" && return 0; } || [ "$(basename "$0")" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
+. "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && { _n2038_return "0" && return 0; } || [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
 
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?"
-. "./shell/_n2038_get_current_shell.sh" || _n2038_return "$?"
+. "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?"
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?"
 
@@ -20,8 +20,14 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 #
 # Usage: _n2038_activate_inner
 _n2038_activate_inner() {
-  # To initialize the "_N2038_SHELL_PATH" variable - to not recalculate it every time
-  _n2038_get_current_shell > /dev/null || return "$?"
+  # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
+  _n2038_get_current_os_name > /dev/null || return "$?"
+
+  # Initialize the "_N2038_INIT_SHELL_DEPTH" variable
+  if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
+    export _N2038_INIT_SHELL_DEPTH
+    _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)" || return "$?"
+  fi
 
   # ========================================
   # Set command prompt.
@@ -38,12 +44,13 @@ _n2038_activate_inner() {
   __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || return "$?"
   __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || return "$?"
   export PS1="\$(
-    __n2038_return_code=\"\$?\"
+    __n2038_return_code_ps1=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}
-    _n2038_ps1_function \"\${__n2038_return_code}\" 2> /dev/null || {
+    _n2038_ps1_function \"\${__n2038_return_code_ps1}\" 2> /dev/null || {
       . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh\" || exit \"\$?\"
-      _n2038_ps1_function \"\${__n2038_return_code}\" || exit \"\$?\"
+      _n2038_ps1_function \"\${__n2038_return_code_ps1}\" || exit \"\$?\"
     }
+    unset __n2038_return_code_ps1
   )"
   unset __n2038_new_ps1_function_file_content_only_body
 
@@ -54,7 +61,7 @@ _n2038_activate_inner() {
     ${__n2038_new_ps2_function_file_content_only_body}
     _n2038_ps2_function 2> /dev/null || {
       . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh\" || exit \"\$?\"
-      _n2038_ps2_function \"\${__n2038_return_code}\" || exit \"\$?\"
+      _n2038_ps2_function || exit \"\$?\"
     }
   )"
   unset __n2038_new_ps2_function_file_content_only_body

@@ -8,20 +8,43 @@ My personal shell environment customizations, which is both useful and simple to
 
 ![Preview](./.readme_images/preview.png)
 
+Structure of the command prompt:
+
+```plaintext
+┌─[USER_NAME@PC_NAME:FULL_PATH_TO_THE_CURRENT_DIRECTORY]
+├─[OS_NAME]─[SHELL_DEPTH]─[SHELL_NAME]─$ COMMAND
+COMMAND_OUTPUT
+└─[COMMAND_RETURN_CODE]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
+```
+
 ## 3. Requirements
 
-Supported shells (tested with start from `bash`):
+### 3.1. Supported shells
+
+(tested with start from `bash`):
 
 - `sh`;
 - `bash`;
 - `dash`;
 - `ksh`.
 
-Required commands:
+### 3.2. Required commands
 
 - `git`, `grep`, `which`, `tput`.
 
 You can install them via:
+
+- Debian:
+
+    ```sh
+    sudo apt-get update && sudo apt-get install -y git grep debianutils ncurses-bin
+    ```
+
+- Arch Linux:
+
+    ```sh
+    sudo pacman --sync --refresh --needed --noconfirm git grep which ncurses
+    ```
 
 - Termux:
 
@@ -29,11 +52,40 @@ You can install them via:
     pkg update && pkg install -y git grep which ncurses-utils
     ```
 
+### 3.3. Optional commands
+
+They will enhance some functional:
+
+- `pstree`: Will allow to output current shell depth.
+
+You can install them via:
+
+- Debian:
+
+    ```sh
+    sudo apt-get update && sudo apt-get install -y psmisc
+    ```
+
 - Arch Linux:
 
     ```sh
-    sudo pacman --sync --refresh --needed --noconfirm git grep
+    sudo pacman --sync --refresh --needed --noconfirm psmisc
     ```
+
+- Termux:
+
+    ```sh
+    pkg update && pkg install -y psmisc
+    ```
+
+- NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
+
+    - Open a **new terminal** (even **not a new shell**, because shell depth is recalculating based on the process tree);
+    - Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
+
+        ```sh
+        _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)"
+        ```
 
 ## 4. Installation
 
