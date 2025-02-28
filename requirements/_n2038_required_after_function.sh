@@ -10,7 +10,7 @@ _n2038_required_after_function() {
   __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || return "$?"
   if [ -n "${__n2038_function_name}" ]; then
     # If this file is being executed - we execute function itself
-    if [ "$({ basename "$0" || true; } 2> /dev/null)" = "$(eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" ]; then
+    if [ "$({ basename "$0" || true; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || true; } 2> /dev/null)" ]; then
       "${__n2038_function_name}" "${@}" || exit "$?"
     fi
   fi
