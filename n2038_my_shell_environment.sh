@@ -197,7 +197,7 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
 }
 
 # If this file is being executed
-if [ "$({ basename "$0" || true; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then
+if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then
   echo "This file is meant to be sourced, not executed! Source this file and then execute function itself:
 . ${0} && n2038_my_shell_environment" >&2
   exit 1

@@ -29,7 +29,7 @@ _n2038_return() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
 
   # If file is being executed
-  if [ "$({ basename "$0" || true; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || true; } 2> /dev/null)" ]; then
+  if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
     if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
       echo "Exiting ${__n2038_return_code}..." >&2
     fi
@@ -98,7 +98,7 @@ _n2038_required_before_imports() {
 }
 
 # If this file is being executed
-if [ "$({ basename "$0" || true; } 2> /dev/null)" = "_n2038_required_before_imports.sh" ]; then
+if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "_n2038_required_before_imports.sh" ]; then
   echo "This file is not meant to be executed directly - only sourced!" >&2
   exit 1
 # If this file is being sourced
