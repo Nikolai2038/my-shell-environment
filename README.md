@@ -25,10 +25,10 @@ My personal shell environment customizations, which is both useful and simple to
 
 You can install them via:
 
-- Debian (not tested):
+- Debian:
 
     ```sh
-    sudo apt-get update && sudo apt-get install -y git grep which ncurses
+    sudo apt-get update && sudo apt-get install -y git grep debianutils ncurses-bin
     ```
 
 - Arch Linux:
@@ -56,8 +56,6 @@ You can install them via:
     ```sh
     sudo apt-get update && sudo apt-get install -y psmisc
     ```
-
-    - `psmisc`: for `pstree` command.
 
 - Arch Linux:
 

@@ -88,7 +88,7 @@ n2038_my_shell_environment() {
       echo "Checking requirements..." >&2
     fi
 
-    if ! which --version > /dev/null 2>&1; then
+    if ! which which > /dev/null 2>&1; then
       echo "\"which\" is not installed!" >&2
       return 1
     fi
