@@ -28,7 +28,7 @@ _n2038_sources_sort() {
     if [[ ! ${line} =~ ^source[[:blank:]] ]] && [[ ! ${line} =~ ^\.[[:blank:]] ]]; then
       if ((was_source)); then
         # Sort and remove empty line at the end
-        sources_to_sort="$(echo -n "${sources_to_sort}" | sort | grep -v '^$')" || return "$?"
+        sources_to_sort="$(echo -n "${sources_to_sort}" | sort --unique | grep -v '^$')" || return "$?"
         if [ -n "${new_file_content}" ]; then
           new_file_content+="
 " || return "$?"
