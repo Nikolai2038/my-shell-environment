@@ -9,9 +9,9 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_ps1_func
 # Imports
 . "../messages/_constants.sh" || _n2038_return "$?"
 . "../messages/_n2038_echo.sh" || _n2038_return "$?"
-. "./_n2038_get_current_shell_name.sh" || _n2038_return "$?"
 . "./_n2038_get_current_os_name.sh" || _n2038_return "$?"
 . "./_n2038_get_current_shell_depth.sh" || _n2038_return "$?"
+. "./_n2038_get_current_shell_name.sh" || _n2038_return "$?"
 
 # Required after imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh

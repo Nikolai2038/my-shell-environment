@@ -7,10 +7,10 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_repla
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && { _n2038_return "0" && return 0; } || [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
 
 # Imports
-. "../shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?"
-. "../string/n2038_escape_sed.sh" || _n2038_return "$?"
 . "./_constants.sh" || _n2038_return "$?"
 . "./_n2038_echo.sh" || _n2038_return "$?"
+. "../shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?"
+. "../string/n2038_escape_sed.sh" || _n2038_return "$?"
 
 # Required after imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
