@@ -8,6 +8,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 
 # Imports
 . "./_constants.sh" || _n2038_return "$?"
+. "./_n2038_echo.sh" || _n2038_return "$?"
 . "../shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?"
 . "../string/n2038_escape_sed.sh" || _n2038_return "$?"
 
@@ -31,22 +32,8 @@ _n2038_print_color_message() {
   fi
   __n2038_text="${__n2038_main_color}${__n2038_text}${c_reset}"
 
-  if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then
-    # Prepare colors in text.
-    # Braces "\[" and "\]" are required, so "bash" can understand, that this is colors and not output.
-    # If we do not use them, the shell will break when we try to navigate in commands' history.
-    # "sh" does not have commands' history, and braces will result in just text, so we don't use them here
-    for color in "${c_text}" "${c_info}" "${c_success}" "${c_highlight}" "${c_warning}" "${c_error}" "${c_border_usual}" "${c_border_root}" "${c_border}"; do
-      __n2038_text="$(echo "${__n2038_text}" | sed -E "s/$(n2038_escape_sed -E "${color}")/$(n2038_escape_sed -E "\\[${color}\\]")/g")" || return "$?"
-    done
-
-    # shellcheck disable=SC2320,SC3037
-    echo -e "${@}" "${__n2038_text}" || return "$?"
-  else
-    # "sh" does not have "-e"
-    # shellcheck disable=SC2320
-    echo "${@}" "${__n2038_text}" || return "$?"
-  fi
+  # shellcheck disable=SC2320,SC3037
+  _n2038_echo -e "${@}" "${__n2038_text}" || return "$?"
 
   unset __n2038_main_color __n2038_text
 }
