@@ -46,21 +46,28 @@ _n2038_ps1_function() {
   fi
 
   __n2038_was_error_calculating_current_shell_depth=0
-  __n2038_get_current_shell_depth="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  if [ "${__n2038_get_current_shell_depth}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
-    __n2038_was_error_calculating_current_shell_depth=1
+
+  # We improve performance of PS1 here by checking for init shell because we can.
+  # This is very useful, because often you work in init shell anyways.
+  if [ "${$}" = "${_N2038_INIT_SHELL_PROCESS_ID}" ]; then
+    __n2038_get_current_shell_depth=0
   else
-    if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
-      _n2038_print_error "Variable \"${c_highlight}_N2038_INIT_SHELL_DEPTH${c_return}\" is not defined!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    elif [ "${_N2038_INIT_SHELL_DEPTH}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
+    __n2038_get_current_shell_depth="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ "${__n2038_get_current_shell_depth}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
       __n2038_was_error_calculating_current_shell_depth=1
     else
-      __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
+        _n2038_print_error "Variable \"${c_highlight}_N2038_INIT_SHELL_DEPTH${c_return}\" is not defined!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+      elif [ "${_N2038_INIT_SHELL_DEPTH}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
+        __n2038_was_error_calculating_current_shell_depth=1
+      else
+        __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-      # Termux has different call stack
-      if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_get_current_shell_depth}" != "0" ]; then
-        __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        # Termux has different call stack
+        if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_get_current_shell_depth}" != "0" ]; then
+          __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        fi
       fi
     fi
   fi

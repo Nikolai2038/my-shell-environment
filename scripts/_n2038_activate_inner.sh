@@ -33,6 +33,8 @@ _n2038_activate_inner() {
     if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ -n "${_N2038_INIT_SHELL_DEPTH}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
       _N2038_INIT_SHELL_DEPTH="$((_N2038_INIT_SHELL_DEPTH - 1))"
     fi
+
+    export _N2038_INIT_SHELL_PROCESS_ID="${$}"
   fi
 
   # ========================================
