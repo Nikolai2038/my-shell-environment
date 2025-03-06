@@ -23,28 +23,28 @@ _n2038_get_current_shell_depth() {
 
   if ! which pstree > /dev/null 2>&1; then
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
-      _n2038_print_error "Install \"${c_highlight}pstree${c_return}\" command to be able to see current shell depth!" || return "$?"
+      _n2038_print_error "Install \"${c_highlight}pstree${c_return}\" command to be able to see current shell depth!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
     echo "${_N2038_SHELL_DEPTH_UNKNOWN}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   # Count all processes, which starts with word "[a-z]*sh" - like "bash", "sh" and others
-  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || return "$?"
+  __n2038_current_shell_depth="$(pstree --ascii --long --show-parents --arguments $$ | sed -En '/^[[:blank:]]*`-[a-z]*sh( .*$|$)/p' | wc -l)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   if [ -z "${__n2038_current_shell_depth}" ]; then
-    _n2038_print_error "Could not determine the current shell depth!" || return "$?"
+    _n2038_print_error "Could not determine the current shell depth!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_SHELL_DEPTH_UNKNOWN}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   # "ksh" has different call stack
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_KSH}" ]; then
-    __n2038_current_shell_depth="$((__n2038_current_shell_depth + 3))"
+    __n2038_current_shell_depth="$((__n2038_current_shell_depth + 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   echo "${__n2038_current_shell_depth}"
-  unset __n2038_current_shell_depth
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

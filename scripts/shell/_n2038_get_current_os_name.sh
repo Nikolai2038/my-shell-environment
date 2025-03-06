@@ -25,36 +25,36 @@ _n2038_get_current_os_name() {
   # If we already calculated current shell in current terminal session - just return it
   if [ -n "${_N2038_CURRENT_OS_NAME}" ]; then
     echo "${_N2038_CURRENT_OS_NAME}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   # For Termux there is no "/etc/os-release" file, so we need to check it separately
   if [ -n "${TERMUX_VERSION}" ]; then
     _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
     echo "${_N2038_CURRENT_OS_NAME}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   if [ ! -f "/etc/os-release" ]; then
-    _n2038_print_error "File \"${c_highlight}/etc/os-release${c_return}\" not found - probably, \"${c_highlight}_n2038_get_current_os_name${c_return}\" is not implemented for your OS." || return "$?"
+    _n2038_print_error "File \"${c_highlight}/etc/os-release${c_return}\" not found - probably, \"${c_highlight}_n2038_get_current_os_name${c_return}\" is not implemented for your OS." || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_OS_NAME_UNKNOWN}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   # NOTE: We use extra variable "__n2038_current_os_name" to not leave main one with wrong value if sed returns error.
-  __n2038_current_os_name="$(sed -n 's/^ID=//p' /etc/os-release)" || return "$?"
+  __n2038_current_os_name="$(sed -n 's/^ID=//p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   if [ -z "${__n2038_current_os_name}" ]; then
-    _n2038_print_error "Could not determine the current OS!" || return "$?"
+    _n2038_print_error "Could not determine the current OS!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_OS_NAME_UNKNOWN}"
-    return 0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   # Save value to avoid recalculations
   _N2038_CURRENT_OS_NAME="${__n2038_current_os_name}"
 
-  unset __n2038_current_os_name
   echo "${_N2038_CURRENT_OS_NAME}"
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

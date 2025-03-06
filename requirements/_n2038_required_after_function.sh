@@ -14,7 +14,6 @@ _n2038_required_after_function() {
       "${__n2038_function_name}" "${@}" || exit "$?"
     fi
   fi
-  unset __n2038_function_name
 
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
 }

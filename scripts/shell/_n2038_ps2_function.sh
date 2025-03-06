@@ -19,15 +19,15 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_ps2_func
 #
 # Usage: _n2038_ps2_function
 _n2038_ps2_function() {
-  __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || return "$?"
+  __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # - We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh".
   # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
   #   Because of that, we can't call "_n2038_print_color_message" here.
   #   But we can specify colors here and replace them all colors with their values later.
-  _n2038_echo -e "${c_border}├─[${c_success}${__n2038_current_shell_name}${c_return}]─> ${c_reset}" || return "$?"
+  _n2038_echo -e "${c_border}├─[${c_success}${__n2038_current_shell_name}${c_return}]─> ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  unset __n2038_current_shell_name
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

@@ -17,23 +17,23 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_echo.
 #
 # Usage: _n2038_echo [-e] [-n] [text]
 _n2038_echo() {
-  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_text=""
 
   if [ "${__n2038_text}" = "-e" ] || [ "${__n2038_text}" = "-n" ] || [ "${__n2038_text}" = "-en" ] || [ "${__n2038_text}" = "-ne" ]; then
     __n2038_args="${__n2038_text}"
-    [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
+    [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_text=""
   fi
 
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then
     # shellcheck disable=SC2320
-    echo "${__n2038_args}" "${__n2038_text}" || return "$?"
+    echo "${__n2038_args}" "${__n2038_text}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   else
     # "echo" in "sh" does not accept any arguments
     # shellcheck disable=SC2320
-    echo "${__n2038_text}" || return "$?"
+    echo "${__n2038_text}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  unset __n2038_text
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

@@ -22,12 +22,12 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 # Usage: _n2038_activate_inner
 _n2038_activate_inner() {
   # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
-  _n2038_get_current_os_name > /dev/null || return "$?"
+  _n2038_get_current_os_name > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Initialize the "_N2038_INIT_SHELL_DEPTH" variable
   if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
     export _N2038_INIT_SHELL_DEPTH
-    _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)" || return "$?"
+    _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     # Termux has different call stack
     if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ -n "${_N2038_INIT_SHELL_DEPTH}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
@@ -47,23 +47,23 @@ _n2038_activate_inner() {
   # ========================================
 
   # Cut all before and after function body
-  __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || return "$?"
-  __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || return "$?"
+  __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # Use "_N2038" here instead of "__N2038" to not unset variable when calling "_n2038_unset".
   # shellcheck disable=SC2154
   export PS1="\$(
-    __n2038_return_code_ps1=\"\$?\"
+    _N2038_RETURN_CODE_PS1=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}
-    _n2038_ps1_function \"\${__n2038_return_code_ps1}\" 2> /dev/null || {
+    _n2038_ps1_function \"\${_N2038_RETURN_CODE_PS1}\" 2> /dev/null || {
       . \"${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh\" || exit \"\$?\"
-      _n2038_ps1_function \"\${__n2038_return_code_ps1}\" || exit \"\$?\"
+      _n2038_ps1_function \"\${_N2038_RETURN_CODE_PS1}\" || exit \"\$?\"
     }
-    unset __n2038_return_code_ps1
+    unset _N2038_RETURN_CODE_PS1
   )"
-  unset __n2038_new_ps1_function_file_content_only_body
 
   # Cut all before and after function body
-  __n2038_new_ps2_function_file_content_only_body="$(sed -n '/_n2038_ps2_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh")" || return "$?"
-  __n2038_new_ps2_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps2_function_file_content_only_body}")" || return "$?"
+  __n2038_new_ps2_function_file_content_only_body="$(sed -n '/_n2038_ps2_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_new_ps2_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps2_function_file_content_only_body}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   export PS2="\$(
     ${__n2038_new_ps2_function_file_content_only_body}
     _n2038_ps2_function 2> /dev/null || {
@@ -71,12 +71,13 @@ _n2038_activate_inner() {
       _n2038_ps2_function || exit \"\$?\"
     }
   )"
-  unset __n2038_new_ps2_function_file_content_only_body
 
   # ========================================
 
   # Make scripts available in shell by their names
   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
+
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

@@ -14,7 +14,8 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_template.sh"
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
 _n2038_template() {
-  echo "Template!" >&2
+  eval 'echo "Template!"' >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

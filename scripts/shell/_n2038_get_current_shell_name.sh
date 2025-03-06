@@ -13,12 +13,14 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_get_curr
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?"
 
-_N2038_CURRENT_SHELL_NAME_SH="sh"
 _N2038_CURRENT_SHELL_NAME_BASH="bash"
-_N2038_CURRENT_SHELL_NAME_DASH="dash"
-_N2038_CURRENT_SHELL_NAME_KSH="ksh"
 _N2038_CURRENT_SHELL_NAME_ZSH="zsh"
+_N2038_CURRENT_SHELL_NAME_KSH="ksh"
 _N2038_CURRENT_SHELL_NAME_TCSH="tcsh"
+_N2038_CURRENT_SHELL_NAME_DASH="dash"
+_N2038_CURRENT_SHELL_NAME_SH="sh"
+
+# TODO: Implement.
 _N2038_CURRENT_SHELL_NAME_FISH="fish"
 
 # Prints name of the current shell.
@@ -36,6 +38,7 @@ _n2038_get_current_shell_name() {
   else
     echo "${_N2038_CURRENT_SHELL_NAME_SH}"
   fi
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

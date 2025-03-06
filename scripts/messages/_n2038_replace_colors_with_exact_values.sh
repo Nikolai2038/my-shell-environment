@@ -20,7 +20,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_repla
 #
 # Usage: _n2038_replace_colors_with_exact_values [text]
 _n2038_replace_colors_with_exact_values() {
-  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_text=""
 
   __n2038_prefix=""
   __n2038_suffix=""
@@ -44,9 +44,9 @@ _n2038_replace_colors_with_exact_values() {
     | sed "s/$(n2038_escape_sed '${c_border_usual}')/$(n2038_escape_sed "${__n2038_prefix}${c_border_usual}${__n2038_suffix}")/g" \
     | sed "s/$(n2038_escape_sed '${c_border_root}')/$(n2038_escape_sed "${__n2038_prefix}${c_border_root}${__n2038_suffix}")/g" \
     | sed "s/$(n2038_escape_sed '${c_border}')/$(n2038_escape_sed "${__n2038_prefix}${c_border}${__n2038_suffix}")/g" \
-    | sed "s/$(n2038_escape_sed '${c_reset}')/$(n2038_escape_sed "${__n2038_prefix}${c_reset}${__n2038_suffix}")/g" || return "$?"
+    | sed "s/$(n2038_escape_sed '${c_reset}')/$(n2038_escape_sed "${__n2038_prefix}${c_reset}${__n2038_suffix}")/g" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  unset __n2038_text __n2038_prefix __n2038_suffix
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

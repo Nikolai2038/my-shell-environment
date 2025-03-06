@@ -1,5 +1,30 @@
 #!/bin/sh
 
+# (HAS TWO DECLARATIONS)
+export _N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT=239
+
+# (HAS TWO DECLARATIONS)
+export _N2038_RETURN_CODE_NOT_PASSED_TO_UNSET=240
+
+# (HAS TWO DECLARATIONS)
+# Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
+#
+# Usage:
+# - instead of: some_function || return "$?"
+#   use:        some_function || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
+# - instead of: return 0
+#   use:        _n2038_unset_init 0 && return "$?" || return "$?"
+# - instead of: return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}"
+#   use:        _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
+_n2038_unset_init() {
+  for __n2038_variable in $(set | sed -En 's/^(__[nN]2038_[a-zA-Z0-9_]+)=.*$/\1/p'); do
+    unset "${__n2038_variable}"
+  done
+  unset __n2038_variable
+
+  return "${1:-${_N2038_RETURN_CODE_NOT_PASSED_TO_UNSET}}"
+}
+
 # Activates the shell environment.
 #
 # Usage: n2038_my_shell_environment [--no-check] [--dev] [--force] [command=activate]
@@ -23,22 +48,21 @@ n2038_my_shell_environment() {
 
   for __n2038_argument in "${@}"; do
     if [ "${__n2038_argument}" = "--no-check" ]; then
-      __n2038_is_check_requested=0 && { shift || return "$?"; }
+      __n2038_is_check_requested=0 && { shift || { _n2038_unset_init "$?" && return "$?" || return "$?"; }; }
     fi
     if [ "${__n2038_argument}" = "--dev" ]; then
-      __n2038_is_install_dev=1 && { shift || return "$?"; }
+      __n2038_is_install_dev=1 && { shift || { _n2038_unset_init "$?" && return "$?" || return "$?"; }; }
     fi
     if [ "${__n2038_argument}" = "--force" ]; then
-      __n2038_is_install_force=1 && { shift || return "$?"; }
+      __n2038_is_install_force=1 && { shift || { _n2038_unset_init "$?" && return "$?" || return "$?"; }; }
     fi
   done
-  unset __n2038_argument
 
   __N2038_COMMAND_INSTALL="install"
   __N2038_COMMAND_UPDATE="update"
   __N2038_COMMAND_ACTIVATE="activate"
 
-  [ "$#" -gt 0 ] && { __n2038_command="${1}" && shift || return "$?"; } || __n2038_command="${__N2038_COMMAND_ACTIVATE}"
+  [ "$#" -gt 0 ] && { __n2038_command="${1}" && shift || { _n2038_unset_init "$?" && return "$?" || return "$?"; }; } || __n2038_command="${__N2038_COMMAND_ACTIVATE}"
 
   # ========================================
   # Preparations
@@ -50,7 +74,7 @@ n2038_my_shell_environment() {
   export _N2038_SHELL_ENVIRONMENT_NAME="${_N2038_SHELL_ENVIRONMENT_NAME:-"my-shell-environment"}"
   if [ -z "${_N2038_SHELL_ENVIRONMENT_NAME}" ]; then
     echo "_N2038_SHELL_ENVIRONMENT_NAME cannot be empty!" >&2
-    return 1
+    _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
   fi
 
   # Repository URL to install scripts from
@@ -77,11 +101,10 @@ n2038_my_shell_environment() {
 
   if [ ! -d "${__n2038_libs_path}" ]; then
     echo "Libs path \"${__n2038_libs_path}\" not found - probably, \"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not implemented for your OS." >&2
-    return 1
+    _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
   fi
   # Path to the directory with scripts
   export _N2038_SHELL_ENVIRONMENT_PATH="${__n2038_libs_path}/${_N2038_SHELL_ENVIRONMENT_NAME}"
-  unset __n2038_libs_path
 
   # Path to the directory with requirements scripts
   export _N2038_REQUIREMENTS_PATH="${_N2038_SHELL_ENVIRONMENT_PATH}/requirements"
@@ -97,26 +120,25 @@ n2038_my_shell_environment() {
 
     if ! which which > /dev/null 2>&1; then
       echo "\"which\" is not installed!" >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
     if ! which git > /dev/null 2>&1; then
       echo "\"git\" is not installed!" >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
     if ! which grep > /dev/null 2>&1; then
       echo "\"grep\" is not installed!" >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
     if ! which sudo > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
       echo "\"sudo\" is not installed!" >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2
     fi
   fi
-  unset __n2038_is_check_requested __n2038_is_sudo_faked
   # ========================================
 
   if [ "${__n2038_command}" = "${__N2038_COMMAND_INSTALL}" ]; then
@@ -126,11 +148,11 @@ n2038_my_shell_environment() {
     if [ -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       if [ "${__n2038_is_install_force}" = "1" ]; then
         echo "Removing old repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
-        rm --recursive --force "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+        rm --recursive --force "${_N2038_SHELL_ENVIRONMENT_PATH}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
         echo "Removing old repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
       else
         echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is already installed! Pass \"--force\" argument to remove old repository." >&2
-        return 1
+        _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
       fi
     fi
 
@@ -140,10 +162,9 @@ n2038_my_shell_environment() {
     if [ "${__n2038_is_install_dev}" = "1" ]; then
       __n2038_branch_name="dev"
     fi
-    sudo git clone --branch "${__n2038_branch_name}" "${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}.git" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
-    unset __n2038_branch_name
+    sudo git clone --branch "${__n2038_branch_name}" "${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}.git" "${_N2038_SHELL_ENVIRONMENT_PATH}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
 
-    sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || return "$?"
+    sudo chown --recursive "${USER}:${USER}" "${_N2038_SHELL_ENVIRONMENT_PATH}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
 
     echo "Cloning repository \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" to \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
     # ========================================
@@ -160,38 +181,36 @@ n2038_my_shell_environment() {
       if { ! [ -f "${__n2038_bashrc_path}" ]; } || { ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate\$" "${__n2038_bashrc_path}"; }; then
         # shellcheck disable=SC2320
         echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
-source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate" >> "${__n2038_bashrc_path}" || return "$?"
+source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate" >> "${__n2038_bashrc_path}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
         echo "Installing for Bash: success!" >&2
       else
         echo "Installing for Bash: already installed!" >&2
       fi
-      unset __n2038_bashrc_path
     fi
     # ----------------------------------------
     # ========================================
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_UPDATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"install\" argument instead of \"update\" to install it." >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
 
     # ========================================
     # Updating the repository
     # ========================================
     echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
-    git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || return "$?"
+    git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
     echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
     # ========================================
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_ACTIVATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed! Pass \"--install\" argument to install it." >&2
-      return 1
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
   else
     echo "Unknown command \"${__n2038_command}\"! Available commands: \"${__N2038_COMMAND_INSTALL}\", \"${__N2038_COMMAND_UPDATE}\", \"${__N2038_COMMAND_ACTIVATE}\"." >&2
-    return 1
+    _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
   fi
-  unset __n2038_command __N2038_COMMAND_ACTIVATE __N2038_COMMAND_INSTALL __N2038_COMMAND_UPDATE __n2038_is_install_dev __n2038_is_install_force
 
   # ========================================
   # Activating the shell environment.
@@ -202,12 +221,14 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
 
   # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
   # However, if this "n2038_my_shell_environment.sh" script is changed, we still need to reload the shell (in some cases).
-  . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner.sh" && _n2038_activate_inner || return "$?"
+  . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner.sh" && _n2038_activate_inner || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2
   fi
   # ========================================
+
+  _n2038_unset_init 0 && return "$?" || return "$?"
 }
 
 # If this file is being executed

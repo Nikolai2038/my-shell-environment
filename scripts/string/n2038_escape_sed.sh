@@ -19,8 +19,8 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/string/n2038_escape_s
 #
 # Usage: _n2038_escape_sed [-E] [text]
 n2038_escape_sed() {
-  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || return "$?"; } || __n2038_text=""
-  [ "$#" -gt 0 ] && { __n2038_arg="${1}" && shift || return "$?"; } || __n2038_arg=""
+  [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_text=""
+  [ "$#" -gt 0 ] && { __n2038_arg="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_arg=""
 
   # "-E" can be as first argument or as second, so we switch them, if necessary
   if [ "${__n2038_text}" = "-E" ]; then
@@ -30,13 +30,13 @@ n2038_escape_sed() {
 
   if [ "${__n2038_arg}" = "-E" ]; then
     # For "sed -E"
-    echo "${__n2038_text}" | sed -e 's/[]\/#$&*.^;|{}()[]/\\&/g' || return "$?"
+    echo "${__n2038_text}" | sed -e 's/[]\/#$&*.^;|{}()[]/\\&/g' || { _n2038_unset "$?" && return "$?" || return "$?"; }
   else
     # For "sed"
-    echo "${__n2038_text}" | sed -e 's/[]\/#$&*.^;[]/\\&/g' || return "$?"
+    echo "${__n2038_text}" | sed -e 's/[]\/#$&*.^;[]/\\&/g' || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  unset __n2038_text __n2038_arg
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

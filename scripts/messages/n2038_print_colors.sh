@@ -18,15 +18,16 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/n2038_print_
 #
 # Usage: _n2038_print_colors
 n2038_print_colors() {
-  _n2038_echo -e "${c_info}c_info${c_reset}" || return "$?"
-  _n2038_echo -e "${c_success}c_success${c_reset}" || return "$?"
-  _n2038_echo -e "${c_highlight}c_highlight${c_reset}" || return "$?"
-  _n2038_echo -e "${c_warning}c_warning${c_reset}" || return "$?"
-  _n2038_echo -e "${c_error}c_error${c_reset}" || return "$?"
-  _n2038_echo -e "${c_text}c_text${c_reset}" || return "$?"
-  _n2038_echo -e "${c_border_usual}c_border_usual${c_reset}" || return "$?"
-  _n2038_echo -e "${c_border_root}c_border_root${c_reset}" || return "$?"
-  _n2038_echo -e "${c_border}c_border${c_reset}" || return "$?"
+  _n2038_echo -e "${c_info}c_info${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_success}c_success${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_highlight}c_highlight${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_warning}c_warning${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_error}c_error${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_text}c_text${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_border_usual}c_border_usual${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_border_root}c_border_root${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "${c_border}c_border${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function

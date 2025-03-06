@@ -139,13 +139,17 @@ These constants can be overridden via environment variables:
 - I use `n2038_` prefix for all variables and functions to not be confused with other ones in the system;
 - I use `_` prefix for variables, which are not intended to be changed by the user;
 - I use `_` prefix for functions, which are not intended to be executed by the user (but by the developer - can and must be interactive and informative about it);
-- I use `__` prefix for local variables and functions, which will not be available outside function;
+- I use `__` prefix for local variables, constants and functions, which will not be available outside function;
+    - Special function `_n2038_unset` is used to unset all local variables and constants - so use them in one function only. If you want to temporarily export some variable to be used in another function - consider it as constant and prefix it with `_`. Unset it by hand when not needed anymore (for example, `_N2038_RETURN_CODE_PS1` and `_N2038_PWD_BEFORE_IMPORTS_*` are like that);
 - I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG_BASH`;
 - I try to use `sh` syntax on main elements of the shell environment. In the future, I will add several customizations for `bash` and probably some other shells when I will get to them;
 - Each shell script contains function with same name. All code done in function and `return` are used. We pass all the arguments to this function and check them all in it. After function call, return code is checked. If it is not `0`, we `exit` or `return` from the script based on if it was executed or sourced (see the bottom lines of any script for more context);
 - Each command, which can return non-zero return code, must end with `|| return "$?"`, `|| exit "$?"` or `|| true`;
 - `exit` is forbidden to be used inside functions - only `return`. This is because we can source shell script and execute function directly in the shell - so calling `exit` from it will result in shell exit (terminal close or disconnection from the remote);
-- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes.
+- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes;
+- Instead of `some_function || return "$?"` use `some_function || { _n2038_unset "$?" && return "$?" || return "$?"; }`;
+- Instead of `return 0` use `_n2038_unset 0 && return "$?" || return "$?"` to unset all local variables. Do not forget to include this as last row in each function;
+- Instead of `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
 
 ## 6. Contribution
 
