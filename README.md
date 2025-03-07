@@ -109,16 +109,31 @@ n2038_my_shell_environment update
 
 ## 6. Features
 
-- Shows information about:
+### 6.1. Command prompt
 
-    - Current user;
-    - Hostname;
-    - Full path to the current directory;
-    - Current real shell (follows symlinks);
-    - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
-    - Date and time when command was finished.
+As shown in preview above, these scripts when sourced will show information about:
 
-- Supports any shell, because scripts are based on POSIX `sh`. Right now I checked it for `bash` and `dash`.
+- Current user;
+- Hostname;
+- Full path to the current directory;
+- Current real shell (follows symlinks);
+- Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
+- Date and time when command was finished.
+
+### 6.2. Scripts
+
+#### 6.2.1. `n2038_jetbrains_download.sh` - Download specified JetBrains product latest stable installer in the current directory
+
+Usage:
+
+```sh
+n2038_jetbrains_download.sh <product_name> <download_type>
+```
+
+Where:
+
+- `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
+- `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
 
 ## 7. More information
 
