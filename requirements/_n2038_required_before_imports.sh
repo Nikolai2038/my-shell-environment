@@ -48,24 +48,23 @@ _n2038_return() {
 
   if [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ]; then
     if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
-      echo "Ignoring return code..." >&2
+      echo "Ignoring return code from $(basename "$0")!" >&2
     fi
     __n2038_return_code=0
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
-
-  : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
 
   # If file is being executed
   if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
     if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
-      echo "Exiting ${__n2038_return_code}..." >&2
+      echo "Exiting from $(basename "$0") with code ${__n2038_return_code}!" >&2
     fi
 
     _n2038_unset "${__n2038_return_code}" && exit "$?" || exit "$?"
   # If file is being sourced
   else
     if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
-      echo "Returning ${__n2038_return_code}..." >&2
+      echo "Returning from $(basename "$0") with code  ${__n2038_return_code}!" >&2
     fi
 
     _n2038_unset "${__n2038_return_code}" && return "$?" || return "$?"
@@ -96,6 +95,8 @@ _n2038_required_before_imports() {
     if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
       echo "Skipping already sourced \"${__n2038_script_file_path}\"..." >&2
     fi
+
+    : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
 
     # NOTE: We use return here to not exit terminal, when sourcing script.
     # NOTE: Also, we use special code to track it later and then turn it down to just 0.
