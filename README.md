@@ -52,6 +52,12 @@ You can install them via:
     pkg update && pkg install -y git grep which ncurses-utils
     ```
 
+- Fedora:
+
+    ```sh
+    sudo dnf install -y git grep which ncurses
+    ```
+
 ### 3.3. Optional commands
 
 They will enhance some functional:
@@ -76,6 +82,12 @@ You can install them via:
 
     ```sh
     pkg update && pkg install -y psmisc
+    ```
+
+- Fedora:
+
+    ```sh
+    sudo dnf install -y psmisc
     ```
 
 - NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
