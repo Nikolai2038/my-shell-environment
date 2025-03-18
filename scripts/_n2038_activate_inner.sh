@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment". See "_n2038_required_before_imports" for the skip logic.
+
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner.sh"
 
 # Required before imports
@@ -78,8 +80,11 @@ _n2038_activate_inner() {
 
   # ========================================
 
-  # Make scripts available in shell by their names
-  export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
+  # TODO: Make separate directory with symlinks
+  # if ! echo "${PATH}" | grep --quiet "${_N2038_SHELL_ENVIRONMENT_PATH}"; then
+  #   # Make scripts available in shell by their names
+  #   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
+  # fi
 
   _n2038_unset 0 && return "$?" || return "$?"
 }

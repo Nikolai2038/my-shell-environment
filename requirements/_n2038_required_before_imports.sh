@@ -83,29 +83,31 @@ _n2038_required_before_imports() {
   # ========================================
   # Check about file being sourced
   # ========================================
+  # "_n2038_activate_inner" is executing from "n2038_my_shell_environment" where we source it every time - so we skip it here
+  if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ]; then
+    __n2038_script_file_is_sourced_variable_name="_N2038_FILE_IS_SOURCED_${__n2038_script_file_hash}"
+    __n2038_current_file_is_sourced="$(eval "echo \"\${${__n2038_script_file_is_sourced_variable_name}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  __n2038_script_file_is_sourced_variable_name="_N2038_FILE_IS_SOURCED_${__n2038_script_file_hash}"
-  __n2038_current_file_is_sourced="$(eval "echo \"\${${__n2038_script_file_is_sourced_variable_name}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    # If file is already sourced - we won't source it.
+    if [ -n "${__n2038_current_file_is_sourced}" ]; then
+      if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
+        echo "Skipping already sourced \"${__n2038_script_file_path}\"..." >&2
+      fi
 
-  # If file is already sourced - we won't source it.
-  if [ -n "${__n2038_current_file_is_sourced}" ]; then
-    if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
-      echo "Skipping already sourced \"${__n2038_script_file_path}\"..." >&2
+      : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
+
+      # NOTE: We use return here to not exit terminal, when sourcing script.
+      # NOTE: Also, we use special code to track it later and then turn it down to just 0.
+      return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}"
+    else
+      if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
+        echo "Sourcing \"${__n2038_script_file_path}\"..." >&2
+      fi
     fi
 
-    : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))"
-
-    # NOTE: We use return here to not exit terminal, when sourcing script.
-    # NOTE: Also, we use special code to track it later and then turn it down to just 0.
-    return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}"
-  else
-    if [ "${N2038_IS_DEBUG_BASH}" = "1" ]; then
-      echo "Sourcing \"${__n2038_script_file_path}\"..." >&2
-    fi
+    # NOTE: Do not use export here - because it will break executing scripts - declared functions will not be available in them
+    eval "${__n2038_script_file_is_sourced_variable_name}=1" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
-
-  # NOTE: Do not use export here - because it will break executing scripts - declared functions will not be available in them
-  eval "${__n2038_script_file_is_sourced_variable_name}=1" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   # ========================================
 
   # Save current working directory
