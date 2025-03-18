@@ -22,7 +22,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_get_curr
 # Usage: _n2038_get_current_os_version
 _n2038_get_current_os_version() {
   # There is no version for Arch, so we skip checking it every time
-  __n2038_current_os_name="$(_n2038_get_current_os_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_current_os_name="" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_ARCH}" ]; then
     _n2038_unset 0 && return "$?" || return "$?"
   fi

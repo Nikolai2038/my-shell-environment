@@ -17,11 +17,8 @@ export _N2038_RETURN_CODE_NOT_PASSED_TO_UNSET=240
 # - instead of: return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}"
 #   use:        _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
 _n2038_unset_init() {
-  for __n2038_variable in $(set | sed -En 's/^(__[nN]2038_[a-zA-Z0-9_]+)=.*$/\1/p'); do
-    unset "${__n2038_variable}"
-  done
-  unset __n2038_variable
-
+  # shellcheck disable=SC2046
+  unset $(set | sed -En 's/^(__[nN]2038_[a-zA-Z0-9_]+)=.*$/\1/p') || return "$?"
   return "${1:-${_N2038_RETURN_CODE_NOT_PASSED_TO_UNSET}}"
 }
 

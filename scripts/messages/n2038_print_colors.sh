@@ -27,7 +27,7 @@ n2038_print_colors() {
   _n2038_echo -e "${c_border_usual}c_border_usual${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   _n2038_echo -e "${c_border_root}c_border_root${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   _n2038_echo -e "${c_border}c_border${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Required after function

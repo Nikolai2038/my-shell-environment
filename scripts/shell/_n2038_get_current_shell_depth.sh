@@ -26,7 +26,7 @@ _n2038_get_current_shell_depth() {
       _n2038_print_error "Install \"${c_highlight}pstree${c_return}\" command to be able to see current shell depth!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
     echo "${_N2038_SHELL_DEPTH_UNKNOWN}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   # Count all processes, which starts with word "[a-z]*sh" - like "bash", "sh" and others

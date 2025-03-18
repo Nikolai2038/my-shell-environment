@@ -18,7 +18,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 # Usage: _n2038_print_list_items <text>
 _n2038_print_list_items() {
   echo "${1}" | sed -En "s/^(.+)\$/- \"${c_highlight}\\1${c_return}\";/p" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Required after function

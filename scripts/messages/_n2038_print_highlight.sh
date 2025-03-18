@@ -19,7 +19,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 # Usage: _n2038_print_highlight [text]
 _n2038_print_highlight() {
   _n2038_print_color_message "${c_highlight}" "${@}" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Required after function

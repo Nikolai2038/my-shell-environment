@@ -26,20 +26,20 @@ _n2038_get_current_os_name() {
   # If we already calculated current shell in current terminal session - just return it
   if [ -n "${_N2038_CURRENT_OS_NAME}" ]; then
     echo "${_N2038_CURRENT_OS_NAME}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   # For Termux there is no "/etc/os-release" file, so we need to check it separately
   if [ -n "${TERMUX_VERSION}" ]; then
     _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
     echo "${_N2038_CURRENT_OS_NAME}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   if [ ! -f "/etc/os-release" ]; then
     _n2038_print_error "File \"${c_highlight}/etc/os-release${c_return}\" not found - probably, \"${c_highlight}_n2038_get_current_os_name${c_return}\" is not implemented for your OS." || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_OS_NAME_UNKNOWN}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   # NOTE: We use extra variable "__n2038_current_os_name" to not leave main one with wrong value if sed returns error.

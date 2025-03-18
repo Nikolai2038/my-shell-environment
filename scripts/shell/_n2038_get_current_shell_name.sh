@@ -38,7 +38,7 @@ _n2038_get_current_shell_name() {
   else
     echo "${_N2038_CURRENT_SHELL_NAME_SH}"
   fi
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Required after function

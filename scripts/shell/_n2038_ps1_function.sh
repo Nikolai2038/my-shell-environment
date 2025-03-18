@@ -69,7 +69,7 @@ _n2038_ps1_function() {
         __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
         # Termux has different call stack
-        if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_get_current_shell_depth}" != "0" ]; then
+        if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_get_current_shell_depth}" != "0" ]; then
           __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
         fi
       fi
