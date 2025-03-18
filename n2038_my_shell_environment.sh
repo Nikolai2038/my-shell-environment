@@ -131,6 +131,10 @@ n2038_my_shell_environment() {
       echo "\"sudo\" is not installed!" >&2
       _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
+    if ! which xxhsum > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
+      echo "\"xxhsum\" is not installed!" >&2
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
+    fi
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2

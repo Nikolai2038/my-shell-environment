@@ -26,12 +26,6 @@ _n2038_unset() {
   return "${1:-${_N2038_RETURN_CODE_NOT_PASSED_TO_UNSET}}"
 }
 
-# Special function to get current script file hash
-_n2038_get_text_hash() {
-  echo "${*}" | sha256sum | cut -d ' ' -f 1 || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  return 0
-}
-
 # Special function to return from script.
 # If script is being executed - it will exit with the given code.
 # If script is being sourced - it will return with the given code.
@@ -77,14 +71,14 @@ _n2038_required_before_imports() {
   # Full path to the script
   __n2038_script_file_path="$(eval "realpath \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  # We check both script path and it's contents
-  __n2038_script_file_hash="$(_n2038_get_text_hash "${__n2038_script_file_path}$(cat "${__n2038_script_file_path}")")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
   # ========================================
   # Check about file being sourced
   # ========================================
   # "_n2038_activate_inner" is executing from "n2038_my_shell_environment" where we source it every time - so we skip it here
   if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ]; then
+    # We check both script path and it's contents
+    __n2038_script_file_hash="$(xxhsum -H0 "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
     __n2038_script_file_is_sourced_variable_name="_N2038_FILE_IS_SOURCED_${__n2038_script_file_hash}"
     __n2038_current_file_is_sourced="$(eval "echo \"\${${__n2038_script_file_is_sourced_variable_name}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
