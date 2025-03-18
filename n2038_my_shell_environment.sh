@@ -145,7 +145,7 @@ n2038_my_shell_environment() {
     if [ -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       if [ "${__n2038_is_install_force}" = "1" ]; then
         echo "Removing old repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\"..." >&2
-        rm --recursive --force "${_N2038_SHELL_ENVIRONMENT_PATH}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
+        sudo rm --recursive --force "${_N2038_SHELL_ENVIRONMENT_PATH}" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
         echo "Removing old repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
       else
         echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is already installed! Pass \"--force\" argument to remove old repository." >&2
