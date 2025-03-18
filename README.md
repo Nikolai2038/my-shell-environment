@@ -157,7 +157,7 @@ Where:
 
 These constants can be overridden via environment variables:
 
-- `N2038_IS_DEBUG_BASH`: If debug mode is enabled (more logs will be shown);
+- `N2038_IS_DEBUG`: If debug mode is enabled (more logs will be shown);
 - (must be overridden before installation) `_N2038_SHELL_ENVIRONMENT_NAME`: Name for the scripts folder and name to be shown in logs;
 - (must be overridden before installation)`_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL`: Repository URL to install scripts from;
 
@@ -168,7 +168,7 @@ These constants can be overridden via environment variables:
 - I use `_` prefix for functions, which are not intended to be executed by the user (but by the developer - can and must be interactive and informative about it);
 - I use `__` prefix for local variables, constants and functions, which will not be available outside function;
     - Special function `_n2038_unset` is used to unset all local variables and constants - so use them in one function only. If you want to temporarily export some variable to be used in another function - consider it as constant and prefix it with `_`. Unset it by hand when not needed anymore (for example, `_N2038_RETURN_CODE_PS1` and `_N2038_PWD_BEFORE_IMPORTS_*` are like that);
-- I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG_BASH`;
+- I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG`;
 - I try to use `sh` syntax on main elements of the shell environment. In the future, I will add several customizations for `bash` and probably some other shells when I will get to them;
 - Each shell script contains function with same name. All code done in function and `return` are used. We pass all the arguments to this function and check them all in it. After function call, return code is checked. If it is not `0`, we `exit` or `return` from the script based on if it was executed or sourced (see the bottom lines of any script for more context);
 - Each command, which can return non-zero return code, must end with `|| return "$?"`, `|| exit "$?"` or `|| true`;
@@ -178,7 +178,7 @@ These constants can be overridden via environment variables:
     - There is no need to optimize this like `return 0` below, because it will only be executed on errors.
 - Instead of `return 0` use `_n2038_unset 0 && return "$?" || return "$?"` to unset all local variables. Do not forget to include this as last row in each function:
     - For optimization, you can leave `return 0`, if you did not use any local variables above it.
-- Instead of (for example) `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
+- Instead of (for example) `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
 
 ## 6. Contribution
 

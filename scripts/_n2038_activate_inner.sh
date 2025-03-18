@@ -1,13 +1,21 @@
 #!/bin/sh
 
-# NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment". See "_n2038_required_before_imports" for the skip logic.
+# NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment" every activation. See "_n2038_required_before_imports" for the skip logic.
 
 # If you ever update this variable here, don't forget to update it in the "_n2038_required_before_imports" as well.
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner.sh"
 
 # Required before imports
-# shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_before_imports.sh
-. "${_N2038_REQUIREMENTS_PATH}/_n2038_required_before_imports.sh" || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ] && exit "${__n2038_return_code}" || return "${__n2038_return_code}"; }
+# shellcheck disable=SC1091
+if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
+  # If we have not initialized the shell environment, but has it (for example, when starting "dash" from "bash"), then we will try to initialize it.
+  if [ -n "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
+    . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+  else
+    echo "\"my-bash-environment\" is not initialized. Please, initialize it first." >&2 && return 1 2> /dev/null || exit 1
+  fi
+fi
+_n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?" || return "$?"
@@ -18,13 +26,16 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
-# shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
-. "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?" || return "$?"
+_n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
 # Function which executes all necessary steps to activate the shell environment.
 #
 # Usage: _n2038_activate_inner
 _n2038_activate_inner() {
+  if [ "${N2038_IS_DEBUG}" = "1" ]; then
+    echo "Activating inner script..." >&2
+  fi
+
   # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
   _n2038_get_current_os_name > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
@@ -90,12 +101,16 @@ _n2038_activate_inner() {
 
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then
     # shellcheck source=/usr/local/lib/my-shell-environment/scripts/_n2038_activate_inner_bash.sh
-    { . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner_bash.sh" && _n2038_activate_inner_bash; } || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
+    . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner_bash.sh" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_activate_inner_bash || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   _n2038_unset 0 && return "$?" || return "$?"
+
+  if [ "${N2038_IS_DEBUG}" = "1" ]; then
+    echo "Activating inner script: success!" >&2
+  fi
 }
 
 # Required after function
-# shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_function.sh
-. "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_function.sh" || _n2038_return "$?" || return "$?"
+_n2038_required_after_function || _n2038_return "$?" || return "$?"
