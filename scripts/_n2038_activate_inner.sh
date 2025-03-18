@@ -2,6 +2,7 @@
 
 # NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment". See "_n2038_required_before_imports" for the skip logic.
 
+# If you ever update this variable here, don't forget to update it in the "_n2038_required_before_imports" as well.
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner.sh"
 
 # Required before imports

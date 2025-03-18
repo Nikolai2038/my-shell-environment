@@ -1,6 +1,6 @@
 #!/bin/sh
 
-__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/string/n2038_escape_sed.sh"
+__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/string/_n2038_escape_sed.sh"
 
 # Required before imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_before_imports.sh
@@ -18,7 +18,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/string/n2038_escape_s
 # This is because, the escaping depends on condition if extended regular expressions will be used.
 #
 # Usage: _n2038_escape_sed [-E] [text]
-n2038_escape_sed() {
+_n2038_escape_sed() {
   [ "$#" -gt 0 ] && { __n2038_text="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_text=""
   [ "$#" -gt 0 ] && { __n2038_arg="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_arg=""
 

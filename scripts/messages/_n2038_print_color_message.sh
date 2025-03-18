@@ -10,7 +10,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 . "./_constants.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_echo.sh" || _n2038_return "$?" || return "$?"
 . "../shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
-. "../string/n2038_escape_sed.sh" || _n2038_return "$?" || return "$?"
+. "../string/_n2038_escape_sed.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
