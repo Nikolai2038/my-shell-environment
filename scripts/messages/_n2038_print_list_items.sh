@@ -1,6 +1,6 @@
 #!/bin/sh
 
-__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print_success.sh"
+__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print_list_items.sh"
 
 # Required before imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_before_imports.sh
@@ -8,17 +8,16 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print
 
 # Imports
 . "./_constants.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_print_color_message.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?" || return "$?"
 
-# Print success-colored text.
+# Print text with items on each line as colorful list.
 #
-# Usage: _n2038_print_success [text]
-_n2038_print_success() {
-  _n2038_print_color_message "${c_success}" "${@}" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+# Usage: _n2038_print_list_items <text>
+_n2038_print_list_items() {
+  echo "${1}" | sed -En "s/^(.+)\$/- \"${c_highlight}\\1${c_return}\";/p" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 

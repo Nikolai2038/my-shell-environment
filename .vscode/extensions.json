@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "foxundermoon.shell-format",
+    "mads-hartmann.bash-ide-vscode",
+    "remisa.shellman",
+    "rpinski.shebang-snippets",
+    "tetradresearch.vscode-h2o",
+    "timonwong.shellcheck",
+  ]
+}
