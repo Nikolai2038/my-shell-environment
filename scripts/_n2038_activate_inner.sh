@@ -46,6 +46,8 @@ _n2038_activate_inner() {
   # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
   #   Because of that, we can't call "_n2038_print_color_message" here.
   #   But we can specify colors here and replace them all colors with their values later.
+  # - Be aware of VS Code: it will ALWAYS insert "\[\]" around "PS1" and "PS2" variables, which will be printed, if we switch shell in the integrated terminal.
+  #   Currently I could not find a solution to that problem - so just use external terminal for stability.
   # ========================================
 
   # Cut all before and after function body
