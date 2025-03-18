@@ -135,12 +135,19 @@ n2038_my_shell_environment() {
       echo "\"xxhsum\" is not installed!" >&2
       _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
     fi
+    if ! which date > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
+      echo "\"date\" is not installed!" >&2
+      _n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE_INIT}" && return "$?" || return "$?"
+    fi
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2
     fi
   fi
   # ========================================
+
+  # Start calculating execution time
+  _N2038_LAST_TIME="$(date +%s%N)" || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
 
   if [ "${__n2038_command}" = "${__N2038_COMMAND_INSTALL}" ]; then
     # ========================================
@@ -222,7 +229,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
 
   # We use external script "_n2038_activate_inner.sh" here to be able to apply new changes right now.
   # However, if this "n2038_my_shell_environment.sh" script is changed, we still need to reload the shell (in some cases).
-  . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner.sh" && _n2038_activate_inner || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
+  # shellcheck source=/usr/local/lib/my-shell-environment/scripts/_n2038_activate_inner.sh
+  { . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner.sh" && _n2038_activate_inner; } || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating \"${_N2038_SHELL_ENVIRONMENT_NAME}\": success!" >&2

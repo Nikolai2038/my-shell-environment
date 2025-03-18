@@ -14,10 +14,15 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_ps1_func
 . "./_n2038_get_current_os_version.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
+. "./_n2038_get_timestamp.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 # shellcheck source=/usr/local/lib/my-shell-environment/requirements/_n2038_required_after_imports.sh
 . "${_N2038_REQUIREMENTS_PATH}/_n2038_required_after_imports.sh" || _n2038_return "$?" || return "$?"
+
+if [ -z "${_N2038_EXECUTION_TIME_ACCURACY}" ]; then
+  export _N2038_EXECUTION_TIME_ACCURACY=2
+fi
 
 # Print PS1 prompt.
 #
@@ -83,12 +88,29 @@ _n2038_ps1_function() {
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
+  __n2038_execution_time_part=""
+  if [ "${__n2038_current_shell_name}" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ] && [ -n "${_N2038_LAST_TIME}" ]; then
+    __n2038_current_timestamp="$(_n2038_get_timestamp)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_current_timestamp="$((__n2038_current_timestamp - _N2038_LAST_TIME))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Align with 24 characters - this should be enough for a couple thousand years
+    __n2038_current_timestamp="$(printf '%024d' "${__n2038_current_timestamp#0}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Show seconds
+    __n2038_seconds="$(echo "${__n2038_current_timestamp}" | cut -c1-15 | sed -En 's/^0*([0-9][0-9]*)/\1/p')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Show seconds parts with specified accuracy
+    __n2038_nanoseconds="$(echo "${__n2038_current_timestamp}" | cut "-c16-$((16 + _N2038_EXECUTION_TIME_ACCURACY - 1))")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    __n2038_execution_time_part="─[${__n2038_seconds}.${__n2038_nanoseconds}]" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
+
   # - We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh".
   # - Colors must be defined before PS1 and not inside it, otherwise the braces will be printed directly.
   #   Because of that, we can't call "_n2038_print_color_message" here.
   #   But we can specify colors here and replace them all colors with their values later.
   # - We specify colors in the beginning of each line, because bash may have override it with text color, when navigating in commands' history.
-  _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]─[${__n2038_date}]
+  _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]${__n2038_execution_time_part}─[${__n2038_date}]
 
 ${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
 ${c_border}├─[${__n2038_current_os_name}]${__n2038_get_current_shell_depth_part}─[${c_success}${__n2038_current_shell_name}${c_border}]─\$ ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }

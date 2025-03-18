@@ -13,6 +13,7 @@ __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
+. "./shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?" || return "$?"
 
@@ -86,6 +87,11 @@ _n2038_activate_inner() {
   #   # Make scripts available in shell by their names
   #   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
   # fi
+
+  if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then
+    # shellcheck source=/usr/local/lib/my-shell-environment/scripts/_n2038_activate_inner_bash.sh
+    { . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner_bash.sh" && _n2038_activate_inner_bash; } || { _n2038_unset_init "$?" && return "$?" || return "$?"; }
+  fi
 
   _n2038_unset 0 && return "$?" || return "$?"
 }
