@@ -38,7 +38,7 @@ _n2038_get_current_os_version() {
     _n2038_unset 0 && return "$?" || return "$?"
   fi
 
-  sed -n 's/^VERSION_ID=//p' /etc/os-release || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   _n2038_unset 0 && return "$?" || return "$?"
 }
