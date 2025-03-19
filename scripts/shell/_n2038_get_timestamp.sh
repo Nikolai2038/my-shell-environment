@@ -1,6 +1,6 @@
 #!/bin/sh
 
-__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print_highlight.sh"
+__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/shell/_n2038_get_timestamp.sh"
 
 # Required before imports
 # shellcheck disable=SC1091
@@ -15,17 +15,13 @@ fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
 # Imports
-. "./_constants.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_print_color_message.sh" || _n2038_return "$?" || return "$?"
+# ...
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
-# Print highlight-colored text.
-#
-# Usage: _n2038_print_highlight [text]
-_n2038_print_highlight() {
-  _n2038_print_color_message "${c_highlight}" "${@}" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+_n2038_get_timestamp() {
+  date +%s%N || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 

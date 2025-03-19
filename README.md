@@ -14,7 +14,7 @@ Structure of the command prompt:
 ┌─[USER_NAME@PC_NAME:FULL_PATH_TO_THE_CURRENT_DIRECTORY]
 ├─[OS_NAME]─[SHELL_DEPTH]─[SHELL_NAME]─$ COMMAND
 COMMAND_OUTPUT
-└─[COMMAND_RETURN_CODE]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
+└─[COMMAND_RETURN_CODE]─[EXECUTION_TIME_IN_SECONDS]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
 ```
 
 ## 3. Requirements
@@ -130,11 +130,31 @@ As shown in preview above, these scripts when sourced will show information abou
 - Full path to the current directory;
 - Current real shell (follows symlinks);
 - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
+- Execution time in seconds (only in `bash`);
 - Date and time when command was finished.
 
-### 6.2. Scripts
+### 6.2. Aliases
 
-#### 6.2.1. `n2038_jetbrains_download.sh` - Download specified JetBrains product latest stable installer in the current directory
+Aliases are stored as functions in files inside `./scripts/aliases` directory - you can see their implementation there.
+
+Some aliases have logic with provided arguments, but all of them are accepting any extra arguments after. For example `gc`
+
+#### 6.2.1. Git
+
+The following Git aliases are available:
+
+- `gs [args]` = `git status` - Show Git repository status;
+- `ga [args, default: .]` = `git add` - Add files to Git index. If no files specified, adds all files (`.`);
+- `gc <message>` = `git commit -m` - Commit changes with message;
+- `gpush [args]` = `git push` - Push commits to remote repository;
+- `gpull [args]` = `git pull` - Pull changes from remote repository;
+- `gl [args]` = `git log` - Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message:
+
+    ![`gl` output](./.readme_images/git_log.png)
+
+### 6.3. Scripts
+
+#### 6.3.1. `n2038_jetbrains_download.sh` - Download specified JetBrains product latest stable installer in the current directory
 
 Usage:
 
@@ -151,34 +171,57 @@ Where:
 
 ### 7.1. About `n2038` prefix
 
-`n2038` prefix was chosen from my nickname to use something unique - to not be confused with system scripts;
+`n2038` prefix was chosen from my nickname to use something unique - to not be confused with system scripts. All functions except aliases have it.
 
 ### 7.2. Environment variables (to customize environment)
 
 These constants can be overridden via environment variables:
 
-- `N2038_IS_DEBUG_BASH`: If debug mode is enabled (more logs will be shown);
+- `N2038_IS_DEBUG`: If debug mode is enabled (more logs will be shown);
 - (must be overridden before installation) `_N2038_SHELL_ENVIRONMENT_NAME`: Name for the scripts folder and name to be shown in logs;
 - (must be overridden before installation)`_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL`: Repository URL to install scripts from;
 
 ### 7.3. Code style
+
+#### 7.3.1. Naming
 
 - I use `n2038_` prefix for all variables and functions to not be confused with other ones in the system;
 - I use `_` prefix for variables, which are not intended to be changed by the user;
 - I use `_` prefix for functions, which are not intended to be executed by the user (but by the developer - can and must be interactive and informative about it);
 - I use `__` prefix for local variables, constants and functions, which will not be available outside function;
     - Special function `_n2038_unset` is used to unset all local variables and constants - so use them in one function only. If you want to temporarily export some variable to be used in another function - consider it as constant and prefix it with `_`. Unset it by hand when not needed anymore (for example, `_N2038_RETURN_CODE_PS1` and `_N2038_PWD_BEFORE_IMPORTS_*` are like that);
-- I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG_BASH`;
-- I try to use `sh` syntax on main elements of the shell environment. In the future, I will add several customizations for `bash` and probably some other shells when I will get to them;
-- Each shell script contains function with same name. All code done in function and `return` are used. We pass all the arguments to this function and check them all in it. After function call, return code is checked. If it is not `0`, we `exit` or `return` from the script based on if it was executed or sourced (see the bottom lines of any script for more context);
+- I try to use `sh` syntax on main elements of the shell environment. In the future, I will add several customizations for `bash` and probably some other shells when I will get to them.
+
+#### 7.3.2. Syntax
+
+- Each shell script contains function with same name. Exceptions: constants and aliases (see below for more info about them). All code done in function and `return`'s are used. We pass all the arguments to this function and check them all in it. After function call, return code is checked. If it is not `0`, we `exit` or `return` from the script based on if it was executed or sourced (see `_n2038_return` for more context).
+
+#### 7.3.3. Returns and exits
+
 - Each command, which can return non-zero return code, must end with `|| return "$?"`, `|| exit "$?"` or `|| true`;
 - `exit` is forbidden to be used inside functions - only `return`. This is because we can source shell script and execute function directly in the shell - so calling `exit` from it will result in shell exit (terminal close or disconnection from the remote);
-- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes;
 - Instead of `some_function || return "$?"` use `some_function || { _n2038_unset "$?" && return "$?" || return "$?"; }`:
     - There is no need to optimize this like `return 0` below, because it will only be executed on errors.
 - Instead of `return 0` use `_n2038_unset 0 && return "$?" || return "$?"` to unset all local variables. Do not forget to include this as last row in each function:
     - For optimization, you can leave `return 0`, if you did not use any local variables above it.
-- Instead of (for example) `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset_init "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
+- Instead of (for example) `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
+
+#### 7.3.4. Constants
+
+- Constants are stored in `_constants.sh` files (can be several) and usually does not have main function at all;
+- I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG`.
+
+#### 7.3.5. Aliases
+
+- Aliases are stored as group of functions in `./scripts/aliases` folder;
+- I prefer functions over aliases because they:
+
+    - Provide more ways to play with arguments;
+    - Easily maintained for large aliases (syntax highlight, references to other functions, space for comments).
+
+#### 7.3.6. Other
+
+- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes.
 
 ## 6. Contribution
 
