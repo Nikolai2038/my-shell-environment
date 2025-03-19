@@ -102,6 +102,21 @@ _n2038_activate_inner() {
   #   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
   # fi
 
+  # "EDITOR" must be set for "Git Graph" extension in VS Code - otherwise it will show error when creating tag
+  if which nvim > /dev/null 2>&1; then
+    export EDITOR="nvim"
+  elif which vim > /dev/null 2>&1; then
+    export EDITOR="vim"
+  elif which nano > /dev/null 2>&1; then
+    export EDITOR="nano"
+  elif which vi > /dev/null 2>&1; then
+    export EDITOR="vi"
+  elif which code > /dev/null 2>&1; then
+    export EDITOR="code"
+  elif which kate > /dev/null 2>&1; then
+    export EDITOR="kate"
+  fi
+
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then
     # shellcheck source=/usr/local/lib/my-shell-environment/scripts/_n2038_activate_inner_bash.sh
     . "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/_n2038_activate_inner_bash.sh" || { _n2038_unset "$?" && return "$?" || return "$?"; }
