@@ -102,13 +102,17 @@ _n2038_required_before_imports() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
   eval "_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${_N2038_SHELL_ENVIRONMENT_PATH}/${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}\""
 
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Starting to source \"$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")\"..." >&2
+  # Full path to the script
+  __n2038_script_file_path="$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  if [ ! -f "${__n2038_script_file_path}" ]; then
+    echo "File \"${__n2038_script_file_path}\" not found! Check if \"__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT\" was set correctly." >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
-  # Full path to the script
-  __n2038_script_file_path="$(eval "realpath \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
+  if [ "${N2038_IS_DEBUG}" = "1" ]; then
+    echo "Starting to source \"${__n2038_script_file_path}\"..." >&2
+  fi
   # ========================================
   # Check about file being sourced
   # ========================================
@@ -185,6 +189,8 @@ _n2038_required_after_function() {
 
   if [ -f "${__n2038_script_file_path}" ]; then
     __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"${__n2038_script_file_path}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    # Not all files will have function with the same name - for example, constants and aliases.
+    # So we don't consider this as error here.
     if [ -n "${__n2038_function_name}" ]; then
       # If this file is being executed - we execute function itself
       if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
