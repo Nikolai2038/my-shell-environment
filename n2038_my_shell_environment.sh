@@ -30,11 +30,19 @@ _n2038_unset() {
     return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
   fi
 
-  # shellcheck disable=SC2046
-  unset $(set | sed -En 's/^(__[nN]2038_[a-zA-Z0-9_]+)=.*$/\1/p') || {
-    echo "Failed to unset local variables in \"_n2038_unset\"! Return code: \"$?\"." >&2
+  __n2038_variables_to_unset="$(set | sed -En "s/^(__n2038_[a-zA-Z0-9_]+)=.*\$/\1/p")" || {
+    echo "Failed to get local variables in \"_n2038_unset\"! Return code: \"$?\"." >&2
     return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
   }
+
+  # "ksh" requires variable names, so we check for that to avoid error message
+  if [ -n "${__n2038_variables_to_unset}" ]; then
+    # shellcheck disable=SC2086
+    unset ${__n2038_variables_to_unset} || {
+      echo "Failed to unset local variables in \"_n2038_unset\"! Return code: \"$?\"." >&2
+      return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+    }
+  fi
 
   if [ "${1}" != "0" ] && [ "${1}" != "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" ]; then
     echo "Error with return code \"${1}\" occurred!" >&2

@@ -14,7 +14,7 @@ Structure of the command prompt:
 ┌─[USER_NAME@PC_NAME:FULL_PATH_TO_THE_CURRENT_DIRECTORY]
 ├─[OS_NAME]─[SHELL_DEPTH]─[SHELL_NAME]─$ COMMAND
 COMMAND_OUTPUT
-└─[COMMAND_RETURN_CODE]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
+└─[COMMAND_RETURN_CODE]─[EXECUTION_TIME_IN_SECONDS]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
 ```
 
 ## 3. Requirements
@@ -130,6 +130,7 @@ As shown in preview above, these scripts when sourced will show information abou
 - Full path to the current directory;
 - Current real shell (follows symlinks);
 - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
+- Execution time in seconds (only in `bash`);
 - Date and time when command was finished.
 
 ### 6.2. Aliases
