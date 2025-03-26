@@ -30,32 +30,32 @@ COMMAND_OUTPUT
 
 ### 3.2. Required commands
 
-- `git`, `grep`, `which`, `tput`.
+- `git`, `grep`, `which`, `tput`, `xxhsum`.
 
 You can install them via:
 
 - Debian:
 
     ```sh
-    sudo apt-get update && sudo apt-get install -y git grep debianutils ncurses-bin
+    sudo apt-get update && sudo apt-get install -y git grep debianutils ncurses-bin xxhash
     ```
 
 - Arch Linux:
 
     ```sh
-    sudo pacman --sync --refresh --needed --noconfirm git grep which ncurses
+    sudo pacman --sync --refresh --needed --noconfirm git grep which ncurses xxhash
     ```
 
 - Termux:
 
     ```sh
-    pkg update && pkg install -y git grep which ncurses-utils
+    pkg update && pkg install -y git grep which ncurses-utils xxhash
     ```
 
 - Fedora:
 
     ```sh
-    sudo dnf install -y git grep which ncurses
+    sudo dnf install -y git grep which ncurses xxhash
     ```
 
 ### 3.3. Optional commands
