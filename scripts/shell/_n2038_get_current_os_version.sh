@@ -40,6 +40,13 @@ _n2038_get_current_os_version() {
     _n2038_unset 0 && return "$?" || return "$?"
   fi
 
+  # For Windows there is no "/etc/os-release" file, so we need to check it separately
+  if [ -n "${MSYSTEM}" ]; then
+    # Convert to lowercase and replace spaces with dashes
+    powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^windows-//' | tr '[:upper:]' '[:lower:]'
+    return 0
+  fi
+
   if [ ! -f "/etc/os-release" ]; then
     _n2038_print_error "File \"${c_highlight}/etc/os-release${c_return}\" not found - probably, \"${c_highlight}_n2038_get_current_os_version${c_return}\" is not implemented for your OS." || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset 0 && return "$?" || return "$?"
