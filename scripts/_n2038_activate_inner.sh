@@ -20,6 +20,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
+. "./shell/_n2038_get_current_os_version.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?" || return "$?"
@@ -41,6 +42,9 @@ _n2038_activate_inner() {
 
   # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
   _n2038_get_current_os_name > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  # To initialize the "_N2038_CURRENT_OS_VERSION" variable - to not recalculate it every time
+  _n2038_get_current_os_version > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Initialize the "_N2038_INIT_SHELL_DEPTH" variable
   if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then

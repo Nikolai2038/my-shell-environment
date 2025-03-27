@@ -47,11 +47,21 @@ _n2038_ps1_function() {
 
   __n2038_date="$(date +'%Y-%m-%d]─[%a]─[%H:%M:%S')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  __n2038_user="$(whoami)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # Getting "${USER}" is faster, but it is not always available
+  if [ -n "${USER}" ]; then
+    __n2038_user="${USER}"
+  else
+    __n2038_user="$(whoami)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
 
-  # There is warning about "$HOSTNAME" being undefined in POSIX "sh", so just in case, we use "hostname" command to get it, if it is installed.
-  # Also, "hostname" command is used in WSL (to get Windows hostname), where is no "$HOSTNAME".
-  __n2038_hostname="$(hostname)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # Getting "${HOSTNAME}" is faster, but it is not always available:
+  # - in "sh" (for example, in "dash");
+  # - in WSL;
+  if [ -n "${HOSTNAME}" ]; then
+    __n2038_hostname="${HOSTNAME}"
+  else
+    __n2038_hostname="$(hostname)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
 
   __n2038_current_os_name="$(_n2038_get_current_os_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   __n2038_current_os_version="$(_n2038_get_current_os_version)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -66,10 +76,10 @@ _n2038_ps1_function() {
   # We improve performance of PS1 here by checking for init shell because we can.
   # This is very useful, because often you work in init shell anyways.
   if [ "${$}" = "${_N2038_INIT_SHELL_PROCESS_ID}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
-    __n2038_get_current_shell_depth=0
+    __n2038_current_shell_depth=0
   else
-    __n2038_get_current_shell_depth="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    if [ "${__n2038_get_current_shell_depth}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
+    __n2038_current_shell_depth="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ "${__n2038_current_shell_depth}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
       __n2038_was_error_calculating_current_shell_depth=1
     else
       if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
@@ -78,11 +88,11 @@ _n2038_ps1_function() {
       elif [ "${_N2038_INIT_SHELL_DEPTH}" = "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
         __n2038_was_error_calculating_current_shell_depth=1
       else
-        __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_current_shell_depth="$((__n2038_current_shell_depth - _N2038_INIT_SHELL_DEPTH - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
         # Termux has different call stack
-        if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_get_current_shell_depth}" != "0" ]; then
-          __n2038_get_current_shell_depth="$((__n2038_get_current_shell_depth - 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_TERMUX}" ] && [ "${__n2038_current_shell_depth}" != "0" ]; then
+          __n2038_current_shell_depth="$((__n2038_current_shell_depth - 3))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
         fi
       fi
     fi
@@ -90,7 +100,7 @@ _n2038_ps1_function() {
 
   __n2038_get_current_shell_depth_part=""
   if [ "${__n2038_was_error_calculating_current_shell_depth}" = "0" ]; then
-    __n2038_get_current_shell_depth_part="─[${__n2038_get_current_shell_depth}]"
+    __n2038_get_current_shell_depth_part="─[${__n2038_current_shell_depth}]"
   fi
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -122,7 +132,8 @@ _n2038_ps1_function() {
 ${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
 ${c_border}├─[${__n2038_current_os_name}]${__n2038_get_current_shell_depth_part}─[${c_success}${__n2038_current_shell_name}${c_border}]─\$ ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  # Since we will run this function in subshell anyway, we won't unset local variables to get even more performance.
+  return 0
 }
 
 # Required after function

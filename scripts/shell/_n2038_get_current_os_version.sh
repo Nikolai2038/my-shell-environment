@@ -22,22 +22,32 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
+export _N2038_CURRENT_OS_VERSION=""
+
 # Prints version of the current OS.
 # It can be empty (for example, for Arch).
-# Also, we don't save it's value in variable, like we did with _N2038_CURRENT_OS_NAME, because OS version can change in current shell (if we update it).
+# Also, defines "_N2038_CURRENT_OS_VERSION" variable with the same value, which is useful to avoid recalculating the current OS name.
+# Even if OS version can be sometimes updated in the current shell, it is not worth to recalculate it every command.
 #
 # Usage: _n2038_get_current_os_version
 _n2038_get_current_os_version() {
-  # There is no version for Arch, so we skip checking it every time
-  __n2038_current_os_name="" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_ARCH}" ]; then
-    _n2038_unset 0 && return "$?" || return "$?"
+  # If we already calculated OS version - just print it
+  if [ -n "${_N2038_CURRENT_OS_VERSION}" ]; then
+    echo "${_N2038_CURRENT_OS_VERSION}"
+    return 0
+  fi
+
+  # There is no version for Arch, so we skip checking it every time.
+  # NOTE: Here we assume that "${_N2038_CURRENT_OS_NAME}" was already initialized via calling "_n2038_get_current_os_name" function.
+  if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+    return 0
   fi
 
   # For Termux there is no "/etc/os-release" file, so we need to check it separately
   if [ -n "${TERMUX_VERSION}" ]; then
-    echo "${TERMUX_VERSION}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    _N2038_CURRENT_OS_VERSION="${TERMUX_VERSION}"
+    echo "${_N2038_CURRENT_OS_VERSION}"
+    return 0
   fi
 
   # For Windows there is no "/etc/os-release" file, so we need to check it separately
@@ -45,7 +55,8 @@ _n2038_get_current_os_version() {
     _n2038_commands_must_be_installed powershell || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     # Convert to lowercase and replace spaces with dashes
-    powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^windows-//' || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _N2038_CURRENT_OS_VERSION="$(powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^windows-//')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    echo "${_N2038_CURRENT_OS_VERSION}"
     return 0
   fi
 
@@ -54,9 +65,10 @@ _n2038_get_current_os_version() {
     _n2038_unset 0 && return "$?" || return "$?"
   fi
 
-  sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _N2038_CURRENT_OS_VERSION="$(sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  echo "${_N2038_CURRENT_OS_VERSION}"
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Required after function

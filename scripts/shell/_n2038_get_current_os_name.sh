@@ -21,6 +21,8 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
+export _N2038_CURRENT_OS_NAME=""
+
 _N2038_OS_NAME_UNKNOWN="os"
 _N2038_OS_NAME_TERMUX="termux"
 _N2038_OS_NAME_ARCH="arch"
@@ -31,7 +33,7 @@ _N2038_OS_NAME_WINDOWS="windows"
 #
 # Usage: _n2038_get_current_os_name
 _n2038_get_current_os_name() {
-  # If we already calculated current shell in current terminal session - just return it
+  # If we already calculated OS name - just print it
   if [ -n "${_N2038_CURRENT_OS_NAME}" ]; then
     echo "${_N2038_CURRENT_OS_NAME}"
     return 0
