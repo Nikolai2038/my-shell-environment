@@ -235,6 +235,23 @@ Example 2 (we assume, that `my-shell-environment` is already installed on both m
     rm search.json.mozlz4
     ```
 
+#### 6.3.3. `n2038_check_port.sh` - Check if port is open on the specified host
+
+Usage:
+
+```sh
+n2038_check_port.sh <host>:<port> [<proxy_host>:<proxy_port>]
+```
+
+Where:
+
+- `host`: Host to connect;
+- `port`: Port to connect;
+- `proxy_host`: Host of the proxy to use before checking connection;
+- `proxy_port`: Port of the proxy to use before checking connection.
+
+For usage with proxy command `proxytunnel` must be installed.
+
 ## 7. More information
 
 ### 7.1. About `n2038` prefix
