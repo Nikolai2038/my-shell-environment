@@ -43,7 +43,7 @@ _n2038_get_current_os_version() {
   # For Windows there is no "/etc/os-release" file, so we need to check it separately
   if [ -n "${MSYSTEM}" ]; then
     # Convert to lowercase and replace spaces with dashes
-    powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^windows-//' | tr '[:upper:]' '[:lower:]'
+    powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^windows-//' || { _n2038_unset "$?" && return "$?" || return "$?"; }
     return 0
   fi
 
