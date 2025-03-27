@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment" every activation. See "_n2038_required_before_imports" for the skip logic.
+
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner_bash.sh"
 
 # Required before imports

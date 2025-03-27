@@ -125,7 +125,8 @@ _n2038_required_before_imports() {
   # Check about file being sourced
   # ========================================
   # "_n2038_activate_inner" is executing from "n2038_my_shell_environment" where we source it every time - so we skip it here
-  if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ]; then
+  if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ] \
+    && [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner_bash.sh" ]; then
     # We check both script path and it's contents
     __n2038_script_file_hash="$(xxhsum -H0 "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
