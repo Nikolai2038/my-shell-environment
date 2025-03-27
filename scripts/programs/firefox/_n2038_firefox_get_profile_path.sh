@@ -16,6 +16,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 
 # Imports
 . "../../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
+. "../../shell/_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
@@ -36,12 +37,19 @@ _n2038_firefox_get_profile_path() {
     fi
   done
 
-  if [ "${__n2038_is_developers_edition}" = "${_N2038_TRUE}" ]; then
-    __n2038_firefox_profile_name="$(sed -En 's/^Path=(.+\.dev-edition-default)$/\1/p' "${HOME}/.mozilla/firefox/profiles.ini")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_os_name="$(_n2038_get_current_os_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  if [ "${__n2038_os_name}" = "${_N2038_OS_NAME_WINDOWS}" ]; then
+    __n2038_firefox_data_path="${APPDATA}/Mozilla/Firefox"
   else
-    __n2038_firefox_profile_name="$(sed -En 's/^Path=(.+\.default-release)$/\1/p' "${HOME}/.mozilla/firefox/profiles.ini")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_firefox_data_path="${HOME}/.mozilla/firefox"
   fi
-  echo "${HOME}/.mozilla/firefox/${__n2038_firefox_profile_name}"
+
+  if [ "${__n2038_is_developers_edition}" = "${_N2038_TRUE}" ]; then
+    __n2038_firefox_profile_name="$(sed -En 's/^Path=(.+\.dev-edition-default)$/\1/p' "${__n2038_firefox_data_path}/profiles.ini")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    __n2038_firefox_profile_name="$(sed -En 's/^Path=(.+\.default-release)$/\1/p' "${__n2038_firefox_data_path}/profiles.ini")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
+  echo "${__n2038_firefox_data_path}/${__n2038_firefox_profile_name}"
 
   _n2038_unset 0 && return "$?" || return "$?"
 }
