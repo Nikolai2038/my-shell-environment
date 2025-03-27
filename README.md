@@ -187,6 +187,7 @@ n2038_firefox_search_engines_export.sh [--dev] <file_path>
 Where:
 
 - `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `--mozlz4`: If to export in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 - `file_path`: Path to the file where search engines data will be saved. Format is JSON.
 
 And:
@@ -198,9 +199,10 @@ n2038_firefox_search_engines_import.sh [--dev] <file_path>
 Where:
 
 - `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `--mozlz4`: If provided file is in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 - `file_path`: Path to the file from where search engines data will be loaded.
 
-Example:
+Example 1:
 
 ```sh
 # Save search engines from Firefox for Developers into file
@@ -212,6 +214,26 @@ n2038_firefox_search_engines_import.sh search.json
 # Remove temp file
 rm search.json
 ```
+
+Example 2 (we assume, that `my-shell-environment` is already installed on both machines):
+
+1. On the Linux Machine:
+
+    ```sh
+    # Save search engines from Firefox for Developers into file without extracting "mozlz4"
+    n2038_firefox_search_engines_export.sh --dev --mozlz4 search.json.mozlz4
+    ```
+
+2. Move file `search.json.mozlz4` to the Windows machine;
+3. On the Windows machine:
+
+    ```sh
+    # Load search engines for default Firefox from file without extracting "mozlz4"
+    n2038_firefox_search_engines_import.sh --mozlz4 search.json.mozlz4
+
+    # Remove temp file
+    rm search.json.mozlz4
+    ```
 
 ## 7. More information
 

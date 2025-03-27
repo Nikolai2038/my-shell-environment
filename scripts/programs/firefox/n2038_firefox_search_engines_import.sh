@@ -23,18 +23,19 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
 # Imports search engines to the current user's Firefox from specified file.
 #
-# Usage: n2038_firefox_search_engines_import [--dev] <file_path>
+# Usage: n2038_firefox_search_engines_import [--dev] [--mozlz4] <file_path>
 # Where:
 # - `--dev`: If to use Firefox for Developers instead of default Firefox;
+# - `--mozlz4`: If provided file is in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 # - `file_path`: Path to the file from where search engines data will be loaded.
 n2038_firefox_search_engines_import() {
-  _n2038_commands_must_be_installed mozlz4 || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
   __n2038_is_developers_edition="${_N2038_FALSE}"
-
+  __n2038_is_mozlz4="${_N2038_FALSE}"
   for __n2038_argument in "$@"; do
     if [ "${__n2038_argument}" = "--dev" ]; then
-      __n2038_is_developers_edition="${_N2038_TRUE}" && { shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; }
+      { __n2038_is_developers_edition="${_N2038_TRUE}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    elif [ "${__n2038_argument}" = "--mozlz4" ]; then
+      { __n2038_is_mozlz4="${_N2038_TRUE}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
   done
 
@@ -50,7 +51,12 @@ n2038_firefox_search_engines_import() {
     __n2038_firefox_profile_path="$(_n2038_firefox_get_profile_path)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  mozlz4 -z "${__n2038_file_path}" "${__n2038_firefox_profile_path}/search.json.mozlz4" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  if [ "$__n2038_is_mozlz4}" = "${_N2038_TRUE}" ]; then
+    _n2038_commands_must_be_installed mozlz4 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    mozlz4 -z "${__n2038_file_path}" "${__n2038_firefox_profile_path}/search.json.mozlz4" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    cp "${__n2038_file_path}" "${__n2038_firefox_profile_path}/search.json.mozlz4" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
 
   _n2038_unset 0 && return "$?" || return "$?"
 }
