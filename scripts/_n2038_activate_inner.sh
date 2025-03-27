@@ -96,11 +96,10 @@ _n2038_activate_inner() {
 
   # ========================================
 
-  # TODO: Make separate directory with symlinks
-  # if ! echo "${PATH}" | grep --quiet "${_N2038_SHELL_ENVIRONMENT_PATH}"; then
-  #   # Make scripts available in shell by their names
-  #   export PATH="${_N2038_SHELL_ENVIRONMENT_PATH}:${PATH}"
-  # fi
+  if [ -n "${_N2038_SHELL_ENVIRONMENT_SYMLINKS} " ] && ! echo "${PATH}" | grep --quiet "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}"; then
+    # Make scripts available in shell by their names
+    export PATH="${_N2038_SHELL_ENVIRONMENT_SYMLINKS}:${PATH}"
+  fi
 
   # "EDITOR" must be set for "Git Graph" extension in VS Code - otherwise it will show error when creating tag
   if which nvim > /dev/null 2>&1; then

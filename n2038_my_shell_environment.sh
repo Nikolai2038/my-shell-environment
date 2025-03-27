@@ -234,6 +234,39 @@ _n2038_commands_must_be_installed() {
   _n2038_unset 0 && return "$?" || return "$?"
 }
 
+# Regenerates symlinks for the scripts in the shell environment.
+#
+# Usage: _n2038_regenerate_symlinks
+_n2038_regenerate_symlinks() {
+  if [ -z "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" ]; then
+    echo "\"_N2038_SHELL_ENVIRONMENT_SYMLINKS\" is empty!" >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  fi
+
+  echo "Regenerating symlinks for the scripts in the shell environment..." >&2
+
+  # Clear existing symlinks
+  rm -rf "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  mkdir --parents "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_scripts="$(find "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts" -type f -name '*n2038*.sh')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  # Create new symlink for each script
+  for __n2038_script in ${__n2038_scripts}; do
+    __n2038_script_name="$(basename "${__n2038_script}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    sudo ln -s "${__n2038_script}" "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}/${__n2038_script_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if [ "${N2038_IS_DEBUG}" = "1" ]; then
+      echo "Creating symlink for \"${__n2038_script_name}\": success!" >&2
+    fi
+  done
+
+  echo "Regenerating symlinks for the scripts in the shell environment: success!" >&2
+
+  _n2038_unset 0 && return "$?" || return "$?"
+}
+
 # Activates the shell environment.
 #
 # Usage: n2038_my_shell_environment [--no-check] [--dev] [--force] [command=activate]
@@ -345,8 +378,8 @@ n2038_my_shell_environment() {
   # Path to the directory with scripts
   export _N2038_SHELL_ENVIRONMENT_PATH="${__n2038_libs_path}/${_N2038_SHELL_ENVIRONMENT_NAME}"
 
-  # Path to the directory with requirements scripts
-  export _N2038_REQUIREMENTS_PATH="${_N2038_SHELL_ENVIRONMENT_PATH}/requirements"
+  # Path to the directory with symlinks to the scripts
+  export _N2038_SHELL_ENVIRONMENT_SYMLINKS="${_N2038_SHELL_ENVIRONMENT_PATH}/.symlinks"
   # ========================================
 
   # ========================================
@@ -414,6 +447,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     fi
     # ----------------------------------------
     # ========================================
+
+    _n2038_regenerate_symlinks || { _n2038_unset "$?" && return "$?" || return "$?"; }
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_UPDATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"install\" argument instead of \"update\" to install it." >&2
@@ -427,6 +462,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
     # ========================================
+
+    _n2038_regenerate_symlinks || { _n2038_unset "$?" && return "$?" || return "$?"; }
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_ACTIVATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed! Pass \"--install\" argument to install it." >&2
