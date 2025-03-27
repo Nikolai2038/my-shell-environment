@@ -25,12 +25,13 @@ COMMAND_OUTPUT
 
 - `sh`;
 - `bash`;
+- `bash` (MINGW on Windows);
 - `dash`;
 - `ksh`.
 
 ### 3.2. Required commands
 
-- `git`, `grep`, `which`, `tput`, `xxhsum`.
+- `git`, `grep`, `which`, `tput`, `xxhsum` (on Windows `shasum` is used instead).
 
 You can install them via:
 
@@ -57,6 +58,10 @@ You can install them via:
     ```sh
     sudo dnf install -y git grep which ncurses xxhash
     ```
+
+- Windows:
+
+    Will be already available if you install [Git](https://git-scm.com/downloads/win).
 
 ### 3.3. Optional commands
 
@@ -90,14 +95,18 @@ You can install them via:
     sudo dnf install -y psmisc
     ```
 
-- NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
+- Windows:
 
-    - Open a **new terminal** (even **not a new shell**, because shell depth is recalculating based on the process tree);
-    - Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
+    If you know how - let me know!
 
-        ```sh
-        _N2038_INIT_SHELL_DEPTH="" && n2038_my_bash_environment activate
-        ```
+NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
+
+- Open a **new terminal** (even **not a new shell**, because shell depth is recalculating based on the process tree);
+- Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
+
+    ```sh
+    _N2038_INIT_SHELL_DEPTH="" && n2038_my_bash_environment activate
+    ```
 
 ## 4. Installation
 
