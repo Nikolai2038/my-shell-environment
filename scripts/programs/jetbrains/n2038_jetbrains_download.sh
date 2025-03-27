@@ -103,4 +103,4 @@ $(_n2038_print_list_items "$(echo "${__n2038_latest_version_files}" | jq -r 'key
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

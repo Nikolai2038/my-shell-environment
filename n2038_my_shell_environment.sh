@@ -202,12 +202,34 @@ _n2038_required_after_function() {
     if [ -n "${__n2038_function_name}" ]; then
       # If this file is being executed - we execute function itself
       if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
-        "${__n2038_function_name}" || exit "$?"
+        "${__n2038_function_name}" "$@" || exit "$?"
       fi
     fi
   fi
 
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_unset 0 && return "$?" || return "$?"
+}
+
+# Checks if the specified commands are installed.
+# Returns 0 if all the commands are installed, otherwise returns other values.
+#
+# Usage: _n2038_commands_must_be_installed <command...>
+_n2038_commands_must_be_installed() {
+  if [ "$#" -eq 0 ]; then
+    echo "The commands is not specified to the \"_n2038_command_must_be_installed\" function!" >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  fi
+
+  while [ "$#" -gt 0 ]; do
+    { __n2038_command="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if ! which "${__n2038_command}" > /dev/null 2>&1; then
+      echo "Command \"${__n2038_command}\" is not installed!" >&2
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  done
+
   _n2038_unset 0 && return "$?" || return "$?"
 }
 
@@ -242,7 +264,7 @@ n2038_my_shell_environment() {
   # (If installing) Remove old "my-shell-environment" if it exists (if not passed and old version exists, installation will be aborted)
   __n2038_is_install_force=0
 
-  for __n2038_argument in "${@}"; do
+  for __n2038_argument in "$@"; do
     if [ "${__n2038_argument}" = "--no-check" ]; then
       __n2038_is_check_requested=0 && { shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; }
     fi
@@ -290,7 +312,7 @@ n2038_my_shell_environment() {
     __n2038_libs_path="${PREFIX}/lib"
 
     # Termux does not need "sudo" to write to the lib directory
-    sudo() { "${@}"; }
+    sudo() { "$@"; }
     __n2038_is_sudo_faked=1
   fi
   # ----------------------------------------
@@ -314,30 +336,8 @@ n2038_my_shell_environment() {
       echo "Checking requirements..." >&2
     fi
 
-    if ! which which > /dev/null 2>&1; then
-      echo "\"which\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which git > /dev/null 2>&1; then
-      echo "\"git\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which grep > /dev/null 2>&1; then
-      echo "\"grep\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which sudo > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
-      echo "\"sudo\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which xxhsum > /dev/null 2>&1; then
-      echo "\"xxhsum\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which date > /dev/null 2>&1; then
-      echo "\"date\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
+    # We use subshell here because we don't want to unset parent function's variables inside child ones
+    (_n2038_commands_must_be_installed which git grep sudo xxhsum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2

@@ -25,9 +25,9 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 #
 # Usage: _n2038_print_error [text]
 _n2038_print_error() {
-  _n2038_print_color_message "${c_error}" "${@}" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_print_color_message "${c_error}" "$@" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

@@ -167,6 +167,43 @@ Where:
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
 - `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
 
+#### 6.3.2. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
+
+Since Firefox does not sync search engines (and even more - it does not allow editing them), I wrote these scripts to export and import them. Usage:
+
+```sh
+n2038_firefox_search_engines_export.sh [--dev] <file_path>
+```
+
+Where:
+
+- `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `file_path`: Path to the file where search engines data will be saved. Format is JSON.
+
+And:
+
+```sh
+n2038_firefox_search_engines_import.sh [--dev] <file_path>
+```
+
+Where:
+
+- `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `file_path`: Path to the file from where search engines data will be loaded.
+
+Example:
+
+```sh
+# Save search engines from Firefox for Developers into file
+n2038_firefox_search_engines_export.sh --dev search.json
+
+# Load search engines for default Firefox from file
+n2038_firefox_search_engines_import.sh search.json
+
+# Remove temp file
+rm search.json
+```
+
 ## 7. More information
 
 ### 7.1. About `n2038` prefix

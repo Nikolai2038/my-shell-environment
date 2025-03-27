@@ -40,10 +40,10 @@ _n2038_print_color_message() {
   __n2038_text="${__n2038_main_color}${__n2038_text}${c_reset}"
 
   # shellcheck disable=SC2320,SC3037
-  _n2038_echo -e "${@}" "${__n2038_text}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_echo -e "$@" "${__n2038_text}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   _n2038_unset 0 && return "$?" || return "$?"
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

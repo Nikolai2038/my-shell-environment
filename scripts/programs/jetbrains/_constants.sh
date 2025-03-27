@@ -67,4 +67,4 @@ ${_N2038_JETBRAINS_DOWNLOAD_TYPE_MAC}
 ${_N2038_JETBRAINS_DOWNLOAD_TYPE_MAC_M1}"
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"
