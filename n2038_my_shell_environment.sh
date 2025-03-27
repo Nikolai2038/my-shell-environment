@@ -91,18 +91,9 @@ _n2038_return() {
 }
 
 _n2038_unset_imports() {
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Unsetting all imports..." >&2
-  fi
-
   # "sha256sum" will generate only "[a-z0-9]" for hash, so we check only for them
   # shellcheck disable=SC2046
   unset $(set | sed -En "s/^(${_N2038_FILE_IS_SOURCED_PREFIX}[a-z0-9]+)=.*\$/\\1/p") || return "$?"
-
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Unsetting all imports: success!" >&2
-  fi
-
   return 0
 }
 
@@ -118,9 +109,6 @@ _n2038_required_before_imports() {
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Starting to source \"${__n2038_script_file_path}\"..." >&2
-  fi
   # ========================================
   # Check about file being sourced
   # ========================================
@@ -156,9 +144,6 @@ _n2038_required_before_imports() {
   # ========================================
 
   # Save current working directory
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${PWD}\"" >&2
-  fi
   eval "_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${PWD}\"" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Change current directory to the script directory to be able to easily import other scripts
@@ -171,18 +156,8 @@ _n2038_required_before_imports() {
 #
 # Usage: _n2038_required_after_imports
 _n2038_required_after_imports() {
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Required after imports..." >&2
-    echo "cd \"\${_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" >&2
-  fi
-
   eval "cd \"\${_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   eval "unset _N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Required after imports: success!" >&2
-  fi
-
   return 0
 }
 
@@ -193,23 +168,26 @@ _n2038_required_after_imports() {
 #
 # Usage: _n2038_required_after_function
 _n2038_required_after_function() {
-  # Full path to the script
-  __n2038_script_file_path="$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # If this file is being executed - we execute function itself
+  if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
+    # Full path to the script
+    __n2038_script_file_path="$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  if [ -f "${__n2038_script_file_path}" ]; then
-    __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"${__n2038_script_file_path}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    # Not all files will have function with the same name - for example, constants and aliases.
-    # So we don't consider this as error here.
-    if [ -n "${__n2038_function_name}" ]; then
-      # If this file is being executed - we execute function itself
-      if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
+    if [ -f "${__n2038_script_file_path}" ]; then
+      __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"${__n2038_script_file_path}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      # Not all files will have function with the same name - for example, constants and aliases.
+      # So we don't consider this as error here.
+      if [ -n "${__n2038_function_name}" ]; then
         "${__n2038_function_name}" "$@" || exit "$?"
       fi
     fi
+
+    : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_unset 0 && return "$?" || return "$?"
   fi
 
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
 
 # Checks if the specified commands are installed.
@@ -217,9 +195,9 @@ _n2038_required_after_function() {
 #
 # Usage: _n2038_commands_must_be_installed <command...>
 _n2038_commands_must_be_installed() {
-  if [ "$#" -eq 0 ]; then
-    echo "The commands is not specified to the \"_n2038_command_must_be_installed\" function!" >&2
-    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: _n2038_commands_must_be_installed <command...>" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
   fi
 
   while [ "$#" -gt 0 ]; do
@@ -383,7 +361,7 @@ n2038_my_shell_environment() {
     fi
 
     # We use subshell here because we don't want to unset parent function's variables inside child ones
-    (_n2038_commands_must_be_installed which git grep sudo sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    (_n2038_commands_must_be_installed which sed grep git sudo sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2

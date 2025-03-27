@@ -31,32 +31,32 @@ COMMAND_OUTPUT
 
 ### 3.2. Required commands
 
-- `git`, `grep`, `which`, `tput`, `sha256sum`.
+- `which`, `sed`, `grep`, `git`, `tput`, `sha256sum`.
 
 You can install them via:
 
 - Debian:
 
     ```sh
-    sudo apt-get update && sudo apt-get install -y git grep debianutils ncurses-bin
+    sudo apt-get update && sudo apt-get install -y grep git debianutils ncurses-bin
     ```
 
 - Arch Linux:
 
     ```sh
-    sudo pacman --sync --refresh --needed --noconfirm git grep which ncurses
+    sudo pacman --sync --refresh --needed --noconfirm which grep git ncurses
     ```
 
 - Termux:
 
     ```sh
-    pkg update && pkg install -y git grep which ncurses-utils
+    pkg update && pkg install -y which grep git ncurses-utils
     ```
 
 - Fedora:
 
     ```sh
-    sudo dnf install -y git grep which ncurses
+    sudo dnf install -y which grep git ncurses
     ```
 
 - Windows:

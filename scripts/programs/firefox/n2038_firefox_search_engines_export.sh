@@ -40,7 +40,7 @@ n2038_firefox_search_engines_export() {
   done
 
   if [ "$#" -lt 1 ]; then
-    _n2038_print_error "The file path is not specified!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_print_error "Usage: ${c_highlight}n2038_firefox_search_engines_export [--dev] [--mozlz4] <file_path>${c_return}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
   { __n2038_file_path="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
