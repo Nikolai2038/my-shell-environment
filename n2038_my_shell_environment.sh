@@ -95,7 +95,7 @@ _n2038_unset_imports() {
     echo "Unsetting all imports..." >&2
   fi
 
-  # "xxhsum" will generate only "[a-z0-9]" for hash, so we check only for them
+  # "sha256sum" will generate only "[a-z0-9]" for hash, so we check only for them
   # shellcheck disable=SC2046
   unset $(set | sed -En "s/^(${_N2038_FILE_IS_SOURCED_PREFIX}[a-z0-9]+)=.*\$/\\1/p") || return "$?"
 
@@ -128,7 +128,7 @@ _n2038_required_before_imports() {
   if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ] \
     && [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner_bash.sh" ]; then
     # We check both script path and it's contents
-    __n2038_script_file_hash="$(xxhsum -H0 "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_script_file_hash="$(sha256sum "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     __n2038_script_file_is_sourced_variable_name="${_N2038_FILE_IS_SOURCED_PREFIX}${__n2038_script_file_hash}"
     __n2038_current_file_is_sourced="$(eval "echo \"\${${__n2038_script_file_is_sourced_variable_name}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -360,14 +360,6 @@ n2038_my_shell_environment() {
 
     # Windows does not have "sudo" - we fake it
     sudo() { "$@"; }
-
-    # MINGW does not have "xxhsum" - we fake it
-    xxhsum() {
-      if [ "${1}" = "-H0" ]; then
-        shift || return "$?"
-      fi
-      shasum "$@" || return "$?"
-    }
   fi
   # ----------------------------------------
 
@@ -391,7 +383,7 @@ n2038_my_shell_environment() {
     fi
 
     # We use subshell here because we don't want to unset parent function's variables inside child ones
-    (_n2038_commands_must_be_installed which git grep sudo xxhsum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    (_n2038_commands_must_be_installed which git grep sudo sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2
