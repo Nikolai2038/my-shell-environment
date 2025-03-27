@@ -224,7 +224,7 @@ _n2038_commands_must_be_installed() {
   while [ "$#" -gt 0 ]; do
     { __n2038_command="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-    if ! which "${__n2038_command}" > /dev/null 2>&1; then
+    if ! type "${__n2038_command}" > /dev/null 2>&1; then
       echo "Command \"${__n2038_command}\" is not installed!" >&2
       _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
     fi
@@ -301,9 +301,6 @@ n2038_my_shell_environment() {
   # Path to folder, where the directory with scripts will be located
   __n2038_libs_path="/usr/local/lib"
 
-  # Is "sudo" faked (not needed) for this OS
-  __n2038_is_sudo_faked=0
-
   # ----------------------------------------
   # Termux support
   # ----------------------------------------
@@ -311,9 +308,32 @@ n2038_my_shell_environment() {
     # Termux does not have "/usr/local/lib" directory - so we use app storage instead
     __n2038_libs_path="${PREFIX}/lib"
 
-    # Termux does not need "sudo" to write to the lib directory
+    # Termux does not need "sudo" to write to the lib directory - we fake it
     sudo() { "$@"; }
-    __n2038_is_sudo_faked=1
+  fi
+  # ----------------------------------------
+
+  # ----------------------------------------
+  # Windows support
+  # ----------------------------------------
+  if [ -n "${MSYSTEM}" ]; then
+    # TODO: In the future find a way to run scripts with admin rights
+    # # Windows does not have "/usr/local/lib" directory - so we use "Program Files" directory instead
+    # __n2038_libs_path="${PROGRAMFILES}"
+
+    # Windows does not have "/usr/local/lib" directory - so we use user's directory instead
+    __n2038_libs_path="${HOME}"
+
+    # Windows does not have "sudo" - we fake it
+    sudo() { "$@"; }
+
+    # MINGW does not have "xxhsum" - we fake it
+    xxhsum() {
+      if [ "${1}" = "-H0" ]; then
+        shift || return "$?"
+      fi
+      shasum "$@" || return "$?"
+    }
   fi
   # ----------------------------------------
 

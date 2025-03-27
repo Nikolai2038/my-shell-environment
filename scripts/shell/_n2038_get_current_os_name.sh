@@ -24,6 +24,7 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 _N2038_OS_NAME_UNKNOWN="os"
 _N2038_OS_NAME_TERMUX="termux"
 _N2038_OS_NAME_ARCH="arch"
+_N2038_OS_NAME_WINDOWS="windows"
 
 # Prints name of the current OS.
 # Also, defines "_N2038_CURRENT_OS_NAME" variable with the same value, which is useful to avoid recalculating the current OS name.
@@ -39,6 +40,13 @@ _n2038_get_current_os_name() {
   # For Termux there is no "/etc/os-release" file, so we need to check it separately
   if [ -n "${TERMUX_VERSION}" ]; then
     _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
+    echo "${_N2038_CURRENT_OS_NAME}"
+    return 0
+  fi
+
+  # For Windows there is no "/etc/os-release" file, so we need to check it separately
+  if [ -n "${MSYSTEM}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_WINDOWS}"
     echo "${_N2038_CURRENT_OS_NAME}"
     return 0
   fi
