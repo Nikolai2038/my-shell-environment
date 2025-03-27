@@ -65,7 +65,7 @@ _n2038_ps1_function() {
 
   # We improve performance of PS1 here by checking for init shell because we can.
   # This is very useful, because often you work in init shell anyways.
-  if [ "${$}" = "${_N2038_INIT_SHELL_PROCESS_ID}" ]; then
+  if [ "${$}" = "${_N2038_INIT_SHELL_PROCESS_ID}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
     __n2038_get_current_shell_depth=0
   else
     __n2038_get_current_shell_depth="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }

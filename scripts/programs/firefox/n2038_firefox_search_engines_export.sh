@@ -28,7 +28,7 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 # - `--dev`: If to use Firefox for Developers instead of default Firefox;
 # - `file_path`: Path to the file where search engines data will be saved. Format is JSON.
 n2038_firefox_search_engines_export() {
-  _n2038_commands_must_be_installed mozlz4 || return "$?"
+  _n2038_commands_must_be_installed mozlz4 || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   __n2038_is_developers_edition="${_N2038_FALSE}"
 

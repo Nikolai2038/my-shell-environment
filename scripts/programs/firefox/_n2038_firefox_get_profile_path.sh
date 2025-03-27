@@ -26,7 +26,7 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 # Where:
 # - `--dev`: If to use Firefox for Developers instead of default Firefox;
 _n2038_firefox_get_profile_path() {
-  _n2038_commands_must_be_installed sed || return "$?"
+  _n2038_commands_must_be_installed sed || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   __n2038_is_developers_edition="${_N2038_FALSE}"
 
