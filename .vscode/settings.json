@@ -1,58 +1,72 @@
 {
-  // ----------------------------------------
-  // Settings for "Bash IDE" extension
-  // ----------------------------------------
-  // Follow redirection operators with a space (more readable)
-  "bashIde.shfmt.spaceRedirects": true,
-  // Increase number of files to analyze (analyze them all to not miss any reference to show)
-  "bashIde.backgroundAnalysisMaxFiles": 9999,
-  // Decrease logging level
-  "bashIde.logLevel": "warning",
-  // ----------------------------------------
-  // "ShellCheck" extension separately
-  // ----------------------------------------
-  // Disable "shellcheck" from Bash IDE - it is not working properly for some reason - and to not download anything in system - use "ShellCheck" extension instead with bundled command
-  "bashIde.shellcheckPath": "",
-  // Decrease logging level
-  "shellcheck.logLevel": "warn",
-  // Parse external files in "source" command
-  "shellcheck.customArgs": [
-      "--external-sources"
-  ],
-  // ----------------------------------------
-  // Settings for "File Watcher" extension
-  // ----------------------------------------
-  // Run custom script on file rename, which will update all links to this files from other files, and all links from this file to others
-  "filewatcher.commands": [
-      {
-          "event": "onFileRename",
-          "match": ".*\\.sh",
-          "cmd": "/usr/local/lib/my-shell-environment/ide/_n2038_execute_when_file_moved.sh \"${workspaceRoot}\" \"${fileOld}\" \"${file}\""
-      },
-      {
-          "event": "onFileChange",
-          "match": ".*\\.sh",
-          "cmd": "/usr/local/lib/my-shell-environment/ide/_n2038_sources_sort.sh \"${file}\""
-      }
-  ],
-  // ----------------------------------------
-  // Settings for "shell-format" extension
-  // ----------------------------------------
-  // Disable "shfmt" from Bash IDE - to not download anything in system - use "shell-format" extension instead with bundled command
-  "bashIde.shfmt.path": "",
-  // Flags for formatting:
-  // -s,  --simplify  simplify the code (this also replaces " with ' where possible, which I don't like)
-  // -i,  --indent uint       0 for tabs (default), >0 for number of spaces
-  // -bn, --binary-next-line  binary ops like && and | may start a line
-  // -ci, --case-indent       switch cases will be indented
-  // -sr, --space-redirects   redirect operators will be followed by a space
-  // -kp, --keep-padding      keep column alignment paddings
-  // -fn, --func-next-line    function opening braces are placed on a separate line
-  "shellformat.flag": "--indent 2 --binary-next-line --case-indent --space-redirects",
-  // Autoformat
-  "[shellscript]": {
-      "editor.formatOnSave": true,
-      "editor.defaultFormatter": "foxundermoon.shell-format",
-  },
-  // ----------------------------------------
+    // ----------------------------------------
+    // Settings for "Bash IDE" extension
+    // ----------------------------------------
+    // Follow redirection operators with a space (more readable)
+    "bashIde.shfmt.spaceRedirects": true,
+    // Increase number of files to analyze (analyze them all to not miss any reference to show)
+    "bashIde.backgroundAnalysisMaxFiles": 9999,
+    // Decrease logging level
+    "bashIde.logLevel": "warning",
+    // ----------------------------------------
+    // "ShellCheck" extension separately
+    // ----------------------------------------
+    // Disable "shellcheck" from Bash IDE - it is not working properly for some reason - and to not download anything in system - use "ShellCheck" extension instead with bundled command
+    "bashIde.shellcheckPath": "",
+    // Decrease logging level
+    "shellcheck.logLevel": "warn",
+    // Parse external files in "source" command
+    "shellcheck.customArgs": [
+        "--external-sources"
+    ],
+    // ----------------------------------------
+    // Settings for "File Watcher" extension
+    // ----------------------------------------
+    // Run custom script on file rename, which will update all links to this files from other files, and all links from this file to others
+    "filewatcher.commands": [
+        {
+            "event": "onFileRename",
+            "match": ".*\\.sh",
+            "cmd": "/usr/local/lib/my-shell-environment/ide/_n2038_execute_when_file_moved.sh \"${workspaceRoot}\" \"${fileOld}\" \"${file}\""
+        },
+        {
+            "event": "onFileChange",
+            "match": ".*\\.sh",
+            "cmd": "/usr/local/lib/my-shell-environment/ide/_n2038_sources_sort.sh \"${file}\""
+        }
+    ],
+    // ----------------------------------------
+    // Settings for "shell-format" extension
+    // ----------------------------------------
+    // Disable "shfmt" from Bash IDE - to not download anything in system - use "shell-format" extension instead with bundled command
+    "bashIde.shfmt.path": "",
+    // Flags for formatting:
+    // -s,  --simplify  simplify the code (this also replaces " with ' where possible, which I don't like)
+    // -i,  --indent uint       0 for tabs (default), >0 for number of spaces
+    // -bn, --binary-next-line  binary ops like && and | may start a line
+    // -ci, --case-indent       switch cases will be indented
+    // -sr, --space-redirects   redirect operators will be followed by a space
+    // -kp, --keep-padding      keep column alignment paddings
+    // -fn, --func-next-line    function opening braces are placed on a separate line
+    "shellformat.flag": "--indent 2 --binary-next-line --case-indent --space-redirects",
+    // Autoformat
+    "[shellscript]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "foxundermoon.shell-format",
+    },
+    "cSpell.words": [
+        "dcbd",
+        "dcbdu",
+        "dcbu",
+        "dcbud",
+        "dcdb",
+        "dcdbu",
+        "dcdu",
+        "dcps",
+        "dcpsa",
+        "dcpsaq",
+        "dcpsq",
+        "dcub"
+    ],
+    // ----------------------------------------
 }

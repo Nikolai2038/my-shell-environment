@@ -27,7 +27,10 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "./shell/_n2038_ps2_function.sh" || _n2038_return "$?" || return "$?"
 
 # Aliases
+. "./aliases/_n2038_aliases_docker_compose.sh" || _n2038_return "$?" || return "$?"
+. "./aliases/_n2038_aliases_docker.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_git.sh" || _n2038_return "$?" || return "$?"
+. "./aliases/_n2038_aliases_ls.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"

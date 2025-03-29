@@ -146,20 +146,72 @@ As shown in preview above, these scripts when sourced will show information abou
 
 Aliases are stored as functions in files inside `./scripts/aliases` directory - you can see their implementation there.
 
-Some aliases have logic with provided arguments, but all of them are accepting any extra arguments after. For example `gc`
+Some aliases have logic with provided arguments, but all of them are accepting any extra arguments after.
 
-#### 6.2.1. Git
+The equals (for example, `l` = `ls`) descriptions below are just informative - actual aliases have more complex logic than that.
 
-The following Git aliases are available:
+#### 6.2.1. `ls`
 
-- `gs [args]` = `git status` - Show Git repository status;
-- `ga [args, default: .]` = `git add` - Add files to Git index. If no files specified, adds all files (`.`);
-- `gc <message>` = `git commit -m` - Commit changes with message;
-- `gpush [args]` = `git push` - Push commits to remote repository;
-- `gpull [args]` = `git pull` - Pull changes from remote repository;
-- `gl [args]` = `git log` - Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message:
+- `l` = `ls`: Prints list of the files (exclude hidden);
+- `la` = `ls -a`: Prints list of the files (include hidden);
+- `ll` = `ls -l`: Prints list of the files (exclude hidden) with their details;
+- `lla` = `ls -la`: Prints list of the files (include hidden) with their details;
+- `lm`: Prints list of the files (exclude hidden) in Markdown format;
+- `lam` or `lma`: Prints list of the files (include hidden) in Markdown format.
 
-    ![`gl` output](./.readme_images/git_log.png)
+#### 6.2.2. `git`
+
+- `gs` = `git status`: Show Git repository status;
+- `ga [arg, default: .]` = `git add`: Add files to Git index. If no files specified, adds all files (`.`);
+- `gc <message>` = `git commit -m`: Commit changes with message;
+- `gpull` = `git pull`: Pull changes from remote repository;
+- `gpush` = `git push`: Push commits to remote repository;
+- `gp` = `git pull && git push`: Pull and then push changes to the remote repository;
+- `gl` = `git log`: Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message:
+
+    ![gl](./.readme_images/git_log.png)
+
+#### 6.2.3. `docker`
+
+Main:
+
+- `dps` = `docker ps`: Prints list of the running containers;
+- `dpi` = `docker images`: Prints colorful list of the images with line format:
+
+    ```plaintext
+    <image>:<tag> (<size>)
+    ```
+
+Extra:
+
+- `dpsq` = `docker ps -q`: Prints list of hashes of the running containers;
+- `dpsa` = `docker ps -a`: Prints list of all containers (running and stopped);
+- `dpsaq` = `docker ps -aq`: Prints list of hashes of all containers (running and stopped).
+
+#### 6.2.4. `docker-compose`
+
+Main:
+
+- `dc` = `docker-compose`;
+- `dcu` = `docker-compose up --detach --wait`;
+- `dcb` = `docker-compose build`;
+- `dcd` = `docker-compose down`;
+- `dcr` = `docker-compose restart`;
+- `dcl` = `docker-compose logs`;
+- `dcps` = `docker-compose ps`;
+
+Extra:
+
+- `dcud` = `docker-compose up --detach --wait && docker-compose down`;
+- `dcbu` = `docker-compose build && docker-compose up --detach --wait`;
+- `dcbud` = `docker-compose build && docker-compose up --detach --wait && docker-compose down`;
+- `dcbdu` = `docker-compose build && docker-compose down && docker-compose up --detach --wait`;
+- `dcdb` = `docker-compose down && docker-compose build`;
+- `dcdu` = `docker-compose down && docker-compose up --detach --wait`;
+- `dcdbu` = `docker-compose down && docker-compose build && docker-compose up --detach --wait`;
+- `dcpsa` = `docker-compose ps -a`;
+- `dcpsq` = `docker-compose ps -q`;
+- `dcpsaq` = `docker-compose ps -aq`.
 
 ### 6.3. Scripts
 
