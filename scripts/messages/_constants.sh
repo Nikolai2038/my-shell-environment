@@ -50,15 +50,29 @@ export c_border_root=""
 export c_reset=""
 
 # NOTE: We use "_n2038_tput" here to be able to define colors both for "bash" and "ksh"
-# NOTE: MINGW and TTYs recognize only 8 colors, so we don't use any colors higher than 7.
-c_text="$(_n2038_tput setaf 7)" || _n2038_return "$?"
-c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
-c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
-c_highlight="$(_n2038_tput setaf 5)" || _n2038_return "$?"
-c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
-c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
-c_border_usual="$(_n2038_tput setaf 4)" || _n2038_return "$?"
-c_border_root="$(_n2038_tput setaf 5)" || _n2038_return "$?"
+
+# If terminal supports more that 8 default colors, we use more soft colors instead
+if [ "${TERM}" = "xterm-256color" ]; then
+  c_text="$(_n2038_tput setaf 15)" || _n2038_return "$?"
+  c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
+  c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
+  c_highlight="$(_n2038_tput setaf 90)" || _n2038_return "$?"
+  c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
+  c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
+  c_border_usual="$(_n2038_tput setaf 27)" || _n2038_return "$?"
+  c_border_root="$(_n2038_tput setaf 90)" || _n2038_return "$?"
+# If terminal does not support more that 8 colors (MINGW, TTYs), we use default 8 colors
+else
+  c_text="$(_n2038_tput setaf 7)" || _n2038_return "$?"
+  c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
+  c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
+  c_highlight="$(_n2038_tput setaf 5)" || _n2038_return "$?"
+  c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
+  c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
+  c_border_usual="$(_n2038_tput setaf 4)" || _n2038_return "$?"
+  c_border_root="$(_n2038_tput setaf 5)" || _n2038_return "$?"
+fi
+
 c_reset="$(_n2038_tput sgr0)" || _n2038_return "$?"
 
 # Color for border when printing tables, etc.
