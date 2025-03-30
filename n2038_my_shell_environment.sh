@@ -15,6 +15,14 @@ export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 export _N2038_TRUE='true'
 export _N2038_FALSE='false'
 
+if [ -z "${N2038_PROGRAMS_PATH}" ]; then
+  export N2038_PROGRAMS_PATH="/opt"
+fi
+
+if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+  export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
+fi
+
 # Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
 #
 # Usage:
@@ -353,8 +361,11 @@ n2038_my_shell_environment() {
   # Path to the directory with scripts
   export _N2038_SHELL_ENVIRONMENT_PATH="${__n2038_libs_path}/${_N2038_SHELL_ENVIRONMENT_NAME}"
 
-  # Path to the directory with symlinks to the scripts
+  # Path to the directory with symlinks to this shell environment scripts
   export _N2038_SHELL_ENVIRONMENT_SYMLINKS="${_N2038_SHELL_ENVIRONMENT_PATH}/.symlinks"
+
+  # Path to the directory with symlinks to installed programs via "my-shell-environment"
+  export _N2038_SHELL_ENVIRONMENT_PROGRAMS="${_N2038_SHELL_ENVIRONMENT_PATH}/.programs"
   # ========================================
 
   # ========================================
