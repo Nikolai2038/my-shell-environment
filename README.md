@@ -128,9 +128,16 @@ rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikola
 n2038_my_shell_environment update
 ```
 
-## 6. Features
+## 6. Settings
 
-### 6.1. Command prompt
+You can set some environment variables to change "my-shell-environment" behaviour:
+
+- `N2038_PROGRAMS_PATH`: Path to directory, in which some programs (for example, JetBrains products) will be installed;
+- `N2038_DOWNLOADS_PATH`: Path to directory, in which files will be downloaded when needed by "my-shell-environment".
+
+## 7. Features
+
+### 7.1. Command prompt
 
 As shown in preview above, these scripts when sourced will show information about:
 
@@ -142,7 +149,7 @@ As shown in preview above, these scripts when sourced will show information abou
 - Execution time in seconds (only in `bash`);
 - Date and time when command was finished.
 
-### 6.2. Aliases
+### 7.2. Aliases
 
 Aliases are stored as functions in files inside `./scripts/aliases` directory - you can see their implementation there.
 
@@ -150,7 +157,7 @@ Some aliases have logic with provided arguments, but all of them are accepting a
 
 The equals (for example, `l` = `ls`) descriptions below are just informative - actual aliases have more complex logic than that.
 
-#### 6.2.1. `ls`
+#### 7.2.1. `ls`
 
 - `l` = `ls`: Prints list of the files (exclude hidden);
 - `la` = `ls -a`: Prints list of the files (include hidden);
@@ -159,7 +166,7 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
 - `lm`: Prints list of the files (exclude hidden) in Markdown format;
 - `lam` or `lma`: Prints list of the files (include hidden) in Markdown format.
 
-#### 6.2.2. `git`
+#### 7.2.2. `git`
 
 - `gs` = `git status`: Show Git repository status;
 - `ga [arg, default: .]` = `git add`: Add files to Git index. If no files specified, adds all files (`.`);
@@ -171,7 +178,7 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
 
     ![gl](./.readme_images/git_log.png)
 
-#### 6.2.3. `docker`
+#### 7.2.3. `docker`
 
 Main:
 
@@ -188,7 +195,7 @@ Extra:
 - `dpsa` = `docker ps -a`: Prints list of all containers (running and stopped);
 - `dpsaq` = `docker ps -aq`: Prints list of hashes of all containers (running and stopped).
 
-#### 6.2.4. `docker-compose`
+#### 7.2.4. `docker-compose`
 
 Main:
 
@@ -213,9 +220,24 @@ Extra:
 - `dcpsq` = `docker-compose ps -q`;
 - `dcpsaq` = `docker-compose ps -aq`.
 
-### 6.3. Scripts
+### 7.3. Scripts
 
-#### 6.3.1. `n2038_jetbrains_download.sh` - Download specified JetBrains product latest stable installer in the current directory
+#### 7.3.1. JetBrains
+
+#### 7.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable)
+
+Usage:
+
+```sh
+n2038_jetbrains_install.sh <product_name> <download_type>
+```
+
+Where:
+
+- `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
+- `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
+
+#### 7.3.1.2. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
 
 Usage:
 
@@ -228,7 +250,15 @@ Where:
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
 - `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
 
-#### 6.3.2. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
+#### 7.3.1.3. `n2038_jetbrains_clear_all_data.sh` - Clear all data of the JetBrains products (reset all settings, logins, etc.)
+
+Usage:
+
+```sh
+n2038_jetbrains_clear_all_data.sh
+```
+
+#### 7.3.2. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
 
 Since Firefox does not sync search engines (and even more - it does not allow editing them), I wrote these scripts to export and import them. Usage:
 
@@ -287,7 +317,7 @@ Example 2 (we assume, that `my-shell-environment` is already installed on both m
     rm search.json.mozlz4
     ```
 
-#### 6.3.3. `n2038_check_port.sh` - Check if port is open on the specified host
+#### 7.3.3. `n2038_check_port.sh` - Check if port is open on the specified host
 
 Usage:
 
@@ -304,13 +334,13 @@ Where:
 
 For usage with proxy command `proxytunnel` must be installed.
 
-## 7. More information
+## 8. More information
 
-### 7.1. About `n2038` prefix
+### 8.1. About `n2038` prefix
 
 `n2038` prefix was chosen from my nickname to use something unique - to not be confused with system scripts. All functions except aliases have it.
 
-### 7.2. Environment variables (to customize environment)
+### 8.2. Environment variables (to customize environment)
 
 These constants can be overridden via environment variables:
 
@@ -318,9 +348,9 @@ These constants can be overridden via environment variables:
 - (must be overridden before installation) `_N2038_SHELL_ENVIRONMENT_NAME`: Name for the scripts folder and name to be shown in logs;
 - (must be overridden before installation)`_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL`: Repository URL to install scripts from;
 
-### 7.3. Code style
+### 8.3. Code style
 
-#### 7.3.1. Naming
+#### 8.3.1. Naming
 
 - I use `n2038_` prefix for all variables and functions to not be confused with other ones in the system;
 - I use `_` prefix for variables, which are not intended to be changed by the user;
@@ -329,11 +359,11 @@ These constants can be overridden via environment variables:
     - Special function `_n2038_unset` is used to unset all local variables and constants - so use them in one function only. If you want to temporarily export some variable to be used in another function - consider it as constant and prefix it with `_`. Unset it by hand when not needed anymore (for example, `_N2038_RETURN_CODE_PS1` and `_N2038_PWD_BEFORE_IMPORTS_*` are like that);
 - I try to use `sh` syntax on main elements of the shell environment. In the future, I will add several customizations for `bash` and probably some other shells when I will get to them.
 
-#### 7.3.2. Syntax
+#### 8.3.2. Syntax
 
 - Each shell script contains function with same name. Exceptions: constants and aliases (see below for more info about them). All code done in function and `return`'s are used. We pass all the arguments to this function and check them all in it. After function call, return code is checked. If it is not `0`, we `exit` or `return` from the script based on if it was executed or sourced (see `_n2038_return` for more context).
 
-#### 7.3.3. Returns and exits
+#### 8.3.3. Returns and exits
 
 - Each command, which can return non-zero return code, must end with `|| return "$?"`, `|| exit "$?"` or `|| true`;
 - `exit` is forbidden to be used inside functions - only `return`. This is because we can source shell script and execute function directly in the shell - so calling `exit` from it will result in shell exit (terminal close or disconnection from the remote);
@@ -341,12 +371,12 @@ These constants can be overridden via environment variables:
 - Before `return 0` use `unset` to unset all local variables;
 - Instead of (for example) `return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"` use `_n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"`.
 
-#### 7.3.4. Constants
+#### 8.3.4. Constants
 
 - Constants are stored in `_constants.sh` files (can be several) and usually does not have main function at all;
 - I use UPPERCASE names for constants. For example, `N2038_IS_DEBUG`.
 
-#### 7.3.5. Aliases
+#### 8.3.5. Aliases
 
 - Aliases are stored as group of functions in `./scripts/aliases` folder;
 - I prefer functions over aliases because they:
@@ -354,10 +384,10 @@ These constants can be overridden via environment variables:
     - Provide more ways to play with arguments;
     - Easily maintained for large aliases (syntax highlight, references to other functions, space for comments).
 
-#### 7.3.6. Other
+#### 8.3.6. Other
 
 - When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes.
 
-## 6. Contribution
+## 9. Contribution
 
 Feel free to contribute via [pull requests](https://github.com/Nikolai2038/my-shell-environment/pulls) or [issues](https://github.com/Nikolai2038/my-shell-environment/issues)!
