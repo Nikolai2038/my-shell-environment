@@ -46,7 +46,8 @@ _n2038_escape_sed() {
     echo "${__n2038_text}" | sed -e 's/[]\/#$&*.^;[]/\\&/g' || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_text __n2038_arg
+  return 0
 }
 
 # Required after function

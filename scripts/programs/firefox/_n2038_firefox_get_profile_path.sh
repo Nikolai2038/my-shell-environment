@@ -52,7 +52,8 @@ _n2038_firefox_get_profile_path() {
   fi
   echo "${__n2038_firefox_data_path}/${__n2038_firefox_profile_name}"
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_is_developers_edition __n2038_argument __n2038_os_name __n2038_firefox_data_path __n2038_firefox_profile_name
+  return 0
 }
 
 # Required after function

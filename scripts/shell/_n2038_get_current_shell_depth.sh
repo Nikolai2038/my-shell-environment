@@ -45,7 +45,9 @@ _n2038_get_current_shell_depth() {
   if [ -z "${__n2038_current_shell_depth}" ]; then
     _n2038_print_error "Could not determine the current shell depth!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_SHELL_DEPTH_UNKNOWN}"
-    _n2038_unset 0 && return "$?" || return "$?"
+
+    unset __n2038_current_shell_depth
+    return 0
   fi
 
   # "ksh" has different call stack
@@ -54,7 +56,9 @@ _n2038_get_current_shell_depth() {
   fi
 
   echo "${__n2038_current_shell_depth}"
-  _n2038_unset 0 && return "$?" || return "$?"
+
+  unset __n2038_current_shell_depth
+  return 0
 }
 
 # Required after function

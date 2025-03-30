@@ -46,7 +46,8 @@ _n2038_tput() {
     echo "\"tput\" ignored - \"TERM\" is empty!" >&2
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_argument
+  return 0
 }
 
 # Required after function

@@ -56,7 +56,8 @@ _n2038_replace_colors_with_exact_values() {
     | sed "s/$(_n2038_escape_sed '${c_border}')/$(_n2038_escape_sed "${__n2038_prefix}${c_border}${__n2038_suffix}")/g" \
     | sed "s/$(_n2038_escape_sed '${c_reset}')/$(_n2038_escape_sed "${__n2038_prefix}${c_reset}${__n2038_suffix}")/g" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_text __n2038_prefix __n2038_suffix
+  return 0
 }
 
 # Required after function

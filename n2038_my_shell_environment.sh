@@ -28,8 +28,6 @@ fi
 # Usage:
 # - instead of: some_function || return "$?"
 #   use:        some_function || { _n2038_unset "$?" && return "$?" || return "$?"; }
-# - instead of: return 0
-#   use:        _n2038_unset 0 && return "$?" || return "$?"
 # - instead of: return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
 #   use:        _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
 _n2038_unset() {
@@ -80,8 +78,8 @@ _n2038_return() {
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Ignoring return code from $(basename "$0")!" >&2
     fi
-    __n2038_return_code=0
-    _n2038_unset 0 && return "$?" || return "$?"
+    unset __n2038_return_code
+    return 0
   fi
 
   # If file is being executed
@@ -100,7 +98,8 @@ _n2038_return() {
     _n2038_unset "${__n2038_return_code}" && return "$?" || return "$?"
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_return_code
+  return 0
 }
 
 _n2038_unset_imports() {
@@ -162,7 +161,8 @@ _n2038_required_before_imports() {
   # Change current directory to the script directory to be able to easily import other scripts
   cd "$(dirname "${__n2038_script_file_path}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_script_file_path __n2038_script_file_hash __n2038_script_file_is_sourced_variable_name __n2038_current_file_is_sourced
+  return 0
 }
 
 # Required steps after imports.
@@ -196,7 +196,8 @@ _n2038_required_after_function() {
     fi
 
     : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    _n2038_unset 0 && return "$?" || return "$?"
+    unset __n2038_script_file_path __n2038_function_name
+    return 0
   fi
 
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -222,7 +223,8 @@ _n2038_commands_must_be_installed() {
     fi
   done
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_command
+  return 0
 }
 
 # Regenerates symlinks for the scripts in the shell environment.
@@ -255,7 +257,8 @@ _n2038_regenerate_symlinks() {
 
   echo "Regenerating symlinks for the scripts in the shell environment: success!" >&2
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_scripts __n2038_script_name
+  return 0
 }
 
 # Activates the shell environment.
@@ -480,7 +483,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
   fi
   # ========================================
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_is_check_requested __n2038_is_install_dev __n2038_is_install_force __n2038_command __n2038_branch_name __n2038_libs_path __n2038_bashrc_path
+  return 0
 }
 
 # If this file is being executed

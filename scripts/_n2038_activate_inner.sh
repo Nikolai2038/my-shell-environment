@@ -82,7 +82,8 @@ _n2038_activate_inner() {
   __n2038_new_ps1_function_file_content_only_body="$(sed -n '/_n2038_ps1_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps1_function.sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   __n2038_new_ps1_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps1_function_file_content_only_body}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   # Use "_N2038" here instead of "__N2038" to not unset variable when calling "_n2038_unset".
-  # shellcheck disable=SC2154
+  # shellcheck disable=SC2089
+  # shellcheck disable=SC2090
   export PS1="\$(
     _N2038_RETURN_CODE_PS1=\"\$?\"
     ${__n2038_new_ps1_function_file_content_only_body}
@@ -96,6 +97,8 @@ _n2038_activate_inner() {
   # Cut all before and after function body
   __n2038_new_ps2_function_file_content_only_body="$(sed -n '/_n2038_ps2_function() {/,/^}/p' "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts/shell/_n2038_ps2_function.sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   __n2038_new_ps2_function_file_content_only_body="$(_n2038_replace_colors_with_exact_values "${__n2038_new_ps2_function_file_content_only_body}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # shellcheck disable=SC2089
+  # shellcheck disable=SC2090
   export PS2="\$(
     ${__n2038_new_ps2_function_file_content_only_body}
     _n2038_ps2_function 2> /dev/null || {
@@ -132,11 +135,12 @@ _n2038_activate_inner() {
     _n2038_activate_inner_bash || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
-
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating inner script: success!" >&2
   fi
+
+  unset __n2038_new_ps1_function_file_content_only_body __n2038_new_ps2_function_file_content_only_body
+  return 0
 }
 
 # Required after function

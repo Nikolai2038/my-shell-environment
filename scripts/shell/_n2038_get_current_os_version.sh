@@ -65,7 +65,7 @@ _n2038_get_current_os_version() {
 
   if [ ! -f "/etc/os-release" ]; then
     _n2038_print_error "File \"${c_highlight}/etc/os-release${c_return}\" not found - probably, \"${c_highlight}_n2038_get_current_os_version${c_return}\" is not implemented for your OS." || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   _N2038_CURRENT_OS_VERSION="$(sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }

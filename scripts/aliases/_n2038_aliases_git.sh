@@ -57,7 +57,9 @@ ga() {
   [ "$#" -gt 0 ] && { __n2038_files="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_files="."
 
   g add "$@" "${__n2038_files}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+
+  unset __n2038_files
+  return 0
 }
 
 unalias gc > /dev/null 2>&1 || true
@@ -74,7 +76,9 @@ gc() {
   { __n2038_message="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   g commit "$@" -m "${__n2038_message}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+
+  unset __n2038_message
+  return 0
 }
 
 unalias gpull > /dev/null 2>&1 || true

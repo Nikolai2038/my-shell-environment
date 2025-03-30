@@ -140,11 +140,11 @@ _n2038_activate_inner_bash() {
   fi
   # ========================================
 
-  _n2038_unset 0 && return "$?" || return "$?"
-
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating inner bash script: success!" >&2
   fi
+
+  return 0
 }
 
 # Required after function

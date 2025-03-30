@@ -61,7 +61,8 @@ n2038_firefox_search_engines_import() {
     cp "${__n2038_file_path}" "${__n2038_firefox_profile_path}/search.json.mozlz4" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_is_developers_edition __n2038_is_mozlz4 __n2038_argument __n2038_file_path __n2038_firefox_profile_path
+  return 0
 }
 
 # Required after function

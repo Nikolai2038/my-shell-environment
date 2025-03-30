@@ -37,7 +37,8 @@ _n2038_ps2_function() {
   #   But we can specify colors here and replace them all colors with their values later.
   _n2038_echo -e "${c_border}├─[${c_success}${__n2038_current_shell_name}${c_return}]─> ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_current_shell_name
+  return 0
 }
 
 # Required after function

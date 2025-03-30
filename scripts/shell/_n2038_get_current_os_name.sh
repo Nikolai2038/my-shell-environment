@@ -68,14 +68,16 @@ _n2038_get_current_os_name() {
   if [ -z "${__n2038_current_os_name}" ]; then
     _n2038_print_error "Could not determine the current OS!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_OS_NAME_UNKNOWN}"
-    _n2038_unset 0 && return "$?" || return "$?"
+    return 0
   fi
 
   # Save value to avoid recalculations
   _N2038_CURRENT_OS_NAME="${__n2038_current_os_name}"
 
   echo "${_N2038_CURRENT_OS_NAME}"
-  _n2038_unset 0 && return "$?" || return "$?"
+
+  unset __n2038_current_os_name
+  return 0
 }
 
 # Required after function
