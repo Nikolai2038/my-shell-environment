@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+if [ -n "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" ]; then
+  return
+fi
+
 export _N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED=238
 export _N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE=239
 export _N2038_RETURN_CODE_NOT_PASSED_TO_UNSET=240
