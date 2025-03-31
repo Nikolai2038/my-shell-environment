@@ -54,6 +54,9 @@ _n2038_unset() {
 
   return "${1}"
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_unset 2> /dev/null || true
 
 # Special function to return from script.
 # If script is being executed - it will exit with the given code.
@@ -93,6 +96,9 @@ _n2038_return() {
   unset __n2038_return_code
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_return 2> /dev/null || true
 
 _n2038_unset_imports() {
   # "sha256sum" will generate only "[a-z0-9]" for hash, so we check only for them
@@ -100,6 +106,9 @@ _n2038_unset_imports() {
   unset $(set | sed -En "s/^(${_N2038_FILE_IS_SOURCED_PREFIX}[a-z0-9]+)=.*\$/\\1/p") || return "$?"
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_unset_imports 2> /dev/null || true
 
 _n2038_required_before_imports() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
@@ -156,6 +165,9 @@ _n2038_required_before_imports() {
   unset __n2038_script_file_path __n2038_script_file_hash __n2038_script_file_is_sourced_variable_name __n2038_current_file_is_sourced
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_before_imports 2> /dev/null || true
 
 # Required steps after imports.
 #
@@ -165,6 +177,9 @@ _n2038_required_after_imports() {
   eval "unset _N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_after_imports 2> /dev/null || true
 
 # Required steps after function declaration.
 # Checks if this file is being executed or sourced.
@@ -195,6 +210,9 @@ _n2038_required_after_function() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_after_function 2> /dev/null || true
 
 # Checks if the specified commands are installed.
 # Returns 0 if all the commands are installed, otherwise returns other values.
@@ -218,6 +236,9 @@ _n2038_commands_must_be_installed() {
   unset __n2038_command
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_commands_must_be_installed 2> /dev/null || true
 
 # Regenerates symlinks for the scripts in the shell environment.
 #
@@ -252,6 +273,9 @@ _n2038_regenerate_symlinks() {
   unset __n2038_scripts __n2038_script_name
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_regenerate_symlinks 2> /dev/null || true
 
 export _N2038_CURRENT_OS_TYPE=""
 
@@ -281,6 +305,9 @@ _n2038_init_current_os_type() {
   unset __n2038_current_kernel_name
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_type 2> /dev/null || true
 
 export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
 
@@ -307,6 +334,9 @@ _n2038_init_current_kernel_architecture() {
   unset __n2038_current_kernel_name
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_kernel_architecture 2> /dev/null || true
 
 export _N2038_CURRENT_OS_NAME=""
 
@@ -350,6 +380,9 @@ _n2038_init_current_os_name() {
 
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_name 2> /dev/null || true
 
 export _N2038_CURRENT_OS_VERSION=""
 
@@ -393,6 +426,9 @@ _n2038_init_current_os_version() {
 
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_version 2> /dev/null || true
 
 # Activates the shell environment.
 #
@@ -476,6 +512,9 @@ n2038_my_shell_environment() {
 
     # Termux does not need "sudo" to write to the lib directory - we fake it
     sudo() { "$@"; }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
   fi
   # ----------------------------------------
 
@@ -490,8 +529,12 @@ n2038_my_shell_environment() {
     # Windows does not have "/usr/local/lib" directory - so we use user's directory instead
     __n2038_libs_path="${HOME}"
 
-    # Windows does not have "sudo" - we fake it
+    # Windows does not have "sudo" - we fake it.
+    # In "_n2038_activate_inner_bash.sh" we properly define "sudo" function to run new Bash process as administrator
     sudo() { "$@"; }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
   fi
   # ----------------------------------------
 
@@ -585,8 +628,21 @@ n2038_my_shell_environment() {
     # ----------------------------------------
     if which bash > /dev/null 2>&1; then
       echo "Installing for Bash..." >&2
+
+      __n2038_bash_profile_path="${HOME}/.bash_profile"
+      if [ ! -f "${__n2038_bash_profile_path}" ]; then
+        echo "Creating \"${__n2038_bash_profile_path}\"..." >&2
+        # Fix "WARNING: Found ~/.bashrc but no ~/.bash_profile, ~/.bash_login or ~/.profile." in Windows
+        cat << EOF | tee "${__n2038_bash_profile_path}" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+test -f ~/.profile && . ~/.profile
+test -f ~/.bashrc && . ~/.bashrc
+EOF
+        echo "Creating \"${__n2038_bash_profile_path}\": success!" >&2
+      fi
+
       __n2038_bashrc_path="${HOME}/.bashrc"
       if { ! [ -f "${__n2038_bashrc_path}" ]; } || { ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate\$" "${__n2038_bashrc_path}"; }; then
+
         # shellcheck disable=SC2320
         echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
 source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate" >> "${__n2038_bashrc_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -647,6 +703,9 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
   unset __n2038_is_check_requested __n2038_is_install_dev __n2038_is_install_force __n2038_command __n2038_branch_name __n2038_libs_path __n2038_bashrc_path
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f n2038_my_shell_environment 2> /dev/null || true
 
 # If this file is being executed
 if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then

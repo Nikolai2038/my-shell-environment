@@ -140,6 +140,41 @@ _n2038_activate_inner_bash() {
   fi
   # ========================================
 
+  # ========================================
+  # Imitate "sudo" command for Windows
+  # ========================================
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    # shellcheck disable=SC2317
+    sudo() {
+      temp_file="$(mktemp --suffix ".sh")" || return "$?"
+      echo "temp file: ${temp_file}"
+
+      while [ "$#" -gt 0 ]; do
+        arg="$1" && shift
+        echo -n "\"${arg}\" " >> "${temp_file}" || return "$?"
+      done
+      echo "" >> "${temp_file}" || return "$?"
+      echo "rm \"${temp_file}\"" >> "${temp_file}" || return "$?"
+      echo "sleep 2" >> "${temp_file}" || return "$?"
+
+      echo "========================================"
+      cat "${temp_file}" || return "$?"
+      echo "========================================"
+
+      powershell.exe -Command "Start-Process -FilePath 'C:\Program Files\Git\git-bash.exe' -Verb RunAs -ArgumentList '-f', '${temp_file}'" || return "$?"
+
+      while [ -f "${temp_file}" ]; do
+        sleep 1
+      done
+
+      return 0
+    }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
+  fi
+  # ========================================
+
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating inner bash script: success!" >&2
   fi
