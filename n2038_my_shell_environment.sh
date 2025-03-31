@@ -279,9 +279,9 @@ export -f _n2038_regenerate_symlinks 2> /dev/null || true
 
 export _N2038_CURRENT_OS_TYPE=""
 
-_N2038_OS_TYPE_WINDOWS="windows"
-_N2038_OS_TYPE_LINUX="linux"
-_N2038_OS_TYPE_MACOS="macos"
+export _N2038_OS_TYPE_WINDOWS="windows"
+export _N2038_OS_TYPE_LINUX="linux"
+export _N2038_OS_TYPE_MACOS="macos"
 
 # Inits the "_N2038_CURRENT_OS_TYPE" variable with type of the current OS.
 #
@@ -311,8 +311,8 @@ export -f _n2038_init_current_os_type 2> /dev/null || true
 
 export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
 
-_N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
-_N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
+export _N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
+export _N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
 
 # Inits the "_N2038_CURRENT_KERNEL_ARCHITECTURE" variable with type of the current OS.
 #
@@ -340,11 +340,11 @@ export -f _n2038_init_current_kernel_architecture 2> /dev/null || true
 
 export _N2038_CURRENT_OS_NAME=""
 
-_N2038_OS_NAME_UNKNOWN="os"
-_N2038_OS_NAME_WINDOWS="windows"
-_N2038_OS_NAME_TERMUX="termux"
-_N2038_OS_NAME_ARCH="arch"
-_N2038_OS_NAME_MACOS="macos"
+export _N2038_OS_NAME_UNKNOWN="os"
+export _N2038_OS_NAME_WINDOWS="windows"
+export _N2038_OS_NAME_TERMUX="termux"
+export _N2038_OS_NAME_ARCH="arch"
+export _N2038_OS_NAME_MACOS="macos"
 
 # Inits the "_N2038_CURRENT_OS_NAME" variable with name of the current OS.
 #
