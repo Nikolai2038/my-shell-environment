@@ -60,4 +60,4 @@ _n2038_sources_sort() {
   return 0
 }
 
-_n2038_sources_sort "${@}" || exit "$?"
+_n2038_sources_sort "$@" || exit "$?"

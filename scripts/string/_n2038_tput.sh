@@ -14,6 +14,9 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+
 # Imports
 # ...
 
@@ -43,8 +46,9 @@ _n2038_tput() {
     echo "\"tput\" ignored - \"TERM\" is empty!" >&2
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_argument
+  return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

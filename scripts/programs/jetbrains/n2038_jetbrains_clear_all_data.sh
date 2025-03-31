@@ -1,6 +1,6 @@
 #!/bin/sh
 
-__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/_n2038_print_success.sh"
+__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/programs/jetbrains/n2038_jetbrains_clear_all_data.sh"
 
 # Required before imports
 # shellcheck disable=SC1091
@@ -15,20 +15,25 @@ fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
 # Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
-. "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+. "../../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
 
 # Imports
 . "./_constants.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_print_color_message.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_constants.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_n2038_print_info.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_n2038_print_list_items.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_n2038_print_success.sh" || _n2038_return "$?" || return "$?"
+. "./n2038_jetbrains_download.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
-# Print success-colored text.
-#
-# Usage: _n2038_print_success [text]
-_n2038_print_success() {
-  _n2038_print_color_message "${c_success}" "$@" >&2 || { _n2038_unset "$?" && return "$?" || return "$?"; }
+n2038_jetbrains_clear_all_data() {
+  rm -rf "${HOME}/.config/JetBrains" \
+    "${HOME}/.local/share/JetBrains" \
+    "${HOME}/.cache/JetBrains" \
+    "${HOME}/.java/.userPrefs/jetbrains" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 

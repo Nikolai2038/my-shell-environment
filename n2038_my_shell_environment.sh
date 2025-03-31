@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+if [ -n "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" ]; then
+  return
+fi
+
 export _N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED=238
 export _N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE=239
 export _N2038_RETURN_CODE_NOT_PASSED_TO_UNSET=240
@@ -10,13 +15,29 @@ export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 export _N2038_TRUE='true'
 export _N2038_FALSE='false'
 
+export _N2038_CURRENT_OS_TYPE=""
+export _N2038_OS_TYPE_WINDOWS="windows"
+export _N2038_OS_TYPE_LINUX="linux"
+export _N2038_OS_TYPE_MACOS="macos"
+
+export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
+export _N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
+export _N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
+
+export _N2038_CURRENT_OS_NAME=""
+export _N2038_OS_NAME_UNKNOWN="os"
+export _N2038_OS_NAME_WINDOWS="windows"
+export _N2038_OS_NAME_TERMUX="termux"
+export _N2038_OS_NAME_ARCH="arch"
+export _N2038_OS_NAME_MACOS="macos"
+
+export _N2038_CURRENT_OS_VERSION=""
+
 # Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
 #
 # Usage:
 # - instead of: some_function || return "$?"
 #   use:        some_function || { _n2038_unset "$?" && return "$?" || return "$?"; }
-# - instead of: return 0
-#   use:        _n2038_unset 0 && return "$?" || return "$?"
 # - instead of: return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
 #   use:        _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
 _n2038_unset() {
@@ -51,6 +72,9 @@ _n2038_unset() {
 
   return "${1}"
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_unset 2> /dev/null || true
 
 # Special function to return from script.
 # If script is being executed - it will exit with the given code.
@@ -67,8 +91,8 @@ _n2038_return() {
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Ignoring return code from $(basename "$0")!" >&2
     fi
-    __n2038_return_code=0
-    _n2038_unset 0 && return "$?" || return "$?"
+    unset __n2038_return_code
+    return 0
   fi
 
   # If file is being executed
@@ -87,24 +111,22 @@ _n2038_return() {
     _n2038_unset "${__n2038_return_code}" && return "$?" || return "$?"
   fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
-}
-
-_n2038_unset_imports() {
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Unsetting all imports..." >&2
-  fi
-
-  # "xxhsum" will generate only "[a-z0-9]" for hash, so we check only for them
-  # shellcheck disable=SC2046
-  unset $(set | sed -En "s/^(${_N2038_FILE_IS_SOURCED_PREFIX}[a-z0-9]+)=.*\$/\\1/p") || return "$?"
-
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Unsetting all imports: success!" >&2
-  fi
-
+  unset __n2038_return_code
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_return 2> /dev/null || true
+
+_n2038_unset_imports() {
+  # "sha256sum" will generate only "[a-z0-9]" for hash, so we check only for them
+  # shellcheck disable=SC2046
+  unset $(set | sed -En "s/^(${_N2038_FILE_IS_SOURCED_PREFIX}[a-z0-9]+)=.*\$/\\1/p") || return "$?"
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_unset_imports 2> /dev/null || true
 
 _n2038_required_before_imports() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
@@ -118,16 +140,14 @@ _n2038_required_before_imports() {
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Starting to source \"${__n2038_script_file_path}\"..." >&2
-  fi
   # ========================================
   # Check about file being sourced
   # ========================================
   # "_n2038_activate_inner" is executing from "n2038_my_shell_environment" where we source it every time - so we skip it here
-  if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ]; then
+  if [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner.sh" ] \
+    && [ "${__N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT}" != "scripts/_n2038_activate_inner_bash.sh" ]; then
     # We check both script path and it's contents
-    __n2038_script_file_hash="$(xxhsum -H0 "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_script_file_hash="$(sha256sum "${__n2038_script_file_path}" | cut -d ' ' -f 1)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     __n2038_script_file_is_sourced_variable_name="${_N2038_FILE_IS_SOURCED_PREFIX}${__n2038_script_file_hash}"
     __n2038_current_file_is_sourced="$(eval "echo \"\${${__n2038_script_file_is_sourced_variable_name}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -155,35 +175,29 @@ _n2038_required_before_imports() {
   # ========================================
 
   # Save current working directory
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${PWD}\"" >&2
-  fi
   eval "_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}=\"${PWD}\"" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Change current directory to the script directory to be able to easily import other scripts
   cd "$(dirname "${__n2038_script_file_path}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_script_file_path __n2038_script_file_hash __n2038_script_file_is_sourced_variable_name __n2038_current_file_is_sourced
+  return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_before_imports 2> /dev/null || true
 
 # Required steps after imports.
 #
 # Usage: _n2038_required_after_imports
 _n2038_required_after_imports() {
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Required after imports..." >&2
-    echo "cd \"\${_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" >&2
-  fi
-
   eval "cd \"\${_N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   eval "unset _N2038_PWD_BEFORE_IMPORTS_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
-  if [ "${N2038_IS_DEBUG}" = "1" ]; then
-    echo "Required after imports: success!" >&2
-  fi
-
   return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_after_imports 2> /dev/null || true
 
 # Required steps after function declaration.
 # Checks if this file is being executed or sourced.
@@ -192,24 +206,232 @@ _n2038_required_after_imports() {
 #
 # Usage: _n2038_required_after_function
 _n2038_required_after_function() {
-  # Full path to the script
-  __n2038_script_file_path="$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # If this file is being executed - we execute function itself
+  if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
+    # Full path to the script
+    __n2038_script_file_path="$(eval "echo \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  if [ -f "${__n2038_script_file_path}" ]; then
-    __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"${__n2038_script_file_path}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    # Not all files will have function with the same name - for example, constants and aliases.
-    # So we don't consider this as error here.
-    if [ -n "${__n2038_function_name}" ]; then
-      # If this file is being executed - we execute function itself
-      if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "$({ eval "basename \"\${_N2038_PATH_TO_THIS_SCRIPT_${_N2038_PATH_TO_THIS_SCRIPT_NUMBER}}\"" || echo eval_basename_failed; } 2> /dev/null)" ]; then
-        "${__n2038_function_name}" || exit "$?"
+    if [ -f "${__n2038_script_file_path}" ]; then
+      __n2038_function_name="$(eval "sed -En 's/^(function )?([a-z0-9_]+)[[:space:]]*\\(\\)[[:space:]]*\{[[:space:]]*\$/\\2/p' \"${__n2038_script_file_path}\"")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      # Not all files will have function with the same name - for example, constants and aliases.
+      # So we don't consider this as error here.
+      if [ -n "${__n2038_function_name}" ]; then
+        "${__n2038_function_name}" "$@" || exit "$?"
       fi
     fi
+
+    : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    unset __n2038_script_file_path __n2038_function_name
+    return 0
   fi
 
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER - 1))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  _n2038_unset 0 && return "$?" || return "$?"
+  return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_required_after_function 2> /dev/null || true
+
+# Checks if the specified commands are installed.
+# Returns 0 if all the commands are installed, otherwise returns other values.
+#
+# Usage: _n2038_commands_must_be_installed <command...>
+_n2038_commands_must_be_installed() {
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: _n2038_commands_must_be_installed <command...>" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  while [ "$#" -gt 0 ]; do
+    { __n2038_command="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if ! type "${__n2038_command}" > /dev/null 2>&1; then
+      echo "Command \"${__n2038_command}\" is not installed!" >&2
+
+      # Add hint for installing "jq" in Windows
+      if [ "${__n2038_command}" = "jq" ] && [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+        echo "You can install \"jq\" for MINGW via command: \"curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe\"" >&2
+      fi
+
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  done
+
+  unset __n2038_command
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_commands_must_be_installed 2> /dev/null || true
+
+# Regenerates symlinks for the scripts in the shell environment.
+#
+# Usage: _n2038_regenerate_symlinks
+_n2038_regenerate_symlinks() {
+  if [ -z "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" ]; then
+    echo "\"_N2038_SHELL_ENVIRONMENT_SYMLINKS\" is empty!" >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  fi
+
+  echo "Regenerating symlinks for the scripts in the shell environment..." >&2
+
+  # Clear existing symlinks
+  rm -rf "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  mkdir --parents "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_scripts="$(find "${_N2038_SHELL_ENVIRONMENT_PATH}/scripts" -type f -name '*n2038*.sh')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  # Create new symlink for each script
+  for __n2038_script in ${__n2038_scripts}; do
+    __n2038_script_name="$(basename "${__n2038_script}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    sudo ln -s "${__n2038_script}" "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}/${__n2038_script_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if [ "${N2038_IS_DEBUG}" = "1" ]; then
+      echo "Creating symlink for \"${__n2038_script_name}\": success!" >&2
+    fi
+  done
+
+  echo "Regenerating symlinks for the scripts in the shell environment: success!" >&2
+
+  unset __n2038_scripts __n2038_script_name
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_regenerate_symlinks 2> /dev/null || true
+
+# Inits the "_N2038_CURRENT_OS_TYPE" variable with type of the current OS.
+#
+# Usage: _n2038_init_current_os_type
+_n2038_init_current_os_type() {
+  _n2038_commands_must_be_installed uname || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_current_kernel_name="$(uname -s)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  if [ -n "${MSYSTEM}" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_WINDOWS}"
+  elif [ "${__n2038_current_kernel_name}" = "Linux" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_LINUX}"
+  elif [ "${__n2038_current_kernel_name}" = "Darwin" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_MACOS}"
+  else
+    echo "Could not determine the current OS type!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  unset __n2038_current_kernel_name
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_type 2> /dev/null || true
+
+# Inits the "_N2038_CURRENT_KERNEL_ARCHITECTURE" variable with type of the current OS.
+#
+# Usage: _n2038_init_current_kernel_architecture
+_n2038_init_current_kernel_architecture() {
+  _n2038_commands_must_be_installed uname || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_current_kernel_name="$(uname -m)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  if [ "${__n2038_current_kernel_name}" = "x86_64" ]; then
+    _N2038_CURRENT_KERNEL_ARCHITECTURE="${_N2038_KERNEL_ARCHITECTURE_X86_64}"
+  elif [ "${__n2038_current_kernel_name}" = "aarch64" ]; then
+    _N2038_CURRENT_KERNEL_ARCHITECTURE="${_N2038_KERNEL_ARCHITECTURE_ARM64}"
+  else
+    echo "Could not determine the current kernel architecture!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  unset __n2038_current_kernel_name
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_kernel_architecture 2> /dev/null || true
+
+# Inits the "_N2038_CURRENT_OS_NAME" variable with name of the current OS.
+#
+# Usage: _n2038_init_current_os_name
+_n2038_init_current_os_name() {
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_WINDOWS}"
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    # For Termux there is no "/etc/os-release" file, so we need to check it separately
+    if [ -n "${TERMUX_VERSION}" ]; then
+      _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
+      return 0
+    fi
+
+    if [ ! -f "/etc/os-release" ]; then
+      echo "File \"/etc/os-release\" not found - probably, \"_n2038_init_current_os_name\" is not implemented for your OS." >&2
+      echo "${_N2038_OS_NAME_UNKNOWN}"
+      return 0
+    fi
+
+    _N2038_CURRENT_OS_NAME="$(sed -n 's/^ID=//p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if [ -z "${_N2038_CURRENT_OS_NAME}" ]; then
+      echo "Could not determine the current OS name!" >&2
+      return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_MACOS}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_MACOS}"
+  else
+    echo "Unknown current OS type in \"_n2038_init_current_os_name\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_name 2> /dev/null || true
+
+# Inits the "_N2038_CURRENT_OS_VERSION" variable with version of the current OS.
+# It can be empty (for example, for Arch).
+# Even if OS version can be sometimes updated in the current shell, it is not worth to recalculate it every command.
+#
+# Usage: _n2038_init_current_os_version
+_n2038_init_current_os_version() {
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    # For Windows there is no "/etc/os-release" file, so we need to check it separately
+    _n2038_commands_must_be_installed powershell || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Convert to lowercase and replace spaces with dashes
+    _N2038_CURRENT_OS_VERSION="$(powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^windows-//')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    return 0
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+      # There is no version for Arch
+      _N2038_CURRENT_OS_VERSION=""
+      return 0
+    elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
+      # For Termux there is no "/etc/os-release" file
+      _N2038_CURRENT_OS_VERSION="${TERMUX_VERSION}"
+      return 0
+    else
+      if [ ! -f "/etc/os-release" ]; then
+        echo "File \"/etc/os-release\" not found - probably, \"_n2038_init_current_os_version\" is not implemented for your OS." >&2
+        return 0
+      fi
+
+      _N2038_CURRENT_OS_VERSION="$(sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_MACOS}" ]; then
+    echo "Getting OS version is not implemented in \"_n2038_init_current_os_version\" for \"${_N2038_CURRENT_OS_NAME}\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  else
+    echo "Unknown current OS type in \"_n2038_init_current_os_version\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  return 0
+}
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f _n2038_init_current_os_version 2> /dev/null || true
 
 # Activates the shell environment.
 #
@@ -224,7 +446,12 @@ _n2038_required_after_function() {
 #   - "activate": Just activate the shell environment.
 n2038_my_shell_environment() {
   # Is "my-shell-environment" initialized successfully
-  _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0
+  export _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0
+
+  _n2038_init_current_os_type || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_kernel_architecture || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_os_name || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_os_version || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Because we want to start calculating execution time as early as possible - we duplicate needed checks here
   if which which > /dev/null 2>&1 && which date > /dev/null 2>&1; then
@@ -242,7 +469,7 @@ n2038_my_shell_environment() {
   # (If installing) Remove old "my-shell-environment" if it exists (if not passed and old version exists, installation will be aborted)
   __n2038_is_install_force=0
 
-  for __n2038_argument in "${@}"; do
+  for __n2038_argument in "$@"; do
     if [ "${__n2038_argument}" = "--no-check" ]; then
       __n2038_is_check_requested=0 && { shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; }
     fi
@@ -279,19 +506,38 @@ n2038_my_shell_environment() {
   # Path to folder, where the directory with scripts will be located
   __n2038_libs_path="/usr/local/lib"
 
-  # Is "sudo" faked (not needed) for this OS
-  __n2038_is_sudo_faked=0
-
   # ----------------------------------------
   # Termux support
   # ----------------------------------------
-  if [ -n "${TERMUX_VERSION}" ]; then
+  if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
     # Termux does not have "/usr/local/lib" directory - so we use app storage instead
     __n2038_libs_path="${PREFIX}/lib"
 
-    # Termux does not need "sudo" to write to the lib directory
-    sudo() { "${@}"; }
-    __n2038_is_sudo_faked=1
+    # Termux does not need "sudo" to write to the lib directory - we fake it
+    sudo() { "$@"; }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
+  fi
+  # ----------------------------------------
+
+  # ----------------------------------------
+  # Windows support
+  # ----------------------------------------
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    # TODO: In the future find a way to run scripts with admin rights
+    # # Windows does not have "/usr/local/lib" directory - so we use "Program Files" directory instead
+    # __n2038_libs_path="${PROGRAMFILES}"
+
+    # Windows does not have "/usr/local/lib" directory - so we use user's directory instead
+    __n2038_libs_path="${HOME}"
+
+    # Windows does not have "sudo" - we fake it.
+    # In "_n2038_activate_inner_bash.sh" we properly define "sudo" function to run new Bash process as administrator
+    sudo() { "$@"; }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
   fi
   # ----------------------------------------
 
@@ -302,8 +548,34 @@ n2038_my_shell_environment() {
   # Path to the directory with scripts
   export _N2038_SHELL_ENVIRONMENT_PATH="${__n2038_libs_path}/${_N2038_SHELL_ENVIRONMENT_NAME}"
 
-  # Path to the directory with requirements scripts
-  export _N2038_REQUIREMENTS_PATH="${_N2038_SHELL_ENVIRONMENT_PATH}/requirements"
+  # Path to the directory with symlinks to this shell environment scripts
+  export _N2038_SHELL_ENVIRONMENT_SYMLINKS="${_N2038_SHELL_ENVIRONMENT_PATH}/.symlinks"
+
+  # Path to the directory with symlinks to installed programs via "my-shell-environment"
+  export _N2038_SHELL_ENVIRONMENT_PROGRAMS="${_N2038_SHELL_ENVIRONMENT_PATH}/.programs"
+
+  # Path to the directory with symlinks to installed programs via "my-shell-environment".
+  # On Windows we use "Program Files" directory.
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    export N2038_PROGRAMS_PATH
+    N2038_PROGRAMS_PATH="$(cygpath -u "${PROGRAMFILES}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
+      echo "Programs path \"${N2038_PROGRAMS_PATH}\" not found!" >&2
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    export N2038_PROGRAMS_PATH="/opt"
+    if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
+      sudo mkdir "${N2038_PROGRAMS_PATH}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+  else
+    echo "Initializing N2038_PROGRAMS_PATH is not supported for \"${_N2038_CURRENT_OS_TYPE}\"!" >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  fi
+
+  if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+    export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
+  fi
   # ========================================
 
   # ========================================
@@ -314,30 +586,8 @@ n2038_my_shell_environment() {
       echo "Checking requirements..." >&2
     fi
 
-    if ! which which > /dev/null 2>&1; then
-      echo "\"which\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which git > /dev/null 2>&1; then
-      echo "\"git\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which grep > /dev/null 2>&1; then
-      echo "\"grep\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which sudo > /dev/null 2>&1 && [ "${__n2038_is_sudo_faked}" = "0" ]; then
-      echo "\"sudo\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which xxhsum > /dev/null 2>&1; then
-      echo "\"xxhsum\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
-    if ! which date > /dev/null 2>&1; then
-      echo "\"date\" is not installed!" >&2
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-    fi
+    # We use subshell here because we don't want to unset parent function's variables inside child ones
+    (_n2038_commands_must_be_installed which sed grep git sudo sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2
@@ -381,8 +631,21 @@ n2038_my_shell_environment() {
     # ----------------------------------------
     if which bash > /dev/null 2>&1; then
       echo "Installing for Bash..." >&2
+
+      __n2038_bash_profile_path="${HOME}/.bash_profile"
+      if [ ! -f "${__n2038_bash_profile_path}" ]; then
+        echo "Creating \"${__n2038_bash_profile_path}\"..." >&2
+        # Fix "WARNING: Found ~/.bashrc but no ~/.bash_profile, ~/.bash_login or ~/.profile." in Windows
+        cat << EOF | tee "${__n2038_bash_profile_path}" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+test -f ~/.profile && . ~/.profile
+test -f ~/.bashrc && . ~/.bashrc
+EOF
+        echo "Creating \"${__n2038_bash_profile_path}\": success!" >&2
+      fi
+
       __n2038_bashrc_path="${HOME}/.bashrc"
       if { ! [ -f "${__n2038_bashrc_path}" ]; } || { ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate\$" "${__n2038_bashrc_path}"; }; then
+
         # shellcheck disable=SC2320
         echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
 source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate" >> "${__n2038_bashrc_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -393,6 +656,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     fi
     # ----------------------------------------
     # ========================================
+
+    _n2038_regenerate_symlinks || { _n2038_unset "$?" && return "$?" || return "$?"; }
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_UPDATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed to be updated! Pass \"install\" argument instead of \"update\" to install it." >&2
@@ -406,6 +671,8 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
     git -C "${_N2038_SHELL_ENVIRONMENT_PATH}" pull || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "Updating repository \"${_N2038_SHELL_ENVIRONMENT_PATH}\": success!" >&2
     # ========================================
+
+    _n2038_regenerate_symlinks || { _n2038_unset "$?" && return "$?" || return "$?"; }
   elif [ "${__n2038_command}" = "${__N2038_COMMAND_ACTIVATE}" ]; then
     if [ ! -d "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
       echo "\"${_N2038_SHELL_ENVIRONMENT_NAME}\" is not installed! Pass \"--install\" argument to install it." >&2
@@ -436,8 +703,12 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
   fi
   # ========================================
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_is_check_requested __n2038_is_install_dev __n2038_is_install_force __n2038_command __n2038_branch_name __n2038_libs_path __n2038_bashrc_path
+  return 0
 }
+# Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# shellcheck disable=SC3045
+export -f n2038_my_shell_environment 2> /dev/null || true
 
 # If this file is being executed
 if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then

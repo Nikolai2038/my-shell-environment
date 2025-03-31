@@ -14,6 +14,9 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+
 # Imports
 . "../messages/_constants.sh" || _n2038_return "$?" || return "$?"
 . "../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
@@ -42,7 +45,9 @@ _n2038_get_current_shell_depth() {
   if [ -z "${__n2038_current_shell_depth}" ]; then
     _n2038_print_error "Could not determine the current shell depth!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     echo "${_N2038_SHELL_DEPTH_UNKNOWN}"
-    _n2038_unset 0 && return "$?" || return "$?"
+
+    unset __n2038_current_shell_depth
+    return 0
   fi
 
   # "ksh" has different call stack
@@ -51,8 +56,10 @@ _n2038_get_current_shell_depth() {
   fi
 
   echo "${__n2038_current_shell_depth}"
-  _n2038_unset 0 && return "$?" || return "$?"
+
+  unset __n2038_current_shell_depth
+  return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

@@ -14,6 +14,9 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+
 # Imports
 . "../string/_n2038_tput.sh" || _n2038_return "$?" || return "$?"
 
@@ -50,14 +53,29 @@ export c_border_root=""
 export c_reset=""
 
 # NOTE: We use "_n2038_tput" here to be able to define colors both for "bash" and "ksh"
-c_text="$(_n2038_tput setaf 15)" || _n2038_return "$?"
-c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
-c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
-c_highlight="$(_n2038_tput setaf 90)" || _n2038_return "$?"
-c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
-c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
-c_border_usual="$(_n2038_tput setaf 27)" || _n2038_return "$?"
-c_border_root="$(_n2038_tput setaf 90)" || _n2038_return "$?"
+
+# If terminal supports more that 8 default colors, we use more soft colors instead
+if [ "${TERM}" = "xterm-256color" ]; then
+  c_text="$(_n2038_tput setaf 15)" || _n2038_return "$?"
+  c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
+  c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
+  c_highlight="$(_n2038_tput setaf 90)" || _n2038_return "$?"
+  c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
+  c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
+  c_border_usual="$(_n2038_tput setaf 27)" || _n2038_return "$?"
+  c_border_root="$(_n2038_tput setaf 90)" || _n2038_return "$?"
+# If terminal does not support more that 8 colors (MINGW, TTYs), we use default 8 colors
+else
+  c_text="$(_n2038_tput setaf 7)" || _n2038_return "$?"
+  c_info="$(_n2038_tput setaf 6)" || _n2038_return "$?"
+  c_success="$(_n2038_tput setaf 2)" || _n2038_return "$?"
+  c_highlight="$(_n2038_tput setaf 5)" || _n2038_return "$?"
+  c_warning="$(_n2038_tput setaf 3)" || _n2038_return "$?"
+  c_error="$(_n2038_tput setaf 1)" || _n2038_return "$?"
+  c_border_usual="$(_n2038_tput setaf 4)" || _n2038_return "$?"
+  c_border_root="$(_n2038_tput setaf 5)" || _n2038_return "$?"
+fi
+
 c_reset="$(_n2038_tput sgr0)" || _n2038_return "$?"
 
 # Color for border when printing tables, etc.
@@ -67,4 +85,4 @@ export c_border="${c_border_usual}"
 export c_return='COLOR_RETURN'
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

@@ -14,6 +14,9 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+
 # Imports
 . "../messages/_constants.sh" || _n2038_return "$?" || return "$?"
 . "../messages/_n2038_echo.sh" || _n2038_return "$?" || return "$?"
@@ -34,8 +37,9 @@ _n2038_ps2_function() {
   #   But we can specify colors here and replace them all colors with their values later.
   _n2038_echo -e "${c_border}├─[${c_success}${__n2038_current_shell_name}${c_return}]─> ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  unset __n2038_current_shell_name
+  return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

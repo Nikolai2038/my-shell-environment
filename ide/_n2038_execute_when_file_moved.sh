@@ -5,7 +5,7 @@ set -o pipefail
 
 # Escape pattern for "sed -E" command
 escape_sed() {
-  echo "${@}" | sed -e 's/[]\/#$&*.^;|{}()[]/\\&/g' || return "$?"
+  echo "$@" | sed -e 's/[]\/#$&*.^;|{}()[]/\\&/g' || return "$?"
   return 0
 }
 
@@ -120,4 +120,4 @@ _n2038_execute_when_file_moved() {
   return 0
 }
 
-_n2038_execute_when_file_moved "${@}" || exit "$?"
+_n2038_execute_when_file_moved "$@" || exit "$?"

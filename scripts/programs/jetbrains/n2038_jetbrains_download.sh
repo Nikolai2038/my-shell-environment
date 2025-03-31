@@ -14,10 +14,14 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
 
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+
 # Imports
 . "./_constants.sh" || _n2038_return "$?" || return "$?"
 . "../../messages/_constants.sh" || _n2038_return "$?" || return "$?"
 . "../../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
+. "../../messages/_n2038_print_info.sh" || _n2038_return "$?" || return "$?"
 . "../../messages/_n2038_print_list_items.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
@@ -95,12 +99,18 @@ $(_n2038_print_list_items "$(echo "${__n2038_latest_version_files}" | jq -r 'key
   # Use CDN server to download
   __n2038_link_to_download="$(echo "${__n2038_link_to_download}" | sed -En 's|^(https://download)(.jetbrains.com.+)$|\1-cdn\2|p')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  __n2038_file_name="$(basename "${__n2038_link_to_download}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_file_path="${N2038_DOWNLOADS_PATH}/$(basename "${__n2038_link_to_download}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-  wget -O "${__n2038_file_name}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  if [ -f "${__n2038_file_path}" ]; then
+    _n2038_print_info "File \"${c_highlight}${__n2038_file_path}${c_return}\" already exists. Skipping download." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    curl -L -o "${__n2038_file_path}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  echo "${__n2038_file_path}"
+
+  return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"

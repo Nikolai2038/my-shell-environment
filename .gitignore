@@ -1,0 +1,8 @@
+# Path to the directory with symlinks to this shell environment scripts
+/.symlinks
+
+# Path to the directory with symlinks to installed programs via "my-shell-environment"
+/.programs
+
+# Private scripts, which will not be in GIT
+/scripts/private

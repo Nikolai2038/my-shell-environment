@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# NOTE: This file will not be skipped if it was already sourced. This is because we need to source it in "n2038_my_shell_environment" every activation. See "_n2038_required_before_imports" for the skip logic.
+
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner_bash.sh"
 
 # Required before imports
@@ -13,6 +15,9 @@ if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
   fi
 fi
 _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_return_code}" = "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" ] && return "${_N2038_RETURN_CODE_WHEN_FILE_IS_ALREADY_SOURCED}" || _n2038_return "${__n2038_return_code}" || return "$?"; }
+
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
+. "../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
 
 # Imports
 . "./shell/_n2038_get_timestamp.sh" || _n2038_return "$?" || return "$?"
@@ -135,12 +140,60 @@ _n2038_activate_inner_bash() {
   fi
   # ========================================
 
-  _n2038_unset 0 && return "$?" || return "$?"
+  # ========================================
+  # Imitate "sudo" command for Windows
+  # ========================================
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    # shellcheck disable=SC2317
+    sudo() {
+      __n2038_temp_file="$(mktemp --suffix ".sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "temp file: ${__n2038_temp_file}"
+
+      echo "return_code=0" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      while [ "$#" -gt 0 ]; do
+        __n2038_arg="$1" && shift
+        __n2038_arg_escaped="${__n2038_arg//\\/\\\\}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_arg_escaped="${__n2038_arg_escaped//\"/\\\"}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_arg_escaped="${__n2038_arg_escaped//\$/\\\$}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        echo -n "\"${__n2038_arg_escaped}\" " >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      done
+      echo " || { return_code=\"\$?\" && read -p 'Error with return code \${return_code} occurred! Press any key to continue...' -n 1 -s -r; }" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # Clear buffer (this helps for special keys like arrows)
+      echo "while read -t 0.1 -n 1 -r; do :; done" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "echo ''" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # Remove temp file
+      echo "rm \"${__n2038_temp_file}\"" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "exit \${return_code}" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      echo "========================================"
+      cat "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "========================================"
+
+      # TODO: Find cause: For some reason, with '--noprofile', '--norc' it will freeze (and then, executing by hand will be okay).
+      powershell.exe -Command "Start-Process -FilePath 'C:\Program Files\Git\git-bash.exe' -Verb RunAs -ArgumentList '${__n2038_temp_file}'" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # Wait for the temp file to be removed - this will happen when the command is finished
+      while [ -f "${__n2038_temp_file}" ]; do
+        sleep 1
+      done
+
+      unset __n2038_temp_file __n2038_arg __n2038_arg_escaped
+      return 0
+    }
+    # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # shellcheck disable=SC3045
+    export -f sudo 2> /dev/null || true
+  fi
+  # ========================================
 
   if [ "${N2038_IS_DEBUG}" = "1" ]; then
     echo "Activating inner bash script: success!" >&2
   fi
+
+  return 0
 }
 
 # Required after function
-_n2038_required_after_function || _n2038_return "$?" || return "$?"
+_n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"
