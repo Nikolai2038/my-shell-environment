@@ -385,7 +385,8 @@ These constants can be overridden via environment variables:
 
 #### 8.3.6. Other
 
-- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes.
+- When printing colored messages with highlights, make sure to surround highlights with quotation marks too. This way they will be more readable in logs and notes;
+- Use `curl -L -o` instead of `wget -O`, because `wget` is not available in MINGW by default, but `curl` is.
 
 ## 9. Contribution
 

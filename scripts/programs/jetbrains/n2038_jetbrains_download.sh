@@ -104,7 +104,7 @@ $(_n2038_print_list_items "$(echo "${__n2038_latest_version_files}" | jq -r 'key
   if [ -f "${__n2038_file_path}" ]; then
     _n2038_print_info "File \"${c_highlight}${__n2038_file_path}${c_return}\" already exists. Skipping download." || { _n2038_unset "$?" && return "$?" || return "$?"; }
   else
-    wget -O "${__n2038_file_path}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    curl -L -o "${__n2038_file_path}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   echo "${__n2038_file_path}"
