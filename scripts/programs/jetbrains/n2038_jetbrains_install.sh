@@ -37,10 +37,26 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
-  [ "$#" -gt 0 ] && { __n2038_download_type="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_download_type=""
-  if [ -z "${__n2038_download_type}" ]; then
-    _n2038_print_error "The OS type is not specified! Available OS types:
-$(_n2038_print_list_items "${_N2038_JETBRAINS_DOWNLOAD_TYPES}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    if [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_X86_64}" ]; then
+      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS}"
+    elif [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_ARM64}" ]; then
+      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ARM64}"
+    else
+      _n2038_print_error "The architecture \"${c_highlight}${_N2038_CURRENT_KERNEL_ARCHITECTURE}${c_return}\" is not supported!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    if [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_X86_64}" ]; then
+      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_LINUX}"
+    elif [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_ARM64}" ]; then
+      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_LINUX_ARM64}"
+    else
+      _n2038_print_error "The architecture \"${c_highlight}${_N2038_CURRENT_KERNEL_ARCHITECTURE}${c_return}\" is not supported!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  else
+    _n2038_print_error "The OS type \"${c_highlight}${_N2038_CURRENT_OS_TYPE}${c_return}\" is not supported!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
@@ -68,14 +84,15 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_DOWNLOAD_TYPES}")" || { _n2038_uns
 
     __n2038_bin_file="${__n2038_installed_program_directory}/bin/${__n2038_product_name}"
 
-    _n2038_print_info "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    echo sudo ln -sf "${__n2038_bin_file}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    sudo ln -sf "${__n2038_installed_program_directory}/bin/${__n2038_product_name}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    _n2038_print_success "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+      _n2038_print_info "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo sudo ln -sf "${__n2038_bin_file}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      sudo ln -sf "${__n2038_installed_program_directory}/bin/${__n2038_product_name}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_print_success "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-    _n2038_print_info "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_print_info "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-    cat << EOF | sudo tee "/usr/share/applications/${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      cat << EOF | sudo tee "/usr/share/applications/${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 [Desktop Entry]
 Name=${__n2038_product_name}
 Exec=${__n2038_bin_file}
@@ -83,7 +100,8 @@ Icon=${__n2038_bin_file}.svg
 Type=Application
 Terminal=false
 EOF
-    _n2038_print_success "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_print_success "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
   else
     _n2038_print_error "The installation for the JetBrains product \"${c_highlight}${__n2038_product_name}${c_return}\" is not implemented for the OS type \"${c_highlight}${__n2038_download_type}${c_return}\"!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"

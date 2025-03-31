@@ -22,8 +22,6 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 
 # Imports
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?" || return "$?"
-. "./shell/_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
-. "./shell/_n2038_get_current_os_version.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_ps1_function.sh" || _n2038_return "$?" || return "$?"
@@ -46,19 +44,13 @@ _n2038_activate_inner() {
     echo "Activating inner script..." >&2
   fi
 
-  # To initialize the "_N2038_CURRENT_OS_NAME" variable - to not recalculate it every time
-  _n2038_get_current_os_name > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
-  # To initialize the "_N2038_CURRENT_OS_VERSION" variable - to not recalculate it every time
-  _n2038_get_current_os_version > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
-
   # Initialize the "_N2038_INIT_SHELL_DEPTH" variable
   if [ -z "${_N2038_INIT_SHELL_DEPTH}" ]; then
     export _N2038_INIT_SHELL_DEPTH
     _N2038_INIT_SHELL_DEPTH="$(_n2038_get_current_shell_depth)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     # Termux has different call stack
-    if [ "$(_n2038_get_current_os_name)" = "${_N2038_OS_NAME_TERMUX}" ] && [ -n "${_N2038_INIT_SHELL_DEPTH}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
+    if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ] && [ -n "${_N2038_INIT_SHELL_DEPTH}" ] && [ "${_N2038_INIT_SHELL_DEPTH}" != "${_N2038_SHELL_DEPTH_UNKNOWN}" ]; then
       _N2038_INIT_SHELL_DEPTH="$((_N2038_INIT_SHELL_DEPTH - 1))"
     fi
 

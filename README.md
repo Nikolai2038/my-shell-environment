@@ -224,18 +224,17 @@ Extra:
 
 #### 7.3.1. JetBrains
 
-#### 7.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable)
+#### 7.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
 
 Usage:
 
 ```sh
-n2038_jetbrains_install.sh <product_name> <download_type>
+n2038_jetbrains_install.sh <product_name>
 ```
 
 Where:
 
-- `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
-- `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
+- `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`.
 
 #### 7.3.1.2. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
 

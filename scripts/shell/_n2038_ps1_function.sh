@@ -21,8 +21,6 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "../messages/_constants.sh" || _n2038_return "$?" || return "$?"
 . "../messages/_n2038_echo.sh" || _n2038_return "$?" || return "$?"
 . "../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_get_current_os_version.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
 . "./_n2038_get_timestamp.sh" || _n2038_return "$?" || return "$?"
@@ -66,12 +64,11 @@ _n2038_ps1_function() {
     __n2038_hostname="$(hostname)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
-  __n2038_current_os_name="$(_n2038_get_current_os_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  __n2038_current_os_version="$(_n2038_get_current_os_version)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_current_os_name="${_N2038_CURRENT_OS_NAME}"
   if [ "${__n2038_current_os_name}" = "${_N2038_OS_NAME_UNKNOWN}" ]; then
     __n2038_current_os_name="${c_error}${__n2038_current_os_name}${c_border}"
-  elif [ -n "${__n2038_current_os_version}" ]; then
-    __n2038_current_os_name="${__n2038_current_os_name}-${__n2038_current_os_version}"
+  elif [ -n "${_N2038_CURRENT_OS_VERSION}" ]; then
+    __n2038_current_os_name="${__n2038_current_os_name}-${_N2038_CURRENT_OS_VERSION}"
   fi
 
   __n2038_was_error_calculating_current_shell_depth=0

@@ -15,14 +15,6 @@ export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 export _N2038_TRUE='true'
 export _N2038_FALSE='false'
 
-if [ -z "${N2038_PROGRAMS_PATH}" ]; then
-  export N2038_PROGRAMS_PATH="/opt"
-fi
-
-if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
-  export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
-fi
-
 # Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
 #
 # Usage:
@@ -261,6 +253,147 @@ _n2038_regenerate_symlinks() {
   return 0
 }
 
+export _N2038_CURRENT_OS_TYPE=""
+
+_N2038_OS_TYPE_WINDOWS="windows"
+_N2038_OS_TYPE_LINUX="linux"
+_N2038_OS_TYPE_MACOS="macos"
+
+# Inits the "_N2038_CURRENT_OS_TYPE" variable with type of the current OS.
+#
+# Usage: _n2038_init_current_os_type
+_n2038_init_current_os_type() {
+  _n2038_commands_must_be_installed uname || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_current_kernel_name="$(uname -s)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  if [ -n "${MSYSTEM}" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_WINDOWS}"
+  elif [ "${__n2038_current_kernel_name}" = "Linux" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_LINUX}"
+  elif [ "${__n2038_current_kernel_name}" = "Darwin" ]; then
+    _N2038_CURRENT_OS_TYPE="${_N2038_OS_TYPE_MACOS}"
+  else
+    echo "Could not determine the current OS type!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  unset __n2038_current_kernel_name
+  return 0
+}
+
+export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
+
+_N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
+_N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
+
+# Inits the "_N2038_CURRENT_KERNEL_ARCHITECTURE" variable with type of the current OS.
+#
+# Usage: _n2038_init_current_kernel_architecture
+_n2038_init_current_kernel_architecture() {
+  _n2038_commands_must_be_installed uname || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  __n2038_current_kernel_name="$(uname -m)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+  if [ "${__n2038_current_kernel_name}" = "x86_64" ]; then
+    _N2038_CURRENT_KERNEL_ARCHITECTURE="${_N2038_KERNEL_ARCHITECTURE_X86_64}"
+  elif [ "${__n2038_current_kernel_name}" = "aarch64" ]; then
+    _N2038_CURRENT_KERNEL_ARCHITECTURE="${_N2038_KERNEL_ARCHITECTURE_ARM64}"
+  else
+    echo "Could not determine the current kernel architecture!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  unset __n2038_current_kernel_name
+  return 0
+}
+
+export _N2038_CURRENT_OS_NAME=""
+
+_N2038_OS_NAME_UNKNOWN="os"
+_N2038_OS_NAME_WINDOWS="windows"
+_N2038_OS_NAME_TERMUX="termux"
+_N2038_OS_NAME_ARCH="arch"
+_N2038_OS_NAME_MACOS="macos"
+
+# Inits the "_N2038_CURRENT_OS_NAME" variable with name of the current OS.
+#
+# Usage: _n2038_init_current_os_name
+_n2038_init_current_os_name() {
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_WINDOWS}"
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    # For Termux there is no "/etc/os-release" file, so we need to check it separately
+    if [ -n "${TERMUX_VERSION}" ]; then
+      _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_TERMUX}"
+      return 0
+    fi
+
+    if [ ! -f "/etc/os-release" ]; then
+      echo "File \"/etc/os-release\" not found - probably, \"_n2038_init_current_os_name\" is not implemented for your OS." >&2
+      echo "${_N2038_OS_NAME_UNKNOWN}"
+      return 0
+    fi
+
+    _N2038_CURRENT_OS_NAME="$(sed -n 's/^ID=//p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    if [ -z "${_N2038_CURRENT_OS_NAME}" ]; then
+      echo "Could not determine the current OS name!" >&2
+      return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_MACOS}" ]; then
+    _N2038_CURRENT_OS_NAME="${_N2038_OS_NAME_MACOS}"
+  else
+    echo "Unknown current OS type in \"_n2038_init_current_os_name\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  return 0
+}
+
+export _N2038_CURRENT_OS_VERSION=""
+
+# Inits the "_N2038_CURRENT_OS_VERSION" variable with version of the current OS.
+# It can be empty (for example, for Arch).
+# Even if OS version can be sometimes updated in the current shell, it is not worth to recalculate it every command.
+#
+# Usage: _n2038_init_current_os_version
+_n2038_init_current_os_version() {
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    # For Windows there is no "/etc/os-release" file, so we need to check it separately
+    _n2038_commands_must_be_installed powershell || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Convert to lowercase and replace spaces with dashes
+    _N2038_CURRENT_OS_VERSION="$(powershell -command "(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName" | sed -E 's/[^a-zA-Z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^windows-//')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    return 0
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+      # There is no version for Arch
+      _N2038_CURRENT_OS_VERSION=""
+      return 0
+    elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
+      # For Termux there is no "/etc/os-release" file
+      _N2038_CURRENT_OS_VERSION="${TERMUX_VERSION}"
+      return 0
+    else
+      if [ ! -f "/etc/os-release" ]; then
+        echo "File \"/etc/os-release\" not found - probably, \"_n2038_init_current_os_version\" is not implemented for your OS." >&2
+        return 0
+      fi
+
+      _N2038_CURRENT_OS_VERSION="$(sed -En 's/^VERSION_ID="?([^"]+)"?/\1/p' /etc/os-release)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_MACOS}" ]; then
+    echo "Getting OS version is not implemented in \"_n2038_init_current_os_version\" for \"${_N2038_CURRENT_OS_NAME}\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  else
+    echo "Unknown current OS type in \"_n2038_init_current_os_version\"!" >&2
+    return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+  fi
+
+  return 0
+}
+
 # Activates the shell environment.
 #
 # Usage: n2038_my_shell_environment [--no-check] [--dev] [--force] [command=activate]
@@ -274,7 +407,12 @@ _n2038_regenerate_symlinks() {
 #   - "activate": Just activate the shell environment.
 n2038_my_shell_environment() {
   # Is "my-shell-environment" initialized successfully
-  _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0
+  export _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0
+
+  _n2038_init_current_os_type || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_kernel_architecture || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_os_name || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  _n2038_init_current_os_version || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Because we want to start calculating execution time as early as possible - we duplicate needed checks here
   if which which > /dev/null 2>&1 && which date > /dev/null 2>&1; then
@@ -332,7 +470,7 @@ n2038_my_shell_environment() {
   # ----------------------------------------
   # Termux support
   # ----------------------------------------
-  if [ -n "${TERMUX_VERSION}" ]; then
+  if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
     # Termux does not have "/usr/local/lib" directory - so we use app storage instead
     __n2038_libs_path="${PREFIX}/lib"
 
@@ -344,7 +482,7 @@ n2038_my_shell_environment() {
   # ----------------------------------------
   # Windows support
   # ----------------------------------------
-  if [ -n "${MSYSTEM}" ]; then
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     # TODO: In the future find a way to run scripts with admin rights
     # # Windows does not have "/usr/local/lib" directory - so we use "Program Files" directory instead
     # __n2038_libs_path="${PROGRAMFILES}"
@@ -369,6 +507,29 @@ n2038_my_shell_environment() {
 
   # Path to the directory with symlinks to installed programs via "my-shell-environment"
   export _N2038_SHELL_ENVIRONMENT_PROGRAMS="${_N2038_SHELL_ENVIRONMENT_PATH}/.programs"
+
+  # Path to the directory with symlinks to installed programs via "my-shell-environment".
+  # On Windows we use "Program Files" directory.
+  if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+    export N2038_PROGRAMS_PATH
+    N2038_PROGRAMS_PATH="$(cygpath -u "${PROGRAMFILES}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
+      echo "Programs path \"${N2038_PROGRAMS_PATH}\" not found!" >&2
+      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+    fi
+  elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
+    export N2038_PROGRAMS_PATH="/opt"
+    if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
+      sudo mkdir "${N2038_PROGRAMS_PATH}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+  else
+    echo "Initializing N2038_PROGRAMS_PATH is not supported for \"${_N2038_CURRENT_OS_TYPE}\"!" >&2
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  fi
+
+  if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+    export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
+  fi
   # ========================================
 
   # ========================================

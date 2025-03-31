@@ -19,7 +19,6 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 
 # Imports
 . "../../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
-. "../../shell/_n2038_get_current_os_name.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
@@ -38,8 +37,7 @@ _n2038_firefox_get_profile_path() {
     fi
   done
 
-  __n2038_os_name="$(_n2038_get_current_os_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  if [ "${__n2038_os_name}" = "${_N2038_OS_NAME_WINDOWS}" ]; then
+  if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_WINDOWS}" ]; then
     __n2038_firefox_data_path="${APPDATA}/Mozilla/Firefox"
   else
     __n2038_firefox_data_path="${HOME}/.mozilla/firefox"
@@ -52,7 +50,7 @@ _n2038_firefox_get_profile_path() {
   fi
   echo "${__n2038_firefox_data_path}/${__n2038_firefox_profile_name}"
 
-  unset __n2038_is_developers_edition __n2038_argument __n2038_os_name __n2038_firefox_data_path __n2038_firefox_profile_name
+  unset __n2038_is_developers_edition __n2038_argument __n2038_firefox_data_path __n2038_firefox_profile_name
   return 0
 }
 
