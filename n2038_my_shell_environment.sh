@@ -15,6 +15,24 @@ export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 export _N2038_TRUE='true'
 export _N2038_FALSE='false'
 
+export _N2038_CURRENT_OS_TYPE=""
+export _N2038_OS_TYPE_WINDOWS="windows"
+export _N2038_OS_TYPE_LINUX="linux"
+export _N2038_OS_TYPE_MACOS="macos"
+
+export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
+export _N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
+export _N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
+
+export _N2038_CURRENT_OS_NAME=""
+export _N2038_OS_NAME_UNKNOWN="os"
+export _N2038_OS_NAME_WINDOWS="windows"
+export _N2038_OS_NAME_TERMUX="termux"
+export _N2038_OS_NAME_ARCH="arch"
+export _N2038_OS_NAME_MACOS="macos"
+
+export _N2038_CURRENT_OS_VERSION=""
+
 # Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
 #
 # Usage:
@@ -229,6 +247,12 @@ _n2038_commands_must_be_installed() {
 
     if ! type "${__n2038_command}" > /dev/null 2>&1; then
       echo "Command \"${__n2038_command}\" is not installed!" >&2
+
+      # Add hint for installing "jq" in Windows
+      if [ "${__n2038_command}" = "jq" ] && [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
+        echo "You can install \"jq\" for MINGW via command: \"curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe\"" >&2
+      fi
+
       _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
     fi
   done
@@ -277,12 +301,6 @@ _n2038_regenerate_symlinks() {
 # shellcheck disable=SC3045
 export -f _n2038_regenerate_symlinks 2> /dev/null || true
 
-export _N2038_CURRENT_OS_TYPE=""
-
-export _N2038_OS_TYPE_WINDOWS="windows"
-export _N2038_OS_TYPE_LINUX="linux"
-export _N2038_OS_TYPE_MACOS="macos"
-
 # Inits the "_N2038_CURRENT_OS_TYPE" variable with type of the current OS.
 #
 # Usage: _n2038_init_current_os_type
@@ -309,11 +327,6 @@ _n2038_init_current_os_type() {
 # shellcheck disable=SC3045
 export -f _n2038_init_current_os_type 2> /dev/null || true
 
-export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
-
-export _N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
-export _N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
-
 # Inits the "_N2038_CURRENT_KERNEL_ARCHITECTURE" variable with type of the current OS.
 #
 # Usage: _n2038_init_current_kernel_architecture
@@ -337,14 +350,6 @@ _n2038_init_current_kernel_architecture() {
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
 # shellcheck disable=SC3045
 export -f _n2038_init_current_kernel_architecture 2> /dev/null || true
-
-export _N2038_CURRENT_OS_NAME=""
-
-export _N2038_OS_NAME_UNKNOWN="os"
-export _N2038_OS_NAME_WINDOWS="windows"
-export _N2038_OS_NAME_TERMUX="termux"
-export _N2038_OS_NAME_ARCH="arch"
-export _N2038_OS_NAME_MACOS="macos"
 
 # Inits the "_N2038_CURRENT_OS_NAME" variable with name of the current OS.
 #
@@ -383,8 +388,6 @@ _n2038_init_current_os_name() {
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
 # shellcheck disable=SC3045
 export -f _n2038_init_current_os_name 2> /dev/null || true
-
-export _N2038_CURRENT_OS_VERSION=""
 
 # Inits the "_N2038_CURRENT_OS_VERSION" variable with version of the current OS.
 # It can be empty (for example, for Arch).

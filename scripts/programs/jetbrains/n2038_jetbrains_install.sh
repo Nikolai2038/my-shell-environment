@@ -39,7 +39,7 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
 
   if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     if [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_X86_64}" ]; then
-      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS}"
+      __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ZIP}"
     elif [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_ARM64}" ]; then
       __n2038_download_type="${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ARM64}"
     else
@@ -86,7 +86,6 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
 
     if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
       _n2038_print_info "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
-      echo sudo ln -sf "${__n2038_bin_file}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       sudo ln -sf "${__n2038_installed_program_directory}/bin/${__n2038_product_name}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       _n2038_print_success "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
@@ -102,6 +101,43 @@ Terminal=false
 EOF
       _n2038_print_success "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
+  elif [ "${__n2038_download_type}" = "${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ZIP}" ]; then
+    __n2038_program_directory="${N2038_PROGRAMS_PATH}/JetBrains/${__n2038_product_name}"
+    sudo mkdir --parents "${__n2038_program_directory}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Windows archive does not contain any directory with version number inside, so we use it's name
+    __n2038_dir_name="$(basename "${__n2038_downloaded_file}" .zip)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    __n2038_installed_program_directory="${__n2038_program_directory}/${__n2038_dir_name}"
+    if [ -d "${__n2038_installed_program_directory}" ]; then
+      _n2038_print_info "The directory \"${c_highlight}${__n2038_installed_program_directory}${c_return}\" already exists! Unpacking the archive will be skipped!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    else
+      _n2038_print_info "Unpacking the archive \"${c_highlight}${__n2038_downloaded_file}${c_return}\" to \"${c_highlight}${__n2038_installed_program_directory}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      # Unzipping sometimes prompt replacement.
+      # For example, for CLion: "replace /c/Program Files/JetBrains/clion/CLion-2024.3.5.win/plugins/clion-radler/tools/profiler/dotmemory? [y]es, [n]o, [A]ll, [N]one, [r]ename:".
+      # Because of that, we use "-o" here.
+      unzip -o "${__n2038_downloaded_file}" -d "${__n2038_installed_program_directory}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_print_success "Unpacking the archive \"${c_highlight}${__n2038_downloaded_file}${c_return}\" to \"${c_highlight}${__n2038_installed_program_directory}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+
+    __n2038_bin_file="${__n2038_installed_program_directory}/bin/${__n2038_product_name}64.exe"
+
+    __n2038_jetbrains_start_menu_directory="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\JetBrains"
+
+    # Create start menu directory "C:\ProgramData\Microsoft\Windows\Start Menu\Programs"
+    _n2038_print_info "Creating start menu directory \"${c_highlight}${_N2038_SHELL_ENVIRONMENT_PROGRAMS}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    sudo mkdir --parents "${__n2038_jetbrains_start_menu_directory}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_print_success "Creating start menu directory \"${c_highlight}${_N2038_SHELL_ENVIRONMENT_PROGRAMS}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    # Create ".lnk" to the ".exe" via PowerShell
+    _n2038_print_info "Creating shortcut to the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    sudo powershell.exe -Command '$Shortcut = (New-Object -COMObject WScript.Shell).CreateShortcut("'"${__n2038_jetbrains_start_menu_directory}"'\'"${__n2038_product_name}"'.lnk"); $Shortcut.TargetPath = "'"$(cygpath -w "${__n2038_bin_file}")"'"; $Shortcut.Save()' || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_print_success "Creating shortcut to the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  elif [ "${__n2038_download_type}" = "${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS}" ] || [ "${__n2038_download_type}" = "${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ARM64}" ]; then
+    # Just execute the ".exe" installer
+    _n2038_print_info "Executing the installer \"${c_highlight}${__n2038_downloaded_file}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    "${__n2038_downloaded_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_print_success "Executing the installer \"${c_highlight}${__n2038_downloaded_file}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   else
     _n2038_print_error "The installation for the JetBrains product \"${c_highlight}${__n2038_product_name}${c_return}\" is not implemented for the OS type \"${c_highlight}${__n2038_download_type}${c_return}\"!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"

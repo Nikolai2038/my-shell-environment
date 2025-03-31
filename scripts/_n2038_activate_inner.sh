@@ -101,6 +101,10 @@ _n2038_activate_inner() {
 
   # ========================================
 
+  # Create directory for programs.
+  # This must be done after installing, because installing depends on empty "my-shell-environment" directory.
+  mkdir --parents "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
   if [ -n "${_N2038_SHELL_ENVIRONMENT_SYMLINKS} " ] && ! echo "${PATH}" | grep --quiet "${_N2038_SHELL_ENVIRONMENT_SYMLINKS}"; then
     # Make scripts available in shell by their names
     export PATH="${_N2038_SHELL_ENVIRONMENT_SYMLINKS}:${PATH}"

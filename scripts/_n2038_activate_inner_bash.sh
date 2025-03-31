@@ -146,27 +146,40 @@ _n2038_activate_inner_bash() {
   if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     # shellcheck disable=SC2317
     sudo() {
-      temp_file="$(mktemp --suffix ".sh")" || return "$?"
-      echo "temp file: ${temp_file}"
+      __n2038_temp_file="$(mktemp --suffix ".sh")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "temp file: ${__n2038_temp_file}"
 
+      echo "return_code=0" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       while [ "$#" -gt 0 ]; do
-        arg="$1" && shift
-        echo -n "\"${arg}\" " >> "${temp_file}" || return "$?"
+        __n2038_arg="$1" && shift
+        __n2038_arg_escaped="${__n2038_arg//\\/\\\\}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_arg_escaped="${__n2038_arg_escaped//\"/\\\"}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_arg_escaped="${__n2038_arg_escaped//\$/\\\$}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        echo -n "\"${__n2038_arg_escaped}\" " >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       done
-      echo "" >> "${temp_file}" || return "$?"
-      echo "rm \"${temp_file}\"" >> "${temp_file}" || return "$?"
-      echo "sleep 2" >> "${temp_file}" || return "$?"
+      echo " || { return_code=\"\$?\" && read -p 'Error with return code \${return_code} occurred! Press any key to continue...' -n 1 -s -r; }" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # Clear buffer (this helps for special keys like arrows)
+      echo "while read -t 0.1 -n 1 -r; do :; done" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "echo ''" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # Remove temp file
+      echo "rm \"${__n2038_temp_file}\"" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      echo "exit \${return_code}" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
       echo "========================================"
-      cat "${temp_file}" || return "$?"
+      cat "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       echo "========================================"
 
-      powershell.exe -Command "Start-Process -FilePath 'C:\Program Files\Git\git-bash.exe' -Verb RunAs -ArgumentList '-f', '${temp_file}'" || return "$?"
+      # TODO: Find cause: For some reason, with '--noprofile', '--norc' it will freeze (and then, executing by hand will be okay).
+      powershell.exe -Command "Start-Process -FilePath 'C:\Program Files\Git\git-bash.exe' -Verb RunAs -ArgumentList '${__n2038_temp_file}'" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-      while [ -f "${temp_file}" ]; do
+      # Wait for the temp file to be removed - this will happen when the command is finished
+      while [ -f "${__n2038_temp_file}" ]; do
         sleep 1
       done
 
+      unset __n2038_temp_file __n2038_arg __n2038_arg_escaped
       return 0
     }
     # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
