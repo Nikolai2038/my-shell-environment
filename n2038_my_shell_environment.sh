@@ -29,9 +29,16 @@ export _N2038_OS_NAME_UNKNOWN="os"
 export _N2038_OS_NAME_WINDOWS="windows"
 export _N2038_OS_NAME_TERMUX="termux"
 export _N2038_OS_NAME_ARCH="arch"
+export _N2038_OS_NAME_FEDORA="fedora"
+export _N2038_OS_NAME_DEBIAN="debian"
 export _N2038_OS_NAME_MACOS="macos"
 
 export _N2038_CURRENT_OS_VERSION=""
+
+export N2038_AUTO_INSTALL_PACKAGES
+if [ -z "${N2038_AUTO_INSTALL_PACKAGES}" ]; then
+  N2038_AUTO_INSTALL_PACKAGES=1
+fi
 
 # Unset local variables (starts with "__n2038") and local constants (starts with "__N2038") and then return passed return code.
 #
@@ -248,12 +255,101 @@ _n2038_commands_must_be_installed() {
     if ! type "${__n2038_command}" > /dev/null 2>&1; then
       echo "Command \"${__n2038_command}\" is not installed!" >&2
 
-      # Add hint for installing "jq" in Windows
-      if [ "${__n2038_command}" = "jq" ] && [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
-        echo "You can install \"jq\" for MINGW via command: \"curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe\"" >&2
+      # ========================================
+      # Define package name for the command.
+      # This can differ from OS to OS - this can be broken.
+      # Right now I am testing only on Arch.
+      # ========================================
+      __n2038_is_aur=0
+      __n2038_packages_names="${__n2038_command}"
+      if [ "${__n2038_command}" = "wl-copy" ]; then
+        __n2038_packages_names="wl-clipboard"
+      elif [ "${__n2038_command}" = "man" ]; then
+        __n2038_packages_names="man-db man-pages"
+      elif [ "${__n2038_command}" = "genisoimage" ]; then
+        __n2038_packages_names="cdrtools"
+      elif [ "${__n2038_command}" = "plasma-activities-cli6" ]; then
+        __n2038_packages_names="plasma-activities"
+      elif [ "${__n2038_command}" = "netstat" ]; then
+        __n2038_packages_names="net-tools"
+      elif [ "${__n2038_command}" = "_init_completion" ]; then
+        __n2038_packages_names="bash-completion"
+      elif [ "${__n2038_command}" = "remote-viewer" ]; then
+        __n2038_packages_names="virt-viewer"
+      elif [ "${__n2038_command}" = "vncviewer" ]; then
+        __n2038_packages_names="tigervnc"
+      elif [ "${__n2038_command}" = "telnet" ]; then
+        __n2038_packages_names="inetutils"
+      elif [ "${__n2038_command}" = "debtap" ]; then
+        __n2038_packages_names="debtap"
+        __n2038_is_aur=1
+      elif [ "${__n2038_command}" = "tput" ]; then
+        if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
+          __n2038_packages_names="ncurses-utils"
+        elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+          __n2038_packages_names="ncurses"
+        elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_FEDORA}" ]; then
+          __n2038_packages_names="ncurses"
+        elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_DEBIAN}" ]; then
+          __n2038_packages_names="ncurses-bin"
+        else
+          echo "Installing command \"${__n2038_command}\" is not implemented for \"${_N2038_CURRENT_OS_NAME}\"!" >&2
+        fi
+      elif [ "${__n2038_command}" = "pstree" ]; then
+        __n2038_packages_names="psmisc"
       fi
+      # ========================================
 
-      _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+      # ========================================
+      # Define installation steps
+      # ========================================
+      # Add hint for installing "jq" in Windows
+      if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_WINDOWS}" ]; then
+        if [ "${__n2038_command}" = "jq" ]; then
+          __n2038_command_to_install="sudo curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe"
+        else
+          echo "Installing command \"${__n2038_command}\" is not implemented for \"${_N2038_OS_NAME_WINDOWS}\"!" >&2
+          _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+        fi
+      elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_TERMUX}" ]; then
+        __n2038_command_to_install="pkg update && pkg install -y ${__n2038_packages_names}"
+      elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+        if [ "${__n2038_is_aur}" = "1" ]; then
+          __n2038_command_to_install="yay --sync --refresh --needed --noconfirm ${__n2038_packages_names}"
+        else
+          __n2038_command_to_install="sudo pacman --sync --refresh --needed --noconfirm ${__n2038_packages_names}"
+        fi
+      elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_FEDORA}" ]; then
+        __n2038_command_to_install="sudo dnf install -y ${__n2038_packages_names}"
+      elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_DEBIAN}" ]; then
+        __n2038_command_to_install="sudo apt-get update && sudo apt-get install -y ${__n2038_packages_names}"
+      elif [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_MACOS}" ]; then
+        echo "Installing commands \"${__n2038_command}\" are not implemented for \"${_N2038_OS_NAME_MACOS}\"!" >&2
+        _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+      fi
+      # ========================================
+
+      # ========================================
+      # Define post installation steps
+      # ========================================
+      if [ "${__n2038_command}" = "debtap" ]; then
+        __n2038_command_to_install="${__n2038_command_to_install} && sudo debtap -u"
+      fi
+      # ========================================
+
+      # ========================================
+      # Installation itself, or just print hint
+      # ========================================
+      if [ "${N2038_AUTO_INSTALL_PACKAGES}" = "1" ]; then
+        echo "Installing \"${__n2038_command}\" for ${_N2038_CURRENT_OS_NAME} via command \"${__n2038_command_to_install}\"..." >&2
+        eval "${__n2038_command_to_install}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        echo "Installing \"${__n2038_command}\" for ${_N2038_CURRENT_OS_NAME} via command \"${__n2038_command_to_install}\": success!" >&2
+        return 0
+      else
+        echo "You can install \"${__n2038_command}\" for ${_N2038_CURRENT_OS_NAME} via command: \"${__n2038_command_to_install}\"" >&2
+        _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+      fi
+      # ========================================
     fi
   done
 
@@ -556,6 +652,7 @@ n2038_my_shell_environment() {
 
   # Path to the directory with symlinks to installed programs via "my-shell-environment".
   # On Windows we use "Program Files" directory.
+  export N2038_DOWNLOADS_PATH
   if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     export N2038_PROGRAMS_PATH
     N2038_PROGRAMS_PATH="$(cygpath -u "${PROGRAMFILES}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -563,18 +660,22 @@ n2038_my_shell_environment() {
       echo "Programs path \"${N2038_PROGRAMS_PATH}\" not found!" >&2
       _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
     fi
+
+    if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+      N2038_DOWNLOADS_PATH="$(powershell.exe -NoProfile -Command "(New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path")"
+    fi
   elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
     export N2038_PROGRAMS_PATH="/opt"
     if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
       sudo mkdir "${N2038_PROGRAMS_PATH}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
+
+    if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+      N2038_DOWNLOADS_PATH="${HOME}/Downloads"
+    fi
   else
     echo "Initializing N2038_PROGRAMS_PATH is not supported for \"${_N2038_CURRENT_OS_TYPE}\"!" >&2
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-  fi
-
-  if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
-    export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
   fi
   # ========================================
 
@@ -587,7 +688,9 @@ n2038_my_shell_environment() {
     fi
 
     # We use subshell here because we don't want to unset parent function's variables inside child ones
-    (_n2038_commands_must_be_installed which sed grep git sudo sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    (_n2038_commands_must_be_installed which sudo sed grep git tput sha256sum date) || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    # Optional commands - we don't consider fails as errors here
+    (_n2038_commands_must_be_installed pstree) 2> /dev/null || true
 
     if [ "${N2038_IS_DEBUG}" = "1" ]; then
       echo "Checking requirements: success!" >&2

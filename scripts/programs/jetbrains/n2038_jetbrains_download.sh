@@ -33,6 +33,8 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 #
 # Example: n2038_jetbrains_download "idea" "linux"
 n2038_jetbrains_download() {
+  _n2038_commands_must_be_installed jq || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
   [ "$#" -gt 0 ] && { __n2038_product_name="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_product_name=""
   if [ -z "${__n2038_product_name}" ]; then
     _n2038_print_error "The product name is not specified! Available products:
@@ -83,7 +85,7 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
   # - "eap" (Early Access Program) – A preview version with experimental features, available for early testing. It may be unstable and is not intended for production use.
   # - "rc" (Release Candidate) – A nearly finished version that is being tested for final bugs before the official release. It is more stable than EAP but still not guaranteed to be bug-free.
   # - "release" – The final, officially stable version intended for general use.
-  __n2038_latest_version_files="$(curl "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=release" | jq -r '(.[0].releases.[0].downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_latest_version_files="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=release" | jq -r '(.[0].releases.[0].downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   if [ -z "${__n2038_latest_version_files}" ]; then
     _n2038_print_error "Failed to get files list!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
@@ -104,7 +106,7 @@ $(_n2038_print_list_items "$(echo "${__n2038_latest_version_files}" | jq -r 'key
   if [ -f "${__n2038_file_path}" ]; then
     _n2038_print_info "File \"${c_highlight}${__n2038_file_path}${c_return}\" already exists. Skipping download." || { _n2038_unset "$?" && return "$?" || return "$?"; }
   else
-    curl -L -o "${__n2038_file_path}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    curl --fail -L -o "${__n2038_file_path}" "${__n2038_link_to_download}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   echo "${__n2038_file_path}"
