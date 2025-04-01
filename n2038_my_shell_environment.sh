@@ -250,7 +250,7 @@ _n2038_commands_must_be_installed() {
 
       # Add hint for installing "jq" in Windows
       if [ "${__n2038_command}" = "jq" ] && [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
-        echo "You can install \"jq\" for MINGW via command: \"curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe\"" >&2
+        echo "You can install \"jq\" for MINGW via command: \"sudo curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe\"" >&2
       fi
 
       _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
@@ -556,6 +556,7 @@ n2038_my_shell_environment() {
 
   # Path to the directory with symlinks to installed programs via "my-shell-environment".
   # On Windows we use "Program Files" directory.
+  export N2038_DOWNLOADS_PATH
   if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     export N2038_PROGRAMS_PATH
     N2038_PROGRAMS_PATH="$(cygpath -u "${PROGRAMFILES}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -563,18 +564,22 @@ n2038_my_shell_environment() {
       echo "Programs path \"${N2038_PROGRAMS_PATH}\" not found!" >&2
       _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
     fi
+
+    if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+      N2038_DOWNLOADS_PATH="$(powershell.exe -NoProfile -Command "(New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path")"
+    fi
   elif [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
     export N2038_PROGRAMS_PATH="/opt"
     if [ ! -d "${N2038_PROGRAMS_PATH}" ]; then
       sudo mkdir "${N2038_PROGRAMS_PATH}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
+
+    if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
+      N2038_DOWNLOADS_PATH="${HOME}/Downloads"
+    fi
   else
     echo "Initializing N2038_PROGRAMS_PATH is not supported for \"${_N2038_CURRENT_OS_TYPE}\"!" >&2
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
-  fi
-
-  if [ -z "${N2038_DOWNLOADS_PATH}" ]; then
-    export N2038_DOWNLOADS_PATH="${HOME}/Downloads"
   fi
   # ========================================
 
