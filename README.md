@@ -27,101 +27,47 @@ COMMAND_OUTPUT
 
 ## 4. Installation
 
-### 4.1. Stable version
+1. Install required software:
 
-#### 4.1.1. Debian
+    - For Windows, install [Git](https://git-scm.com/downloads/win);
+    - For Linux, install:
+      - `git`;
+      - `sudo` command and grant your user permissions.
 
-```sh
-sudo apt-get update && sudo apt-get install -y grep git debianutils ncurses-bin psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
-```
+    Other commands and packages will be installed by script itself:
 
-#### 4.1.2. Arch Linux
+    - Required commands:
 
-```sh
-sudo pacman --sync --refresh --needed --noconfirm which grep git ncurses psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
-```
+        - `which`, `sudo`, `sed`, `grep`, `git`, `tput`, `sha256sum`, `date`.
 
-#### 4.1.3. Termux
+    - Optional commands:
 
-```sh
-pkg update && pkg install -y which grep git ncurses-utils psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
-```
+        - `pstree`: Will allow to output current shell depth.
 
-#### 4.1.4. Fedora
+            NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
 
-```sh
-sudo dnf install -y which grep git ncurses psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
-```
+            - Open a **new terminal** (even **not a new shell**, because shell depth is recalculating based on the process tree);
+            - Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
 
-#### 4.1.5. Windows
+                ```sh
+                _N2038_INIT_SHELL_DEPTH="" && n2038_my_bash_environment activate
+                ```
 
-1. Install [Git](https://git-scm.com/downloads/win);
-2. Then run in Bash (MINGW):
+    If you don't want script to install anything - set environment variable `N2038_AUTO_INSTALL_PACKAGES` to `0` in your `.bashrc` or just in terminal - before installing `my-shell-environment`. Script will still hint you how to install all the commands.
 
-    ```sh
-    rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
-    ```
+2. Open Bash terminal;
+3. Install:
 
-### 4.2. Development version
-
-#### 4.2.1. Debian
-
-```sh
-sudo apt-get update && sudo apt-get install -y grep git debianutils ncurses-bin psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
-```
-
-#### 4.2.2. Arch Linux
-
-```sh
-sudo pacman --sync --refresh --needed --noconfirm which grep git ncurses psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
-```
-
-#### 4.2.3. Termux
-
-```sh
-pkg update && pkg install -y which grep git ncurses-utils psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
-```
-
-#### 4.2.4. Fedora
-
-```sh
-sudo dnf install -y which grep git ncurses psmisc && \
-rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
-```
-
-#### 4.2.5. Windows
-
-1. Install [Git](https://git-scm.com/downloads/win);
-2. Then run in Bash (MINGW):
-
-    ```sh
-    rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
-    ```
-
-### 4.4. More about commands
-
-Required commands:
-
-- `which`, `sed`, `grep`, `git`, `tput`, `sha256sum`.
-
-Optional commands:
-
-- `pstree`: Will allow to output current shell depth.
-
-    NOTE: If you install `psmisc` in already applied "my-shell-environment", for shell depth to appear you need to do either of one:
-
-    - Open a **new terminal** (even **not a new shell**, because shell depth is recalculating based on the process tree);
-    - Or just execute (but this method will see current shell as level `0`, regardless of the parent shells number):
+    - Stable version (`main` branch):
 
         ```sh
-        _N2038_INIT_SHELL_DEPTH="" && n2038_my_bash_environment activate
+        rm -rf ~/.my-shell-environment; git clone --branch main https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment install; rm -rf ~/.my-shell-environment
+        ```
+
+    - Development version (`dev` branch):
+
+        ```sh
+        rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
         ```
 
 ## 5. Uninstallation
