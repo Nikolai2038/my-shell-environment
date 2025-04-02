@@ -61,7 +61,8 @@ n2038_check_port() {
     __n2038_port="${__n2038_host_and_port#*:}"
   fi
 
-  timeout 1 sh -c "</dev/tcp/${__n2038_host}/${__n2038_port}" || { _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"; }
+  _n2038_commands_must_be_installed bash || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  timeout 1 bash -c "</dev/tcp/${__n2038_host}/${__n2038_port}" || { _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"; }
 
   return 0
 }
