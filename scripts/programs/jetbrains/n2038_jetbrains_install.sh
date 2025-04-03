@@ -94,7 +94,11 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
       cat << EOF | sudo tee "/usr/share/applications/${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 [Desktop Entry]
 Name=${__n2038_product_name}
-Exec=${__n2038_bin_file}
+
+# Start on X11, because on Wayland scaling is broken.
+# If you do not use display with scale, you can remove this env variable.
+Exec=env WAYLAND_DISPLAY= ${__n2038_bin_file}
+
 Icon=${__n2038_bin_file}.svg
 Type=Application
 Terminal=false
