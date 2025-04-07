@@ -122,7 +122,7 @@ unalias gl > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "git log" command.
 gl() {
-  g log --graph --pretty=format:"%C(yellow)%h %C(green)%ad %C(cyan)%G? %C(blue)%an%C(magenta)%d%C(reset) %s" --date=format:"%Y-%m-%d %H:%M:%S" "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  g log --all --graph --pretty=format:"%C(yellow)%h %C(green)%ad %C(cyan)%G? %C(blue)%an%C(magenta)%d%C(reset) %s" --date=format:"%Y-%m-%d %H:%M:%S" "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 

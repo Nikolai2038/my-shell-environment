@@ -103,6 +103,17 @@ dcps() {
   dc ps "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
+
+unalias dce > /dev/null 2>&1 || true
+# Alias for "docker-compose exec -it"
+#
+# Usage: dce [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose exec -it" command.
+dce() {
+  docker-compose exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
 # ========================================
 
 # ========================================

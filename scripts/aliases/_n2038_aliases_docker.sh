@@ -53,6 +53,30 @@ di() {
   docker image list --format "${c_success}{{.Repository}}${c_text}:${c_border_usual}{{.Tag}}${c_text} ({{.Size}})${c_reset}" --filter "dangling=false" | grep -v '<none>' | sort | less -R || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
+
+unalias dl > /dev/null 2>&1 || true
+# Alias for "docker logs".
+#
+# Usage: dl [arg...]
+# Where:
+# - "arg": Extra argument to the "docker ps" command.
+dl() {
+  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  docker logs "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias de > /dev/null 2>&1 || true
+# Alias for "docker exec -it".
+#
+# Usage: de [arg...]
+# Where:
+# - "arg": Extra argument to the "docker ps" command.
+de() {
+  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  docker exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
 # ========================================
 
 # ========================================

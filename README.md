@@ -140,11 +140,14 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
 Main:
 
 - `dps` = `docker ps`: Prints list of the running containers;
-- `dpi` = `docker images`: Prints colorful list of the images with line format:
+- `di` = `docker images`: Prints colorful list of the images with line format:
 
     ```plaintext
     <image>:<tag> (<size>)
     ```
+
+- `dl` = `docker logs`;
+- `de` = `docker compose exec -it`.
 
 Extra:
 
@@ -163,6 +166,7 @@ Main:
 - `dcr` = `docker-compose restart`;
 - `dcl` = `docker-compose logs`;
 - `dcps` = `docker-compose ps`;
+- `dce` = `docker-compose exec -it`.
 
 Extra:
 
