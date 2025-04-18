@@ -81,6 +81,27 @@ gc() {
   return 0
 }
 
+unalias gca > /dev/null 2>&1 || true
+# Alias for "git commit --amend --no-edit".
+#
+# Usage: gca [message] [arg...]
+# Where:
+# - "arg": Extra argument to the "git commit" command.
+gca() {
+  if [ "$#" -gt 0 ]; then
+    if [ "$#" -lt 1 ]; then
+      _n2038_print_error "Usage: gca [message]" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
+    fi
+    { __n2038_message="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+    g commit --amend --no-edit "$@" -m "${__n2038_message}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    g commit --amend --no-edit "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
+  return 0
+}
+
 unalias gpull > /dev/null 2>&1 || true
 # Alias for "git pull".
 #
@@ -123,6 +144,29 @@ unalias gl > /dev/null 2>&1 || true
 # - "arg": Extra argument to the "git log" command.
 gl() {
   g log --all --graph --pretty=format:"%C(yellow)%h %C(green)%ad %C(cyan)%G? %C(blue)%an%C(magenta)%d%C(reset) %s" --date=format:"%Y-%m-%d %H:%M:%S" "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias glr > /dev/null 2>&1 || true
+# Alias for "git log --reflog" (beautified).
+#
+# Usage: glr [arg...]
+# Where:
+# - "arg": Extra argument to the "git log" command.
+glr() {
+  gl --reflog "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias gu > /dev/null 2>&1 || true
+# Undo last commit (keep changes staged).
+# Alias for "git reset --soft HEAD~1".
+#
+# Usage: gu [arg...]
+# Where:
+# - "arg": Extra argument to the "git reset" command.
+gu() {
+  g reset "$@" --soft HEAD~1 || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 

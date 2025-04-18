@@ -128,12 +128,16 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
 - `gs` = `git status`: Show Git repository status;
 - `ga [arg, default: .]` = `git add`: Add files to Git index. If no files specified, adds all files (`.`);
 - `gc <message>` = `git commit -m`: Commit changes with message;
+- `gca [message]` = `git commit --amend`: Add current staged changes to last commit. Optionally, can change message of the last commit;
 - `gpull` = `git pull`: Pull changes from remote repository;
 - `gpush` = `git push`: Push commits to remote repository;
 - `gp` = `git pull && git push`: Pull and then push changes to the remote repository;
 - `gl` = `git log`: Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message:
 
     ![gl](./.readme_images/git_log.png)
+
+- `glr` = `git log --reflog`: Same as `git log`, but also show commits only mentioned by reflogs;
+- `gu` = `git reset --soft HEAD~1`: Undo last commit (keep changes staged).
 
 #### 8.2.3. `docker`
 
