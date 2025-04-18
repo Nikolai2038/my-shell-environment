@@ -151,13 +151,14 @@ Main:
     ```
 
 - `dl` = `docker logs`;
+- `dlf` = `docker logs --follow`;
 - `de` = `docker compose exec -it`.
 
 Extra:
 
 - `dpsq` = `docker ps -q`: Prints list of hashes of the running containers;
 - `dpsa` = `docker ps -a`: Prints list of all containers (running and stopped);
-- `dpsaq` = `docker ps -aq`: Prints list of hashes of all containers (running and stopped).
+- `dpsaq`/`dpsqa` = `docker ps -aq`: Prints list of hashes of all containers (running and stopped).
 
 #### 8.2.4. `docker-compose`
 
@@ -175,15 +176,20 @@ Main:
 Extra:
 
 - `dcud` = `docker-compose up --detach --wait && docker-compose down`;
+- `dcdu` = `docker-compose down && docker-compose up --detach --wait`;
+- `dcub` = `docker-compose up --detach --wait && docker-compose build`;
 - `dcbu` = `docker-compose build && docker-compose up --detach --wait`;
+- `dcdb` = `docker-compose down && docker-compose build`;
+- `dcbd` = `docker-compose build && docker-compose down`;
 - `dcbud` = `docker-compose build && docker-compose up --detach --wait && docker-compose down`;
 - `dcbdu` = `docker-compose build && docker-compose down && docker-compose up --detach --wait`;
-- `dcdb` = `docker-compose down && docker-compose build`;
-- `dcdu` = `docker-compose down && docker-compose up --detach --wait`;
 - `dcdbu` = `docker-compose down && docker-compose build && docker-compose up --detach --wait`;
+- `dcdub` = `docker-compose down && docker-compose up --detach --wait && docker-compose build`;
+- `dcudb` = `docker-compose up --detach --wait && docker-compose down && docker-compose build`;
+- `dcubd` = `docker-compose up --detach --wait && docker-compose build && docker-compose down`;
 - `dcpsa` = `docker-compose ps -a`;
 - `dcpsq` = `docker-compose ps -q`;
-- `dcpsaq` = `docker-compose ps -aq`.
+- `dcpsaq`/`dcpsqa` = `docker-compose ps -aq`.
 
 ### 8.3. Scripts
 

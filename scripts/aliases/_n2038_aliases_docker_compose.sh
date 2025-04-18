@@ -131,6 +131,30 @@ dcud() {
   return 0
 }
 
+unalias dcdu > /dev/null 2>&1 || true
+# Alias for "docker-compose down && docker-compose up --detach --wait"
+#
+# Usage: dcdu [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose down" and "docker-compose up" commands.
+dcdu() {
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcub > /dev/null 2>&1 || true
+# Alias for "docker-compose up --detach --wait && docker-compose build"
+#
+# Usage: dcub [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose up" and "docker-compose build" commands.
+dcub() {
+  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 unalias dcbu > /dev/null 2>&1 || true
 # Alias for "docker-compose build && docker-compose up --detach --wait"
 #
@@ -140,6 +164,30 @@ unalias dcbu > /dev/null 2>&1 || true
 dcbu() {
   dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcdb > /dev/null 2>&1 || true
+# Alias for "docker-compose down && docker-compose build"
+#
+# Usage: dcdb [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose down" and "docker-compose build" commands.
+dcdb() {
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcbd > /dev/null 2>&1 || true
+# Alias for "docker-compose build && docker-compose down"
+#
+# Usage: dcbd [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose build" and "docker-compose down" commands.
+dcbd() {
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -169,30 +217,6 @@ dcbdu() {
   return 0
 }
 
-unalias dcdb > /dev/null 2>&1 || true
-# Alias for "docker-compose down && docker-compose build"
-#
-# Usage: dcdb [arg...]
-# Where:
-# - "arg": Extra argument to the "docker-compose down" and "docker-compose build" commands.
-dcdb() {
-  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  return 0
-}
-
-unalias dcdu > /dev/null 2>&1 || true
-# Alias for "docker-compose down && docker-compose up --detach --wait"
-#
-# Usage: dcdu [arg...]
-# Where:
-# - "arg": Extra argument to the "docker-compose down" command.
-dcdu() {
-  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  return 0
-}
-
 unalias dcdbu > /dev/null 2>&1 || true
 # Alias for "docker-compose down && docker-compose build && docker-compose up --detach --wait"
 #
@@ -203,6 +227,45 @@ dcdbu() {
   dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcdub > /dev/null 2>&1 || true
+# Alias for "docker-compose down && docker-compose up --detach --wait && docker-compose build"
+#
+# Usage: dcdub [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose down", "docker-compose up" and "docker-compose build" commands.
+dcdub() {
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcubd > /dev/null 2>&1 || true
+# Alias for "docker-compose up --detach --wait && docker-compose build && docker-compose down"
+#
+# Usage: dcubd [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose up", "docker-compose build" and "docker-compose down" commands.
+dcubd() {
+  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcudb > /dev/null 2>&1 || true
+# Alias for "docker-compose up --detach --wait && docker-compose down && docker-compose build"
+#
+# Usage: dcudb [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose up", "docker-compose down" and "docker-compose build" commands.
+dcudb() {
+  dcu "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcd "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  dcb "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -236,6 +299,17 @@ unalias dcpsaq > /dev/null 2>&1 || true
 # - "arg": Extra argument to the "docker-compose ps" command.
 dcpsaq() {
   dcpsa -q "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dcpsqa > /dev/null 2>&1 || true
+# Alias for "docker-compose ps -aq"
+#
+# Usage: dcpsqa [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose ps" command.
+dcpsqa() {
+  dcpsaq "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 # ========================================

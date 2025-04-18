@@ -27,6 +27,18 @@ _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 # ========================================
 # Main
 # ========================================
+unalias d > /dev/null 2>&1 || true
+# Alias for "docker".
+#
+# Usage: d [arg...]
+# Where:
+# - "arg": Extra argument to the "docker" command.
+d() {
+  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  docker "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 unalias dps > /dev/null 2>&1 || true
 # Alias for "docker ps".
 # Prints list of the running containers.
@@ -35,8 +47,7 @@ unalias dps > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker ps" command.
 dps() {
-  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  docker ps --format "table {{.Names}}\t{{.Image}}\t{{.RunningFor}}\t{{.Status}}\t{{.Networks}}\t{{.Ports}}" "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  d ps --format "table {{.Names}}\t{{.Image}}\t{{.RunningFor}}\t{{.Status}}\t{{.Networks}}\t{{.Ports}}" "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -49,8 +60,7 @@ unalias di > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker ps" command.
 di() {
-  _n2038_commands_must_be_installed docker less || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  docker image list --format "${c_success}{{.Repository}}${c_text}:${c_border_usual}{{.Tag}}${c_text} ({{.Size}})${c_reset}" --filter "dangling=false" | grep -v '<none>' | sort | less -R || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  d image list --format "${c_success}{{.Repository}}${c_text}:${c_border_usual}{{.Tag}}${c_text} ({{.Size}})${c_reset}" --filter "dangling=false" | grep -v '<none>' | sort | less -R || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -61,8 +71,18 @@ unalias dl > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker ps" command.
 dl() {
-  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  docker logs "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  d logs "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dlf > /dev/null 2>&1 || true
+# Alias for "docker logs --follow".
+#
+# Usage: dlf [arg...]
+# Where:
+# - "arg": Extra argument to the "docker ps" command.
+dlf() {
+  dl --follow "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -73,8 +93,7 @@ unalias de > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker ps" command.
 de() {
-  _n2038_commands_must_be_installed docker || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  docker exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  d exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 # ========================================
@@ -115,6 +134,18 @@ unalias dpsaq > /dev/null 2>&1 || true
 # - "arg": Extra argument to the "docker ps" command.
 dpsaq() {
   dpsa -q "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
+unalias dpsqa > /dev/null 2>&1 || true
+# Alias for "docker ps -aq".
+# Prints list of hashes of all containers (running and stopped).
+#
+# Usage: dpsqa [arg...]
+# Where:
+# - "arg": Extra argument to the "docker ps" command.
+dpsqa() {
+  dpsaq "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 # ========================================
