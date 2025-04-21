@@ -36,6 +36,7 @@ g() {
 }
 
 unalias gs > /dev/null 2>&1 || true
+# Show Git repository status.
 # Alias for "git status".
 #
 # Usage: gs [arg...]
@@ -46,7 +47,20 @@ gs() {
   return 0
 }
 
+unalias gf > /dev/null 2>&1 || true
+# Fetch Git changes.
+# Alias for "git fetch".
+#
+# Usage: gf [arg...]
+# Where:
+# - "arg": Extra argument to the "git fetch" command.
+gf() {
+  g fetch "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 unalias ga > /dev/null 2>&1 || true
+# Add files to Git index. If no files specified, adds all files (`.`).
 # Alias for "git add".
 #
 # Usage: ga [arg, default: .] [arg...]
@@ -63,6 +77,7 @@ ga() {
 }
 
 unalias gc > /dev/null 2>&1 || true
+# Commit changes with specified message.
 # Alias for "git commit -m".
 #
 # Usage: gc <message> [arg...]
@@ -82,6 +97,7 @@ gc() {
 }
 
 unalias gca > /dev/null 2>&1 || true
+# Add current staged changes to last commit. Optionally, can change message of the last commit.
 # Alias for "git commit --amend --no-edit".
 #
 # Usage: gca [message] [arg...]
@@ -103,6 +119,7 @@ gca() {
 }
 
 unalias gpull > /dev/null 2>&1 || true
+# Pull changes from remote repository.
 # Alias for "git pull".
 #
 # Usage: gpull [arg...]
@@ -114,6 +131,7 @@ gpull() {
 }
 
 unalias gpush > /dev/null 2>&1 || true
+# Push commits to remote repository.
 # Alias for "git push".
 #
 # Usage: gpush [arg...]
@@ -125,6 +143,7 @@ gpush() {
 }
 
 unalias gp > /dev/null 2>&1 || true
+# Pull and then push changes to the remote repository.
 # Alias for "git pull && git push".
 #
 # Usage: gp [arg...]
@@ -136,8 +155,22 @@ gp() {
   return 0
 }
 
+unalias gpf > /dev/null 2>&1 || true
+# Pull and then force push changes to the remote repository.
+# Alias for "git pull && git push --force".
+#
+# Usage: gpf [arg...]
+# Where:
+# - "arg": Extra argument to the "git pull" and "git push" commands.
+gpf() {
+  gpull "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  gpush --force "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 unalias gl > /dev/null 2>&1 || true
-# Alias for "git log" (beautified).
+# Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message.
+# Alias for "git log".
 #
 # Usage: gl [arg...]
 # Where:
@@ -148,7 +181,8 @@ gl() {
 }
 
 unalias glr > /dev/null 2>&1 || true
-# Alias for "git log --reflog" (beautified).
+# Same as `git log`, but also show commits only mentioned by reflogs.
+# Alias for "git log --reflog".
 #
 # Usage: glr [arg...]
 # Where:

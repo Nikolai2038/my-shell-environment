@@ -105,6 +105,40 @@ _n2038_ps1_function() {
 
   __n2038_current_shell_name="$(_n2038_get_current_shell_name)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
+  __n2038_git_part=""
+  # If we are in GIT repository (".git" will be directory in main repository and be file in submodules)
+  if [ -e ".git" ]; then
+    __n2038_git_part="
+├─"
+
+    __n2038_git_branch_name="$(git branch 2> /dev/null | sed -En 's/^\* (.+)$/\1/p')" || __n2038_git_branch_name=""
+    if [ -z "${__n2038_git_branch_name}" ]; then
+      # When cloned empty repository
+      __n2038_git_branch_name="$(git status | sed -En 's/^On branch (.+)$/\1/p')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    fi
+
+    __n2038_parent_repository="$(git rev-parse --show-superproject-working-tree)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    # If current repository is submodule - calculate info about parent repository first
+    if [ -n "${__n2038_parent_repository}" ]; then
+      __n2038_parent_git_branch_name="$(git -C "${__n2038_parent_repository}" branch 2> /dev/null | sed -En 's/^\* (.+)$/\1/p')" || __n2038_git_branch_name=""
+
+      __n2038_submodule_name="$(basename "$(git rev-parse --show-superproject-working-tree 2> /dev/null)")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      if [ -n "${__n2038_parent_git_branch_name}" ]; then
+        __n2038_git_part="${__n2038_git_part}${c_border}[${__n2038_submodule_name}:${c_success}${__n2038_parent_git_branch_name}${c_border}]─"
+      else
+        __n2038_git_part="${__n2038_git_part}${c_border}[${__n2038_submodule_name}:${c_error}???${c_border}]─"
+      fi
+    fi
+
+    # Calculate info about current repository
+    __n2038_repository_name="$(basename "$(git rev-parse --show-toplevel 2> /dev/null)")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    if [ -n "${__n2038_git_branch_name}" ]; then
+      __n2038_git_part="${__n2038_git_part}${c_border}[${__n2038_repository_name}:${c_success}${__n2038_git_branch_name}${c_border}]"
+    else
+      __n2038_git_part="${__n2038_git_part}${c_border}[${__n2038_repository_name}:${c_error}???${c_border}]"
+    fi
+  fi
+
   __n2038_execution_time_part=""
   if [ "${__n2038_current_shell_name}" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ] && [ -n "${_N2038_LAST_TIME}" ]; then
     __n2038_current_timestamp="$(_n2038_get_timestamp)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -129,7 +163,7 @@ _n2038_ps1_function() {
   # - We specify colors in the beginning of each line, because bash may have override it with text color, when navigating in commands' history.
   _n2038_echo -en "${c_border}└─[${__n2038_color_for_error_code}${__n2038_return_code_formatted}${c_border}]${__n2038_execution_time_part}─[${__n2038_date}]
 
-${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]
+${c_border}┌─[${__n2038_user}@${__n2038_hostname}:${c_success}${PWD}${c_border}]${__n2038_git_part}${c_reset}
 ${c_border}├─[${__n2038_current_os_name}]${__n2038_get_current_shell_depth_part}─[${c_success}${__n2038_current_shell_name}${c_border}]─\$ ${c_reset}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   # Since we will run this function in subshell anyway, we won't unset local variables to get even more performance.
