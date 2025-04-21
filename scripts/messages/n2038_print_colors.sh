@@ -3,11 +3,11 @@
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/messages/n2038_print_colors.sh"
 
 # Required before imports
-# shellcheck disable=SC1091
-if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
+if ! type _n2038_required_before_imports > /dev/null 2>&1; then
   # If we have not initialized the shell environment, but has it (for example, when starting "dash" from "bash"), then we will try to initialize it.
   if [ -n "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-    . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+    # shellcheck disable=SC1091
+    _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0 . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
   else
     echo "\"my-bash-environment\" is not initialized. Please, initialize it first." >&2 && return 1 2> /dev/null || exit 1
   fi

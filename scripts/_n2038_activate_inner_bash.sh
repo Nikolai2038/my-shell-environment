@@ -5,11 +5,11 @@
 __N2038_PATH_TO_THIS_SCRIPT_FROM_ENVIRONMENT_ROOT="scripts/_n2038_activate_inner_bash.sh"
 
 # Required before imports
-# shellcheck disable=SC1091
-if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" != "1" ]; then
+if ! type _n2038_required_before_imports > /dev/null 2>&1; then
   # If we have not initialized the shell environment, but has it (for example, when starting "dash" from "bash"), then we will try to initialize it.
   if [ -n "${_N2038_SHELL_ENVIRONMENT_PATH}" ]; then
-    . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
+    # shellcheck disable=SC1091
+    _N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED=0 . "${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
   else
     echo "\"my-bash-environment\" is not initialized. Please, initialize it first." >&2 && return 1 2> /dev/null || exit 1
   fi
@@ -183,8 +183,9 @@ _n2038_activate_inner_bash() {
       return 0
     }
     # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
     # shellcheck disable=SC3045
-    export -f sudo 2> /dev/null || true
+    [ -n "${BASH_VERSION}" ] && export -f sudo 2> /dev/null
   fi
   # ========================================
 

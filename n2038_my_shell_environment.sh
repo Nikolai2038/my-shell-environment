@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
-if [ -n "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" ]; then
+if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" = "1" ]; then
   return
 fi
 
@@ -15,16 +15,22 @@ export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 export _N2038_TRUE="true"
 export _N2038_FALSE="false"
 
-export _N2038_CURRENT_OS_TYPE=""
+if [ -z "${_N2038_CURRENT_OS_TYPE}" ]; then
+  export _N2038_CURRENT_OS_TYPE=""
+fi
 export _N2038_OS_TYPE_WINDOWS="windows"
 export _N2038_OS_TYPE_LINUX="linux"
 export _N2038_OS_TYPE_MACOS="macos"
 
-export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
+if [ -z "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" ]; then
+  export _N2038_CURRENT_KERNEL_ARCHITECTURE=""
+fi
 export _N2038_KERNEL_ARCHITECTURE_X86_64="x86_64"
 export _N2038_KERNEL_ARCHITECTURE_ARM64="aarch64"
 
-export _N2038_CURRENT_OS_NAME=""
+if [ -z "${_N2038_CURRENT_OS_NAME}" ]; then
+  export _N2038_CURRENT_OS_NAME=""
+fi
 export _N2038_OS_NAME_UNKNOWN="os"
 export _N2038_OS_NAME_WINDOWS="windows"
 export _N2038_OS_NAME_TERMUX="termux"
@@ -33,7 +39,9 @@ export _N2038_OS_NAME_FEDORA="fedora"
 export _N2038_OS_NAME_DEBIAN="debian"
 export _N2038_OS_NAME_MACOS="macos"
 
-export _N2038_CURRENT_OS_VERSION=""
+if [ -z "${_N2038_CURRENT_OS_VERSION}" ]; then
+  export _N2038_CURRENT_OS_VERSION=""
+fi
 
 export N2038_AUTO_INSTALL_PACKAGES
 if [ -z "${N2038_AUTO_INSTALL_PACKAGES}" ]; then
@@ -79,9 +87,11 @@ _n2038_unset() {
 
   return "${1}"
 }
+
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_unset 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_unset 2> /dev/null
 
 # Special function to return from script.
 # If script is being executed - it will exit with the given code.
@@ -122,8 +132,9 @@ _n2038_return() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_return 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_return 2> /dev/null
 
 _n2038_unset_imports() {
   # "sha256sum" will generate only "[a-z0-9]" for hash, so we check only for them
@@ -132,8 +143,9 @@ _n2038_unset_imports() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_unset_imports 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_unset_imports 2> /dev/null
 
 _n2038_required_before_imports() {
   : "$((_N2038_PATH_TO_THIS_SCRIPT_NUMBER = _N2038_PATH_TO_THIS_SCRIPT_NUMBER + 1))"
@@ -191,8 +203,9 @@ _n2038_required_before_imports() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_required_before_imports 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_required_before_imports 2> /dev/null
 
 # Required steps after imports.
 #
@@ -203,8 +216,9 @@ _n2038_required_after_imports() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_required_after_imports 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_required_after_imports 2> /dev/null
 
 # Required steps after function declaration.
 # Checks if this file is being executed or sourced.
@@ -236,8 +250,9 @@ _n2038_required_after_function() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_required_after_function 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_required_after_function 2> /dev/null
 
 # Checks if the specified commands are installed.
 # Returns 0 if all the commands are installed, otherwise returns other values.
@@ -357,8 +372,9 @@ _n2038_commands_must_be_installed() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_commands_must_be_installed 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_commands_must_be_installed 2> /dev/null
 
 # Regenerates symlinks for the scripts in the shell environment.
 #
@@ -394,8 +410,9 @@ _n2038_regenerate_symlinks() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_regenerate_symlinks 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_regenerate_symlinks 2> /dev/null
 
 # Inits the "_N2038_CURRENT_OS_TYPE" variable with type of the current OS.
 #
@@ -420,8 +437,9 @@ _n2038_init_current_os_type() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_init_current_os_type 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_init_current_os_type 2> /dev/null
 
 # Inits the "_N2038_CURRENT_KERNEL_ARCHITECTURE" variable with type of the current OS.
 #
@@ -444,8 +462,9 @@ _n2038_init_current_kernel_architecture() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_init_current_kernel_architecture 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_init_current_kernel_architecture 2> /dev/null
 
 # Inits the "_N2038_CURRENT_OS_NAME" variable with name of the current OS.
 #
@@ -482,8 +501,9 @@ _n2038_init_current_os_name() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_init_current_os_name 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_init_current_os_name 2> /dev/null
 
 # Inits the "_N2038_CURRENT_OS_VERSION" variable with version of the current OS.
 # It can be empty (for example, for Arch).
@@ -526,8 +546,9 @@ _n2038_init_current_os_version() {
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f _n2038_init_current_os_version 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f _n2038_init_current_os_version 2> /dev/null
 
 # Activates the shell environment.
 #
@@ -612,8 +633,9 @@ n2038_my_shell_environment() {
     # Termux does not need "sudo" to write to the lib directory - we fake it
     sudo() { "$@"; }
     # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
     # shellcheck disable=SC3045
-    export -f sudo 2> /dev/null || true
+    [ -n "${BASH_VERSION}" ] && export -f sudo 2> /dev/null
   fi
   # ----------------------------------------
 
@@ -632,8 +654,9 @@ n2038_my_shell_environment() {
     # In "_n2038_activate_inner_bash.sh" we properly define "sudo" function to run new Bash process as administrator
     sudo() { "$@"; }
     # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+    # Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
     # shellcheck disable=SC3045
-    export -f sudo 2> /dev/null || true
+    [ -n "${BASH_VERSION}" ] && export -f sudo 2> /dev/null
   fi
   # ----------------------------------------
 
@@ -810,8 +833,9 @@ source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_m
   return 0
 }
 # Export function, if we are in Bash. This way, MINGW will be able to see main functions when executing files.
+# Also, in "dash" if error encountered while sourcing, sourcing will be stoped - so we explicitly check if we are in Bash here.
 # shellcheck disable=SC3045
-export -f n2038_my_shell_environment 2> /dev/null || true
+[ -n "${BASH_VERSION}" ] && export -f n2038_my_shell_environment 2> /dev/null
 
 # If this file is being executed
 if [ "$({ basename "$0" || echo basename_failed; } 2> /dev/null)" = "n2038_my_shell_environment.sh" ]; then
