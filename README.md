@@ -12,10 +12,15 @@ Structure of the command prompt:
 
 ```plaintext
 ┌─[USER_NAME@PC_NAME:FULL_PATH_TO_THE_CURRENT_DIRECTORY]
+├─[REPOSITORY_NAME:BRANCH_NAME]─[SUBMODULE_NAME:BRANCH_NAME]
 ├─[OS_NAME]─[SHELL_DEPTH]─[SHELL_NAME]─$ COMMAND
 COMMAND_OUTPUT
 └─[COMMAND_RETURN_CODE]─[EXECUTION_TIME_IN_SECONDS]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
 ```
+
+- Line `├─[REPOSITORY_NAME:BRANCH_NAME]─[SUBMODULE_NAME:BRANCH_NAME]` will not be printed if current working directory is not Git repository. Also:
+
+    - `─[SUBMODULE_NAME:BRANCH_NAME]` will not be printed if current working directory is not Git submodule.
 
 ## 3. Supported shells
 
