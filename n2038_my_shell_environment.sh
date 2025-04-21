@@ -12,8 +12,8 @@ export _N2038_RETURN_CODE_NOT_PASSED_TO_UNSET=240
 # Value for this variable must not be in the variable name itself - otherwise it can unset itself in "_n2038_unset_imports" (right now it won't but just to be sure)
 export _N2038_FILE_IS_SOURCED_PREFIX="_N2038_FILE_IS_SOURCED_WITH_HASH_"
 
-export _N2038_TRUE='true'
-export _N2038_FALSE='false'
+export _N2038_TRUE="true"
+export _N2038_FALSE="false"
 
 export _N2038_CURRENT_OS_TYPE=""
 export _N2038_OS_TYPE_WINDOWS="windows"

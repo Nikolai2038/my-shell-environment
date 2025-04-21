@@ -31,8 +31,9 @@ COMMAND_OUTPUT
 
     - For Windows, install [Git](https://git-scm.com/downloads/win);
     - For Linux, install:
-      - `git`;
-      - `sudo` command and grant your user permissions.
+
+        - `git`;
+        - `sudo` (and grant your user permissions).
 
     Other commands and packages will be installed by script itself:
 
@@ -170,6 +171,7 @@ Main:
 - `dcd` = `docker-compose down`;
 - `dcr` = `docker-compose restart`;
 - `dcl` = `docker-compose logs`;
+- `dclf` = `docker-compose logs --follow`;
 - `dcps` = `docker-compose ps`;
 - `dce` = `docker-compose exec -it`.
 
@@ -190,6 +192,25 @@ Extra:
 - `dcpsa` = `docker-compose ps -a`;
 - `dcpsq` = `docker-compose ps -q`;
 - `dcpsaq`/`dcpsqa` = `docker-compose ps -aq`.
+
+#### 8.2.5. Package management
+
+These aliases will use `apt`/`apt-get`/`pacman`/`yay`/`dnf`/`pkg` package managers based on current OS.
+Also, there are two variants:
+
+- Confirm all prompts automatically:
+
+    - `i <package...>`: Install specified packages.
+    - `r <package...>`: Remove specified packages;
+    - `u [package...]`: Update specified packages. If no packages are specified, this will update all packages;
+    - `uu`: Update all packages and optimize the system.
+
+- Confirm all prompts by hand:
+
+    - `ih <package...>`: Install specified packages.
+    - `rh <package...>`: Remove specified packages;
+    - `uh [package...]`: Update specified packages. If no packages are specified, this will update all packages;
+    - `uuh`: Update all packages and optimize the system.
 
 ### 8.3. Scripts
 

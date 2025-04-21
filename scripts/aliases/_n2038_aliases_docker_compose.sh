@@ -93,6 +93,17 @@ dcl() {
   return 0
 }
 
+unalias dclf > /dev/null 2>&1 || true
+# Alias for "docker-compose logs --follow"
+#
+# Usage: dclf [arg...]
+# Where:
+# - "arg": Extra argument to the "docker-compose logs" command.
+dclf() {
+  dcl --follow "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 unalias dcps > /dev/null 2>&1 || true
 # Alias for "docker-compose ps"
 #
