@@ -153,7 +153,38 @@ _n2038_ps1_function() {
     # Show seconds parts with specified accuracy
     __n2038_nanoseconds="$(echo "${__n2038_current_timestamp}" | cut "-c16-$((16 + _N2038_EXECUTION_TIME_ACCURACY - 1))")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-    __n2038_execution_time_part="─[${__n2038_seconds}.${__n2038_nanoseconds}]" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_minutes=""
+    __n2038_hours=""
+    if [ "${__n2038_seconds}" -ge 60 ]; then
+      __n2038_minutes="$((__n2038_seconds / 60))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      __n2038_seconds="$((__n2038_seconds - __n2038_minutes * 60))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      if [ "${__n2038_minutes}" -ge 60 ]; then
+        __n2038_hours="$((__n2038_minutes / 60))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        __n2038_minutes="$((__n2038_minutes - __n2038_hours * 60))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+        # Add leading zeros
+        if [ "${__n2038_hours}" -lt 10 ]; then
+          __n2038_hours="0${__n2038_hours}"
+        fi
+
+        # Add separator
+        __n2038_hours="${__n2038_hours}:"
+      fi
+
+      # Add leading zeros
+      if [ "${__n2038_minutes}" -lt 10 ]; then
+        __n2038_minutes="0${__n2038_minutes}"
+      fi
+      if [ "${__n2038_seconds}" -lt 10 ]; then
+        __n2038_seconds="0${__n2038_seconds}"
+      fi
+
+      # Add separator
+      __n2038_minutes="${__n2038_minutes}:"
+    fi
+
+    __n2038_execution_time_part="─[${__n2038_hours}${__n2038_minutes}${__n2038_seconds}.${__n2038_nanoseconds}]" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   # - We don't use "\"-variables ("\w", "\u", "\h", etc.) here because they do not exist in "sh".

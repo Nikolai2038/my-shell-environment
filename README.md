@@ -15,7 +15,7 @@ Structure of the command prompt:
 ├─[REPOSITORY_NAME:BRANCH_NAME]─[SUBMODULE_NAME:BRANCH_NAME]
 ├─[OS_NAME]─[SHELL_DEPTH]─[SHELL_NAME]─$ COMMAND
 COMMAND_OUTPUT
-└─[COMMAND_RETURN_CODE]─[EXECUTION_TIME_IN_SECONDS]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
+└─[COMMAND_RETURN_CODE]─[EXECUTION_TIME]─[FINISHED_DATE]─[FINISHED_DAY_OF_THE_WEEK]─[FINISHED_TIME]
 ```
 
 - Line `├─[REPOSITORY_NAME:BRANCH_NAME]─[SUBMODULE_NAME:BRANCH_NAME]` will not be printed if current working directory is not Git repository. Also:
@@ -109,7 +109,7 @@ As shown in preview above, these scripts when sourced will show information abou
 - Full path to the current directory;
 - Current real shell (follows symlinks);
 - Exit code of the finished command. If it is not `0`, it will be red (can be seen on preview);
-- Execution time in seconds (only in `bash`);
+- Execution time in seconds (only in `bash`). Shows minutes and hours if execution time is long enough;
 - Date and time when command was finished.
 
 ### 8.2. Aliases
