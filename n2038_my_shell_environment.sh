@@ -1,7 +1,9 @@
 #!/bin/sh
 
-# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced
-if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" = "1" ]; then
+# Imitate sourcing main file - to get correct references in IDE - it will not actually be sourced.
+# We extra check via declare for Konsole in Fedora.
+# shellcheck disable=SC3044
+if [ "${_N2038_IS_MY_SHELL_ENVIRONMENT_INITIALIZED}" = "1" ] && declare -fx n2038_my_shell_environment 2> /dev/null; then
   return
 fi
 
