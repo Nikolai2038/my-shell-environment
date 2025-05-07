@@ -223,7 +223,7 @@ Also, there are two variants:
 
 #### 8.3.1. JetBrains
 
-#### 8.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
+##### 8.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
 
 Usage:
 
@@ -235,7 +235,7 @@ Where:
 
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`.
 
-#### 8.3.1.2. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
+##### 8.3.1.2. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
 
 Usage:
 
@@ -248,7 +248,7 @@ Where:
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
 - `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
 
-#### 8.3.1.3. `n2038_jetbrains_clear_all_data.sh` - Clear all data of the JetBrains products (reset all settings, logins, etc.)
+##### 8.3.1.3. `n2038_jetbrains_clear_all_data.sh` - Clear all data of the JetBrains products (reset all settings, logins, etc.)
 
 Usage:
 
@@ -256,7 +256,9 @@ Usage:
 n2038_jetbrains_clear_all_data.sh
 ```
 
-#### 8.3.2. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
+#### 8.3.2. Firefox
+
+##### 8.3.2.1. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
 
 Since Firefox does not sync search engines (and even more - it does not allow editing them), I wrote these scripts to export and import them. Usage:
 
@@ -315,7 +317,9 @@ Example 2 (we assume, that `my-shell-environment` is already installed on both m
     rm search.json.mozlz4
     ```
 
-#### 8.3.3. `n2038_check_port.sh` - Check if port is open on the specified host
+#### 8.3.3. Network
+
+##### 8.3.3.1. `n2038_check_port.sh` - Check if port is open on the specified host
 
 Usage:
 
@@ -331,6 +335,24 @@ Where:
 - `proxy_port`: Port of the proxy to use before checking connection.
 
 For usage with proxy command `proxytunnel` must be installed.
+
+##### 8.3.3.2. `n2038_ssh_with_checks.sh` - Simplified connection via SSH
+
+Usage:
+
+```sh
+n2038_ssh_with_checks <address[:port]> [password] [arg...]
+```
+
+##### 8.3.3.3. `n2038_ssh_without_checks.sh` - Simplified connection via SSH (without checking hosts file)
+
+This is useful for VMs or dualbooting several linux OSes on the same host.
+
+Usage:
+
+```sh
+n2038_ssh_without_checks <address[:port]> [password] [arg...]
+```
 
 ## 9. More information
 

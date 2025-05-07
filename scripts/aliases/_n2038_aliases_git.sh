@@ -18,6 +18,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "../../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
 
 # Imports
+. "../messages/_constants.sh" || _n2038_return "$?" || return "$?"
 . "../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
@@ -85,7 +86,7 @@ unalias gc > /dev/null 2>&1 || true
 # - "arg": Extra argument to the "git commit" command.
 gc() {
   if [ "$#" -lt 1 ]; then
-    _n2038_print_error "Usage: gc <message>" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_print_error "Usage: ${c_highlight}gc <message>${c_return}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
   fi
   { __n2038_message="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
@@ -106,7 +107,7 @@ unalias gca > /dev/null 2>&1 || true
 gca() {
   if [ "$#" -gt 0 ]; then
     if [ "$#" -lt 1 ]; then
-      _n2038_print_error "Usage: gca [message]" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      _n2038_print_error "Usage: ${c_highlight}gca [message]${c_return}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       return "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}"
     fi
     { __n2038_message="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }

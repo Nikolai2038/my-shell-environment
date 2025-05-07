@@ -314,6 +314,8 @@ _n2038_commands_must_be_installed() {
         fi
       elif [ "${__n2038_command}" = "pstree" ]; then
         __n2038_packages_names="psmisc"
+      elif [ "${__n2038_command}" = "sshpass" ]; then
+        __n2038_packages_names="sshpass"
       fi
       # ========================================
 

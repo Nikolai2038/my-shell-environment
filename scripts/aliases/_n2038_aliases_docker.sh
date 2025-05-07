@@ -58,7 +58,7 @@ unalias di > /dev/null 2>&1 || true
 #
 # Usage: di [arg...]
 # Where:
-# - "arg": Extra argument to the "docker ps" command.
+# - "arg": Extra argument to the "docker image" command.
 di() {
   d image list --format "${c_success}{{.Repository}}${c_text}:${c_border_usual}{{.Tag}}${c_text} ({{.Size}})${c_reset}" --filter "dangling=false" | grep -v '<none>' | sort | less -R || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
@@ -69,7 +69,7 @@ unalias dl > /dev/null 2>&1 || true
 #
 # Usage: dl [arg...]
 # Where:
-# - "arg": Extra argument to the "docker ps" command.
+# - "arg": Extra argument to the "docker logs" command.
 dl() {
   d logs "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
@@ -80,7 +80,7 @@ unalias dlf > /dev/null 2>&1 || true
 #
 # Usage: dlf [arg...]
 # Where:
-# - "arg": Extra argument to the "docker ps" command.
+# - "arg": Extra argument to the "docker logs" command.
 dlf() {
   dl --follow "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
@@ -91,7 +91,7 @@ unalias de > /dev/null 2>&1 || true
 #
 # Usage: de [arg...]
 # Where:
-# - "arg": Extra argument to the "docker ps" command.
+# - "arg": Extra argument to the "docker exec" command.
 de() {
   d exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
