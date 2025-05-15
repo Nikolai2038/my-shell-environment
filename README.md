@@ -258,29 +258,47 @@ n2038_jetbrains_clear_all_data.sh
 
 #### 8.3.2. Firefox
 
-##### 8.3.2.1. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
+##### 8.3.2.1. `n2038_firefox_get_profile_path.sh` - Print path to current Firefox profile folder
 
-Since Firefox does not sync search engines (and even more - it does not allow editing them), I wrote these scripts to export and import them. Usage:
+Usage:
 
 ```sh
-n2038_firefox_search_engines_export.sh [--dev] <file_path>
+n2038_firefox_get_profile_path.sh <firefox_type>
 ```
 
 Where:
 
-- `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `firefox_type`: Type of the Firefox:
+    - `firefox`: Firefox;
+    - `firefox-developer-edition`: Firefox for Developers.
+
+##### 8.3.2.2. `n2038_firefox_search_engines_export.sh` and `n2038_firefox_search_engines_import.sh` - Export and import Firefox's search engines
+
+Since Firefox does not sync search engines (and even more - it does not allow editing them), I wrote these scripts to export and import them. Usage:
+
+```sh
+n2038_firefox_search_engines_export.sh [--mozlz4] <firefox_type> <file_path>
+```
+
+Where:
+
+- `firefox_type`: Type of the Firefox:
+    - `firefox`: Firefox;
+    - `firefox-developer-edition`: Firefox for Developers.
 - `--mozlz4`: If to export in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 - `file_path`: Path to the file where search engines data will be saved. Format is JSON.
 
 And:
 
 ```sh
-n2038_firefox_search_engines_import.sh [--dev] <file_path>
+n2038_firefox_search_engines_import.sh [--mozlz4] <firefox_type> <file_path>
 ```
 
 Where:
 
-- `--dev`: If to use Firefox for Developers instead of default Firefox;
+- `firefox_type`: Type of the Firefox:
+    - `firefox`: Firefox;
+    - `firefox-developer-edition`: Firefox for Developers.
 - `--mozlz4`: If provided file is in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 - `file_path`: Path to the file from where search engines data will be loaded.
 
@@ -341,7 +359,7 @@ For usage with proxy command `proxytunnel` must be installed.
 Usage:
 
 ```sh
-n2038_ssh_with_checks <address[:port]> [password] [arg...]
+n2038_ssh_with_checks.sh <address[:port]> [password] [arg...]
 ```
 
 ##### 8.3.3.3. `n2038_ssh_without_checks.sh` - Simplified connection via SSH (without checking hosts file)
@@ -351,7 +369,7 @@ This is useful for VMs or dualbooting several linux OSes on the same host.
 Usage:
 
 ```sh
-n2038_ssh_without_checks <address[:port]> [password] [arg...]
+n2038_ssh_without_checks.sh <address[:port]> [password] [arg...]
 ```
 
 ## 9. More information

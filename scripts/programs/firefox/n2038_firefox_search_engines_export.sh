@@ -19,46 +19,46 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 
 # Imports
 . "../../messages/_n2038_print_error.sh" || _n2038_return "$?" || return "$?"
-. "./_n2038_firefox_get_profile_path.sh" || _n2038_return "$?" || return "$?"
+. "./n2038_firefox_get_profile_path.sh" || _n2038_return "$?" || return "$?"
 
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
 # Exports search engines from current user's Firefox into specified file.
 #
-# Usage: n2038_firefox_search_engines_export [--dev] [--mozlz4] <file_path>
+# Usage: n2038_firefox_search_engines_export [--mozlz4] <firefox_type> <file_path>
 # Where:
-# - `--dev`: If to use Firefox for Developers instead of default Firefox;
+# - `firefox_type`: Type of the Firefox:
+#   - `firefox`: Firefox;
+#   - `firefox-developer-edition`: Firefox for Developers.
 # - `--mozlz4`: If to export in "mozlz4" format, not JSON. In this case command "mozlz4" not needed to be installed (useful on Windows);
 # - `file_path`: Path to the file where search engines data will be saved. Format is JSON.
 n2038_firefox_search_engines_export() {
-  __n2038_is_developers_edition="${_N2038_FALSE}"
+  __n2038_usage() {
+    _n2038_print_error "Usage: ${c_highlight}n2038_firefox_search_engines_export [--mozlz4] <${__N2038_FIREFOX_TYPE_FIREFOX}|${__N2038_FIREFOX_TYPE_FIREFOX_DEVELOPER_EDITION}> <file_path>${c_return}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  }
+
   __n2038_is_mozlz4="${_N2038_FALSE}"
   for __n2038_argument in "$@"; do
-    if [ "${__n2038_argument}" = "--dev" ]; then
-      { __n2038_is_developers_edition="${_N2038_TRUE}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    elif [ "${__n2038_argument}" = "--mozlz4" ]; then
+    if [ "${__n2038_argument}" = "--mozlz4" ]; then
       { __n2038_is_mozlz4="${_N2038_TRUE}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
     fi
   done
 
-  if [ "$#" -lt 1 ]; then
-    _n2038_print_error "Usage: ${c_highlight}n2038_firefox_search_engines_export [--dev] [--mozlz4] <file_path>${c_return}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-    _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
+  if [ "$#" -ne 2 ]; then
+    __n2038_usage && return "$?" || return "$?"
   fi
-  { __n2038_file_path="${1}" && shift; } || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_firefox_type="${1}" && { shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; }
+  __n2038_file_path="${1}" && { shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; }
 
-  if [ "${__n2038_is_developers_edition}" = "${_N2038_TRUE}" ]; then
-    __n2038_firefox_profile_path="$(_n2038_firefox_get_profile_path --dev)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  else
-    __n2038_firefox_profile_path="$(_n2038_firefox_get_profile_path)" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  fi
+  __n2038_firefox_profile_path="$(n2038_firefox_get_profile_path "${__n2038_firefox_type}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   if [ "$__n2038_is_mozlz4}" = "${_N2038_TRUE}" ]; then
+    cp "${__n2038_firefox_profile_path}/search.json.mozlz4" "${__n2038_file_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
     _n2038_commands_must_be_installed mozlz4 || { _n2038_unset "$?" && return "$?" || return "$?"; }
     mozlz4 "${__n2038_firefox_profile_path}/search.json.mozlz4" "${__n2038_file_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
-  else
-    cp "${__n2038_firefox_profile_path}/search.json.mozlz4" "${__n2038_file_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   unset __n2038_is_developers_edition __n2038_is_mozlz4 __n2038_argument __n2038_file_path __n2038_firefox_profile_path

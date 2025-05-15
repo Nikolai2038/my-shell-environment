@@ -316,6 +316,13 @@ _n2038_commands_must_be_installed() {
         __n2038_packages_names="psmisc"
       elif [ "${__n2038_command}" = "sshpass" ]; then
         __n2038_packages_names="sshpass"
+      elif [ "${__n2038_command}" = "mozlz4" ]; then
+        if [ "${_N2038_CURRENT_OS_NAME}" = "${_N2038_OS_NAME_ARCH}" ]; then
+          __n2038_packages_names="mozlz4-git"
+          __n2038_is_aur=1
+        else
+          echo "Installing command \"${__n2038_command}\" is not implemented for \"${_N2038_CURRENT_OS_NAME}\"!" >&2
+        fi
       fi
       # ========================================
 
