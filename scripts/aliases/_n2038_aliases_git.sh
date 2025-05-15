@@ -157,14 +157,13 @@ gp() {
 }
 
 unalias gpf > /dev/null 2>&1 || true
-# Pull and then force push changes to the remote repository.
-# Alias for "git pull && git push --force".
+# Force push changes to the remote repository.
+# Alias for "git push --force".
 #
 # Usage: gpf [arg...]
 # Where:
-# - "arg": Extra argument to the "git pull" and "git push" commands.
+# - "arg": Extra argument to the "git push" command.
 gpf() {
-  gpull "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   gpush --force "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
