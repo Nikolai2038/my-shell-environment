@@ -75,10 +75,10 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
   fi
 
   # "release.type" can be:
-  # - "eap" (Early Access Program) – A preview version with experimental features, available for early testing. It may be unstable and is not intended for production use.
+  # - "eap" (Early Access Program) – A preview version with experimental features, available for early testing. It may be unstable and is not intended for production use. But it can be used without license - just need to login.
   # - "rc" (Release Candidate) – A nearly finished version that is being tested for final bugs before the official release. It is more stable than EAP but still not guaranteed to be bug-free.
   # - "release" – The final, officially stable version intended for general use.
-  __n2038_versions="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=release" | jq -r '(.[0].releases.[].version // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_versions="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=eap" | jq -r '(.[0].releases.[].version // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   if [ -z "${__n2038_versions}" ]; then
     _n2038_print_error "Failed to get files list!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"

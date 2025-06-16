@@ -27,7 +27,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
-# Download specified JetBrains product latest stable installer in the current directory.
+# Download specified JetBrains product latest EAP installer in the current directory.
 #
 # Usage: n2038_jetbrains_download <product_name> <download_type> [version]
 #
@@ -84,14 +84,14 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
   fi
 
   # "release.type" can be:
-  # - "eap" (Early Access Program) – A preview version with experimental features, available for early testing. It may be unstable and is not intended for production use.
+  # - "eap" (Early Access Program) – A preview version with experimental features, available for early testing. It may be unstable and is not intended for production use. But it can be used without license - just need to login.
   # - "rc" (Release Candidate) – A nearly finished version that is being tested for final bugs before the official release. It is more stable than EAP but still not guaranteed to be bug-free.
   # - "release" – The final, officially stable version intended for general use.
   if [ -n "${__n2038_version}" ]; then
-    __n2038_version_files="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=release" | jq -r '(.[0].releases[] | select(.version == "'"${__n2038_version}"'") | .downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_version_files="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=eap" | jq -r '(.[0].releases[] | select(.version == "'"${__n2038_version}"'") | .downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   # If version is not specified - we get the latest one
   else
-    __n2038_version_files="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=release" | jq -r '(.[0].releases.[0].downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_version_files="$(curl --fail "https://data.services.jetbrains.com/products?code=${__n2038_product_code}&release.type=eap" | jq -r '(.[0].releases.[0].downloads // "")')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   fi
 
   if [ -z "${__n2038_version_files}" ]; then

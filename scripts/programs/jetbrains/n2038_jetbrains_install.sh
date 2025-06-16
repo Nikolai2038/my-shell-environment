@@ -29,7 +29,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
-# Install specified JetBrains product latest stable version.
+# Install specified JetBrains product latest EAP version.
 #
 # Usage: n2038_jetbrains_install <product_name> [version]
 #

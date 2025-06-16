@@ -254,7 +254,7 @@ The output will look like:
 ...
 ```
 
-#### 8.3.1.2. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
+#### 8.3.1.2. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest EAP) for current OS
 
 Usage:
 
@@ -273,7 +273,7 @@ Example:
 n2038_jetbrains_install.sh idea 2024.1.7
 ```
 
-#### 8.3.1.3. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
+#### 8.3.1.3. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest EAP installer) in the downloads directory
 
 Usage:
 
