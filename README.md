@@ -223,32 +223,77 @@ Also, there are two variants:
 
 #### 8.3.1. JetBrains
 
-##### 8.3.1.1. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
+#### 8.3.1.1. `n2038_jetbrains_list_versions.sh` - List available versions of the JetBrains product
 
 Usage:
 
 ```sh
-n2038_jetbrains_install.sh <product_name>
+n2038_jetbrains_list_versions.sh <product_name>
 ```
 
 Where:
 
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`.
 
-##### 8.3.1.2. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
+Example:
+
+```sh
+n2038_jetbrains_list_versions.sh idea
+```
+
+The output will look like:
+
+```plaintext
+2025.1.2
+2025.1.1.1
+2025.1.1
+2025.1
+2024.3.6
+2024.3.5
+2024.3.4.1
+...
+```
+
+#### 8.3.1.2. `n2038_jetbrains_install.sh` - Install specified JetBrains product (latest stable) for current OS
 
 Usage:
 
 ```sh
-n2038_jetbrains_download.sh <product_name> <download_type>
+n2038_jetbrains_install.sh <product_name> [version]
 ```
 
 Where:
 
 - `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
-- `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`.
+- `version`: Version to install. If not specified, the latest one will be used.
 
-##### 8.3.1.3. `n2038_jetbrains_clear_all_data.sh` - Clear all data of the JetBrains products (reset all settings, logins, etc.)
+Example:
+
+```sh
+n2038_jetbrains_install.sh idea 2024.1.7
+```
+
+#### 8.3.1.3. `n2038_jetbrains_download.sh` - Download specified JetBrains product (latest stable installer) in the downloads directory
+
+Usage:
+
+```sh
+n2038_jetbrains_download.sh <product_name> <download_type> [version]
+```
+
+Where:
+
+- `product_name` can be one of the: `idea`, `phpstorm`, `clion`, `pycharm`, `webstorm`, `rider`, `rubymine`, `rustrover`, `writerside`, `datagrip`, `dataspell`, `fleet`, `goland`;
+- `download_type` can be on of the: `linuxARM64`, `linux`, `windows`, `thirdPartyLibrariesJson`, `windowsZip`, `windowsARM64`, `mac`, `macM1`;
+- `version`: Version to install. If not specified, the latest one will be used.
+
+Example:
+
+```sh
+n2038_jetbrains_download.sh idea linux 2024.1.7
+```
+
+#### 8.3.1.4. `n2038_jetbrains_clear_all_data.sh` - Clear all data of the JetBrains products (reset all settings, logins, etc.)
 
 Usage:
 

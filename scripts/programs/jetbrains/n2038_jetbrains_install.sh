@@ -29,6 +29,11 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
+# Install specified JetBrains product latest stable version.
+#
+# Usage: n2038_jetbrains_install <product_name> [version]
+#
+# Example: n2038_jetbrains_install "idea"
 n2038_jetbrains_install() {
   [ "$#" -gt 0 ] && { __n2038_product_name="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_product_name=""
   if [ -z "${__n2038_product_name}" ]; then
@@ -36,6 +41,8 @@ n2038_jetbrains_install() {
 $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
+
+  [ "$#" -gt 0 ] && { __n2038_version="${1}" && shift || { _n2038_unset "$?" && return "$?" || return "$?"; }; } || __n2038_version=""
 
   if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_WINDOWS}" ]; then
     if [ "${_N2038_CURRENT_KERNEL_ARCHITECTURE}" = "${_N2038_KERNEL_ARCHITECTURE_X86_64}" ]; then
@@ -60,7 +67,7 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
     _n2038_unset "${_N2038_RETURN_CODE_WHEN_ERROR_WITH_MESSAGE}" && return "$?" || return "$?"
   fi
 
-  __n2038_downloaded_file="$(n2038_jetbrains_download "${__n2038_product_name}" "${__n2038_download_type}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_downloaded_file="$(n2038_jetbrains_download "${__n2038_product_name}" "${__n2038_download_type}" "${__n2038_version}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   if [ "${__n2038_download_type}" = "${_N2038_JETBRAINS_DOWNLOAD_TYPE_LINUX}" ]; then
     __n2038_program_directory="${N2038_PROGRAMS_PATH}/JetBrains/${__n2038_product_name}"
@@ -86,7 +93,14 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
 
     if [ "${_N2038_CURRENT_OS_TYPE}" = "${_N2038_OS_TYPE_LINUX}" ]; then
       _n2038_print_info "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
-      sudo ln -sf "${__n2038_installed_program_directory}/bin/${__n2038_product_name}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # In some versions (for example, IDEA 2024.1.7, binary file may have ".sh" extension)
+      if [ ! -f "${__n2038_bin_file}" ] && [ -f "${__n2038_bin_file}.sh" ]; then
+        __n2038_bin_file="${__n2038_bin_file}.sh"
+      fi
+
+      sudo ln -sf "${__n2038_bin_file}" "${_N2038_SHELL_ENVIRONMENT_PROGRAMS}/${__n2038_product_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
       _n2038_print_success "Creating symlink to the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
       _n2038_print_info "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
