@@ -105,7 +105,8 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
 
       _n2038_print_info "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
-      cat << EOF | sudo tee "/usr/share/applications/${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      # I add "jetbrains-" prefix, so the name of the desktop file is the same as application class
+      cat << EOF | sudo tee "/usr/share/applications/jetbrains-${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 [Desktop Entry]
 Name=${__n2038_product_name}
 
