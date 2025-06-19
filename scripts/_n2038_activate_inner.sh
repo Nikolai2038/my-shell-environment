@@ -21,6 +21,8 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "../n2038_my_shell_environment.sh" || _n2038_return "$?" || return "$?"
 
 # Imports
+. "./messages/_constants.sh" || _n2038_return "$?" || return "$?"
+. "./messages/_n2038_print_info.sh" || _n2038_return "$?" || return "$?"
 . "./messages/_n2038_replace_colors_with_exact_values.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_depth.sh" || _n2038_return "$?" || return "$?"
 . "./shell/_n2038_get_current_shell_name.sh" || _n2038_return "$?" || return "$?"
@@ -32,6 +34,7 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "./aliases/_n2038_aliases_docker.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_git.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_ls.sh" || _n2038_return "$?" || return "$?"
+. "./aliases/_n2038_aliases_other.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_packages_automatically.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_packages_by_hand.sh" || _n2038_return "$?" || return "$?"
 
@@ -116,19 +119,52 @@ _n2038_activate_inner() {
     export PATH="${_N2038_SHELL_ENVIRONMENT_SYMLINKS}:${PATH}"
   fi
 
-  # "EDITOR" must be set for "Git Graph" extension in VS Code - otherwise it will show error when creating tag
+  # NOTE: "EDITOR" must be set for "Git Graph" extension in VS Code - otherwise it will show error when creating tag
+  if [ -z "${EDITOR}" ]; then
+    if which nvim > /dev/null 2>&1; then
+      export EDITOR="nvim"
+    elif which vim > /dev/null 2>&1; then
+      export EDITOR="vim"
+    elif which vi > /dev/null 2>&1; then
+      export EDITOR="vi"
+    elif which code > /dev/null 2>&1; then
+      export EDITOR="code"
+    elif which kate > /dev/null 2>&1; then
+      export EDITOR="kate"
+    elif which nano > /dev/null 2>&1; then
+      export EDITOR="nano"
+    fi
+  fi
+
   if which nvim > /dev/null 2>&1; then
-    export EDITOR="nvim"
+    # Replace "vim"
+    unalias vim > /dev/null 2>&1 || true
+    # shellcheck disable=SC2317
+    vim() {
+      _n2038_print_info "Command will use \"${c_highlight}nvim${c_return}\" instead of \"${c_highlight}vim${c_return}\"! If you still want to start \"${c_highlight}vim${c_return}\", run \"${c_highlight}command vim${c_return}\" instead." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      nvim "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      return 0
+    }
+
+    # Replace "vi"
+    unalias vi > /dev/null 2>&1 || true
+    # shellcheck disable=SC2317
+    vi() {
+      _n2038_print_info "Command will use \"${c_highlight}nvim${c_return}\" instead of \"${c_highlight}vi${c_return}\"! If you still want to start \"${c_highlight}vi${c_return}\", run \"${c_highlight}command vi${c_return}\" instead." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      nvim "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      return 0
+    }
   elif which vim > /dev/null 2>&1; then
     export EDITOR="vim"
-  elif which nano > /dev/null 2>&1; then
-    export EDITOR="nano"
-  elif which vi > /dev/null 2>&1; then
-    export EDITOR="vi"
-  elif which code > /dev/null 2>&1; then
-    export EDITOR="code"
-  elif which kate > /dev/null 2>&1; then
-    export EDITOR="kate"
+
+    # Replace "vi"
+    unalias vi > /dev/null 2>&1 || true
+    # shellcheck disable=SC2317
+    vi() {
+      _n2038_print_info "Command will use \"${c_highlight}vim${c_return}\" instead of \"${c_highlight}vi${c_return}\"! If you still want to start \"${c_highlight}vi${c_return}\", run \"${c_highlight}command vi${c_return}\" instead." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      vim "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      return 0
+    }
   fi
 
   if [ "$(_n2038_get_current_shell_name)" = "${_N2038_CURRENT_SHELL_NAME_BASH}" ]; then

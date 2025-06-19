@@ -219,6 +219,10 @@ Also, there are two variants:
     - `uh [package...]`: Update specified packages. If no packages are specified, this will update all packages;
     - `uuh`: Update all packages and optimize the system.
 
+#### 8.2.6. Other
+
+- `e`: Run default editor (`EDITOR` variable). If `EDITOR` is empty, it will be set automatically in the `_n2038_activate_inner.sh` script.
+
 ### 8.3. Scripts
 
 #### 8.3.1. JetBrains
