@@ -782,10 +782,11 @@ EOF
 
       __n2038_bashrc_path="${HOME}/.bashrc"
       if { ! [ -f "${__n2038_bashrc_path}" ]; } || { ! grep --quiet --extended-regexp "^source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate\$" "${__n2038_bashrc_path}"; }; then
-
         # shellcheck disable=SC2320
         echo "# \"${_N2038_SHELL_ENVIRONMENT_NAME}\" - see \"${_N2038_SHELL_ENVIRONMENT_REPOSITORY_URL}\" for more details
-source ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh && n2038_my_shell_environment activate" >> "${__n2038_bashrc_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+if [ -f ${_N2038_SHELL_ENVIRONMENT_PATH}/n2038_my_shell_environment.sh ]; then
+  source /usr/local/lib/my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment activate
+fi" >> "${__n2038_bashrc_path}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
         echo "Installing for Bash: success!" >&2
       else
         echo "Installing for Bash: already installed!" >&2
