@@ -45,7 +45,12 @@ unalias dcu > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker-compose up" command.
 dcu() {
-  dc up --detach --wait "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # "--wait" argument is not available in Debian 12
+  if docker-compose up --help | grep --quiet '\--wait'; then
+    dc up --detach --wait "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    dc up --detach "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
   return 0
 }
 
