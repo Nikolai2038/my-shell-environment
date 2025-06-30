@@ -76,6 +76,10 @@ COMMAND_OUTPUT
         rm -rf ~/.my-shell-environment; git clone --branch dev https://github.com/Nikolai2038/my-shell-environment.git ~/.my-shell-environment && . ~/.my-shell-environment/n2038_my_shell_environment.sh && n2038_my_shell_environment --dev install; rm -rf ~/.my-shell-environment
         ```
 
+4. Install extra commands if you want:
+
+    - `bat` - to use colorized `cat` command.
+
 ## 5. Uninstallation
 
 ```sh
@@ -200,7 +204,7 @@ Extra:
 - `dcpsq` = `docker-compose ps -q`;
 - `dcpsaq`/`dcpsqa` = `docker-compose ps -aq`.
 
-#### 8.2.5. Package management
+#### 8.2.5. [CURRENTLY IN WORK] Package management
 
 These aliases will use `apt`/`apt-get`/`pacman`/`yay`/`dnf`/`pkg` package managers based on current OS.
 Also, there are two variants:
@@ -219,7 +223,12 @@ Also, there are two variants:
     - `uh [package...]`: Update specified packages. If no packages are specified, this will update all packages;
     - `uuh`: Update all packages and optimize the system.
 
-#### 8.2.6. Other
+#### 8.2.6. `cat`
+
+- `cat` is aliased to `bat` if it is installed, otherwise it will use `cat` command.
+- `c` = `cat`.
+
+#### 8.2.7. Other
 
 - `e`: Run default editor (`EDITOR` variable). If `EDITOR` is empty, it will be set automatically in the `_n2038_activate_inner.sh` script.
 
