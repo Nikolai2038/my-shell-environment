@@ -39,6 +39,14 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "./aliases/_n2038_aliases_packages_automatically.sh" || _n2038_return "$?" || return "$?"
 . "./aliases/_n2038_aliases_packages_by_hand.sh" || _n2038_return "$?" || return "$?"
 
+# Private Aliases
+if [ -d "./private/aliases" ]; then
+  for __n2038_private_alias_file in ./private/aliases/*.sh; do
+    # shellcheck disable=SC1090
+    . "${__n2038_private_alias_file}" || _n2038_return "$?" || return "$?"
+  done
+fi
+
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
