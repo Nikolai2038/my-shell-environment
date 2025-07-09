@@ -151,7 +151,7 @@ _n2038_activate_inner_bash() {
 
       echo "return_code=0" >> "${__n2038_temp_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
       while [ "$#" -gt 0 ]; do
-        __n2038_arg="$1" && shift
+        __n2038_arg="${1}" && shift
         __n2038_arg_escaped="${__n2038_arg//\\/\\\\}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
         __n2038_arg_escaped="${__n2038_arg_escaped//\"/\\\"}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
         __n2038_arg_escaped="${__n2038_arg_escaped//\$/\\\$}" || { _n2038_unset "$?" && return "$?" || return "$?"; }

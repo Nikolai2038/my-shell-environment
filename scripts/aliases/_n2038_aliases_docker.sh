@@ -93,7 +93,20 @@ unalias de > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "docker exec" command.
 de() {
-  d exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  # If only service name is provided, then we will use "bash" shell to enter the container
+  if [ "$#" = "1" ]; then
+    __n2038_service_name="${1}" && shift
+    __n2038_shell_name="bash"
+
+    # Check if bash is available in the container - if not, use "sh"
+    if ! d exec -T "${__n2038_service_name}" which "${__n2038_shell_name}" > /dev/null 2>&1; then
+      __n2038_shell_name="sh"
+    fi
+
+    d exec -it "${__n2038_service_name}" "${__n2038_shell_name}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  else
+    d exec -it "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  fi
   return 0
 }
 # ========================================

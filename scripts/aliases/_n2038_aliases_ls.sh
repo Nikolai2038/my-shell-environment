@@ -35,7 +35,7 @@ l() {
   # - We don't use "-1" from "ls" because it does not show us where links are pointing.
   #   Instead, we use "cut".
   # - We use "tr" to remove duplicate spaces - for "cut" to work properly.
-  command ls -F --group-directories-first --color -l --human-readable --time-style=long-iso "${@}" | sed -E '/^(total|итого)/d' | tr -s '[:blank:]' | cut -d ' ' -f 8- || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  command ls -F --group-directories-first --color -l --human-readable --time-style=long-iso "$@" | sed -E '/^(total|итого)/d' | tr -s '[:blank:]' | cut -d ' ' -f 8- || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -47,7 +47,7 @@ unalias la > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "ls" command.
 la() {
-  l --almost-all "${@}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  l --almost-all "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -59,7 +59,7 @@ unalias ll > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "ls" command.
 ll() {
-  command ls -F --group-directories-first --color -l --human-readable --time-style=long-iso "${@}" | sed -E '/^(total|итого)/d' || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  command ls -F --group-directories-first --color -l --human-readable --time-style=long-iso "$@" | sed -E '/^(total|итого)/d' || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -71,7 +71,7 @@ unalias lla > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "ls" command.
 lla() {
-  ll --almost-all "${@}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  ll --almost-all "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -83,7 +83,7 @@ unalias lm > /dev/null 2>&1 || true
 # - "arg": Extra argument to the "ls" command.
 lm() {
   # shellcheck disable=SC2016
-  l "${@}" | sed -E 's/^(.*)$/- `\1`;/' || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  l "$@" | sed -E 's/^(.*)$/- `\1`;/' || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -94,7 +94,7 @@ unalias lam > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "ls" command.
 lam() {
-  lm --almost-all "${@}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  lm --almost-all "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
@@ -106,7 +106,7 @@ unalias lma > /dev/null 2>&1 || true
 # Where:
 # - "arg": Extra argument to the "lam" command.
 lma() {
-  lam "${@}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  lam "$@" || { _n2038_unset "$?" && return "$?" || return "$?"; }
   return 0
 }
 
