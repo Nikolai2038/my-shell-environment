@@ -44,7 +44,7 @@ _n2038_ps1_function() {
     __n2038_color_for_error_code="${c_error}"
   fi
 
-  __n2038_return_code_formatted="$(printf '%03d' "${__n2038_return_code#0}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  __n2038_return_code_formatted="$(printf '%03d' "${__n2038_return_code}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
   __n2038_date="$(date +'%Y-%m-%d]─[%a]─[%H:%M:%S')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
@@ -111,7 +111,7 @@ _n2038_ps1_function() {
     __n2038_current_timestamp="$((__n2038_current_timestamp - _N2038_LAST_TIME))" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     # Align with 24 characters - this should be enough for a couple thousand years
-    __n2038_current_timestamp="$(printf '%024d' "${__n2038_current_timestamp#0}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+    __n2038_current_timestamp="$(printf '%024d' "${__n2038_current_timestamp}")" || { _n2038_unset "$?" && return "$?" || return "$?"; }
 
     # Show seconds
     __n2038_seconds="$(echo "${__n2038_current_timestamp}" | cut -c1-15 | sed -En 's/^0*([0-9][0-9]*)/\1/p')" || { _n2038_unset "$?" && return "$?" || return "$?"; }
