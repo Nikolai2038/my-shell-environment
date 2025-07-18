@@ -149,7 +149,8 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
     ![gl](./.readme_images/git_log.png)
 
 - `glr` = `git log --reflog`: Same as `git log`, but also show commits only mentioned by reflogs;
-- `gu` = `git reset --soft HEAD~1`: Undo last commit (keep changes staged).
+- `gu` = `git reset --soft HEAD~1`: Undo last commit (keep changes staged);
+- `gr` = `git revert HEAD --no-edit`: Revert last commit.
 
 #### 8.2.3. `docker`
 

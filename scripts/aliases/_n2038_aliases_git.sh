@@ -204,5 +204,17 @@ gu() {
   return 0
 }
 
+unalias gr > /dev/null 2>&1 || true
+# Revert last commit.
+# Alias for "git revert HEAD --no-edit".
+#
+# Usage: gr [arg...]
+# Where:
+# - "arg": Extra argument to the "git revert" command.
+gr() {
+  g revert "$@" HEAD --no-edit || { _n2038_unset "$?" && return "$?" || return "$?"; }
+  return 0
+}
+
 # Required after function
 _n2038_required_after_function "$@" || _n2038_return "$?" || return "$?"
