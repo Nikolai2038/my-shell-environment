@@ -109,16 +109,36 @@ $(_n2038_print_list_items "${_N2038_JETBRAINS_PRODUCTS}")" || { _n2038_unset "$?
       cat << EOF | sudo tee "/usr/share/applications/jetbrains-${__n2038_product_name}.desktop" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
 [Desktop Entry]
 Name=${__n2038_product_name}
-
-# Start on X11, because on Wayland scaling is broken.
-# If you do not use display with scale, you can remove this env variable.
-Exec=env WAYLAND_DISPLAY= ${__n2038_bin_file}
-
+Exec=${__n2038_bin_file}
 Icon=${__n2038_bin_file}.svg
 Type=Application
 Terminal=false
 EOF
       _n2038_print_success "Creating desktop entry for the program \"${c_highlight}${__n2038_product_name}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+      # We need to modify VM options in bin directory, because in the home directory it differs for each version.
+      __n2038_vmoptions_file="${__n2038_installed_program_directory}/bin/${__n2038_product_name}64.vmoptions"
+      __n2038_vmoptions_file_bkp="${__n2038_vmoptions_file}.bkp"
+      if [ -f "${__n2038_vmoptions_file}" ]; then
+        _n2038_print_info "Modifying VM options in file \"${c_highlight}${__n2038_vmoptions_file}${c_return}\"..." || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+        # Create backup of the default VM options file if not already
+        if [ ! -f "${__n2038_vmoptions_file_bkp}" ]; then
+          sudo cp -T "${__n2038_vmoptions_file}" "${__n2038_vmoptions_file_bkp}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+        fi
+
+        # Reset file to defaults
+        sudo cp -T "${__n2038_vmoptions_file_bkp}" "${__n2038_vmoptions_file}" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+        # Enable Wayland support
+        echo '
+# Enable Wayland support
+-Dawt.toolkit.name=WLToolkit' | sudo tee --append "${__n2038_vmoptions_file}" > /dev/null || { _n2038_unset "$?" && return "$?" || return "$?"; }
+
+        _n2038_print_success "Modifying VM options in file \"${c_highlight}${__n2038_vmoptions_file}${c_return}\": success!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      else
+        _n2038_print_info "The VM options file \"${c_highlight}${__n2038_vmoptions_file}${c_return}\" does not exist! Skipping modification of VM options!" || { _n2038_unset "$?" && return "$?" || return "$?"; }
+      fi
     fi
   elif [ "${__n2038_download_type}" = "${_N2038_JETBRAINS_DOWNLOAD_TYPE_WINDOWS_ZIP}" ]; then
     __n2038_program_directory="${N2038_PROGRAMS_PATH}/JetBrains/${__n2038_product_name}"
