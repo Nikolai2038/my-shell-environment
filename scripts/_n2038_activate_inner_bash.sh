@@ -23,6 +23,9 @@ _n2038_required_before_imports || { __n2038_return_code="$?" && [ "${__n2038_ret
 . "./shell/_n2038_get_timestamp.sh" || _n2038_return "$?" || return "$?"
 . "./string/_n2038_tput.sh" || _n2038_return "$?" || return "$?"
 
+# Autocompletion for aliases
+. "../autocompletion/bash/aliases/_n2038_aliases_kubectl.sh" || _n2038_return "$?" || return "$?"
+
 # Required after imports
 _n2038_required_after_imports || _n2038_return "$?" || return "$?"
 
