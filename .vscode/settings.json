@@ -73,6 +73,12 @@
         "dcubd",
         "dcudb",
         "dpsqa",
+        "gnbddu",
+        "gnbdu",
+        "gndd",
+        "gnddu",
+        "gndu",
+        "persistentvolumeclaims",
         "Prefs"
     ],
     // ----------------------------------------

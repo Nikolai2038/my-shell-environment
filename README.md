@@ -143,7 +143,7 @@ The equals (for example, `l` = `ls`) descriptions below are just informative - a
 - `gpull` = `git pull`: Pull changes from remote repository;
 - `gpush` = `git push`: Push commits to remote repository;
 - `gp` = `git pull && git push`: Pull and then push changes to the remote repository;
-- `gpf` = `git pull && git push --force`: Pull and then force push changes to the remote repository;
+- `gpf` = `git push --force`: Pull and then force push changes to the remote repository;
 - `gl` = `git log`: Show beautified Git log. Shows a colorized log with commit hash, date, GPG signature, author, branches/tags, and commit message:
 
     ![gl](./.readme_images/git_log.png)
@@ -205,7 +205,33 @@ Extra:
 - `dcpsq` = `docker-compose ps -q`;
 - `dcpsaq`/`dcpsqa` = `docker-compose ps -aq`.
 
-#### 8.2.5. [CURRENTLY IN WORK] Package management
+#### 8.2.5. `kubectl`
+
+- `k` = `kubectl`;
+- `kn` = `kubectl get namespaces`;
+- `kps` = `kubectl get all,secret,persistentvolumeclaims`;
+- `kd` = `kubectl delete all,secret`;
+- `kdd` = `kubectl delete all,secret,persistentvolumeclaims`;
+- `kl` = `kubectl describe && kubectl logs`.
+
+#### 8.2.6. `garden`
+
+Main:
+
+- `gn` = `garden`;
+- `gnb` = `garden build`;
+- `gnu` = `garden deploy`;
+- `gnd` = `garden cleanup deploy`;
+- `gndd` = `garden cleanup namespace`.
+
+Extra:
+
+- `gndu` = `garden cleanup deploy && garden deploy`;
+- `gnddu` = `garden cleanup deploy && garden deploy`;
+- `gnbdu` = `garden build && garden cleanup deploy && garden deploy`;
+- `gnbddu` = `garden build && garden cleanup namespace && garden deploy`.
+
+#### 8.2.7. [CURRENTLY IN WORK] Package management
 
 These aliases will use `apt`/`apt-get`/`pacman`/`yay`/`dnf`/`pkg` package managers based on current OS.
 Also, there are two variants:
@@ -224,12 +250,12 @@ Also, there are two variants:
     - `uh [package...]`: Update specified packages. If no packages are specified, this will update all packages;
     - `uuh`: Update all packages and optimize the system.
 
-#### 8.2.6. `cat`
+#### 8.2.8. `cat`
 
 - `cat` is aliased to `bat` if it is installed, otherwise it will use `cat` command.
 - `c` = `cat`.
 
-#### 8.2.7. Other
+#### 8.2.9. Other
 
 - `e`: Run default editor (`EDITOR` variable). If `EDITOR` is empty, it will be set automatically in the `_n2038_activate_inner.sh` script.
 
